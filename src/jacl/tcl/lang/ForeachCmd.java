@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: ForeachCmd.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
  *
  */
 
@@ -47,7 +47,6 @@ class ForeachCmd implements Command {
 
 	int c, i, j, base;
 	int maxIter = 0;
-	String result;
 	TclObject command = argv[argv.length-1];
 	boolean done = false;
 
