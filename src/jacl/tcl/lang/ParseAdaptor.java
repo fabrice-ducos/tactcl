@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: ParseAdaptor.java,v 1.2.1.2 1999/01/31 11:55:46 mo Exp $
+ * RCS: @(#) $Id: ParseAdaptor.java,v 1.3 1999/07/21 04:21:12 mo Exp $
  */
 
 package tcl.lang;
@@ -79,8 +79,6 @@ static ParseResult
 parseNestedCmd(
     Interp interp,		// The current Interp.
     String string,		// The script containing the variable.
-// FIXME : is this comment correct? , why would the parse rely on
-// the char after the ']'?
     int index,			// An index into string that points to.
 				// the character just after the ].
     int length)			// The length of the string.
