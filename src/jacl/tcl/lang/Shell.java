@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Shell.java,v 1.2.2.3 1999/03/23 21:49:13 dejong Exp $
+ * RCS: @(#) $Id: Shell.java,v 1.4 1999/07/06 12:19:34 mo Exp $
  */
 
 package tcl.lang;
@@ -328,7 +328,7 @@ run()
 
 		try {
 		    TclObject histLimit = interp.getVar("historyLimit",
-			    TCL.GLOBAL_ONLY | TCL.DONT_THROW_EXCEPTION);
+			    TCL.GLOBAL_ONLY);
 		    if (histLimit != null) {
 			limit = TclInteger.get(interp, histLimit);
 		    }
