@@ -10,13 +10,13 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: AssocData.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
 package tcl.lang;
 
-/*
+/**
  * This interface is the API for registering named data objects in the
  * Tcl interpreter.
  */
