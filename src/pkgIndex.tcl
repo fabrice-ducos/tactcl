@@ -1,6 +1,6 @@
 # Cross platform init script for Tcl Blend. Known to work on unix and windows.
 # Author:  Christopher Hylands, Mo Dejong
-# RCS: @(#) $Id: pkgIndex.tcl,v 1.20 2000/04/08 04:25:36 mo Exp $
+# RCS: @(#) $Id: pkgIndex.tcl,v 1.21 2000/05/13 23:56:28 mo Exp $
 
 proc loadtclblend {dir} {
     global tclblend_init env tcljava
@@ -170,12 +170,6 @@ proc loadtclblend {dir} {
 
     if {[catch {XpUtils::iload -d $dir -extdbg "" tclblend} errMsg]} {
         error "\"XpUtils::iload -d $dir tclblend\" failed:\n $errMsg"
-    }
-
-    # export the java commands out of the java namespace
-    namespace eval ::java {
-	namespace export bind call cast defineclass event field \
-	    getinterp instanceof lock new null prop throw try unlock import
     }
 
     # See src/tcljava/tcl/lang/BlendExtension.java
