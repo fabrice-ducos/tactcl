@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: ArrayObject.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
+ * RCS: @(#) $Id: ArrayObject.java,v 1.2 1999/05/09 20:59:47 dejong Exp $
  *
  */
 
@@ -125,7 +125,7 @@ throws
 	    int startIdx = optionIdx + 1;
 
 	    FuncSig.get(interp, javaClass, argv[optionIdx],
-		    argv, startIdx, argv.length - startIdx);
+		    argv, startIdx, argv.length - startIdx, false);
 	} catch (TclException e1) {
 	    throw new TclException(interp, "bad option \"" +
 		    argv[optionIdx] +"\": must be length, get, getrange, "+
