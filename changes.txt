@@ -1017,3 +1017,8 @@ The IBM JDK port to Linux uses yet another include
 native include directory style which required some
 changes to the configure script. (Mo)
 
+01/31/2000 (minor fixup for JavaFieldCmd.test)
+Added "string trim" calls around some values
+queried by the java::field regression tests so
+that they pass under glibc 2.0. (Mo)
+
