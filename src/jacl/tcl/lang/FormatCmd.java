@@ -632,6 +632,9 @@ class FormatCmd implements Command {
 	// Normalize dblValue to within 10.0 > dblValue >= 1.0 
 
 	exp = 0;
+	if (Double.isNaN(dblValue)) {
+	    return "NaN";
+	}
 	if (dblValue>0.0) {
 	    int k = 0;
 	    while ((dblValue >= 1e8) && (k++ < 100)) {
