@@ -24,7 +24,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: TclClassLoader.java,v 1.2.1.5 1999/02/11 05:38:57 dejong Exp $
+ * RCS: @(#) $Id: TclClassLoader.java,v 1.5 1999/07/06 12:19:35 mo Exp $
  */
 
 
@@ -527,8 +527,7 @@ getEnvTclClasspath(
     Interp interp) 
 throws TclException
 {
-    TclObject tobj = interp.getVar("env", "TCL_CLASSPATH",
-             TCL.DONT_THROW_EXCEPTION | TCL.GLOBAL_ONLY);
+    TclObject tobj = interp.getVar("env", "TCL_CLASSPATH", TCL.GLOBAL_ONLY);
     if (tobj != null) {
 	return(TclList.getElements(interp, tobj));
     }
