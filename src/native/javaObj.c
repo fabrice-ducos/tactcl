@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: javaObj.c,v 1.7 2002/12/07 08:51:03 mdejong Exp $
+ * RCS: @(#) $Id: javaObj.c,v 1.8 2002/12/16 02:01:40 mdejong Exp $
  */
 
 #include "java.h"
@@ -517,6 +517,7 @@ Java_tcl_lang_CObject_makeRef(
 	jclass nullClass = (*env)->FindClass(env,
 		"java/lang/NullPointerException");
 	(*env)->ThrowNew(env, nullClass, "Invalid CObject.");
+	return;
     }
 
 #ifdef TCL_MEM_DEBUG
@@ -579,6 +580,7 @@ Java_tcl_lang_CObject_newCObject(
     if (string) {
 	objPtr->bytes = JavaGetString(env, string, &objPtr->length);
     }
+    obj = 0;
     *(Tcl_Obj **)&obj = objPtr;
     return obj;	
 }
