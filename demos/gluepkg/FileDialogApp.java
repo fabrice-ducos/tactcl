@@ -7,14 +7,14 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: FileDialogApp.java,v 1.2 1999/05/08 23:14:11 dejong Exp $
  *
  */
 
 import java.awt.*;
 import java.io.*;
 
-/*
+/**
  * A simple "application" that just wraps around the AWT FileDialog 
  * component.  Once the FileDialog is no longer displayed, then calls
  * to getFile() and getDirectory() will return information on which path 
@@ -23,13 +23,13 @@ import java.io.*;
 
 public class FileDialogApp {
 
-    /*
+    /**
      * The Java AWT FileDialog. 
      */
 
     private FileDialog fd;              
 
-    /*
+    /**
      * FileDialogApp --
      *
      * Create a FileDialog.  Since the AWT FileDialog is modal, it
@@ -40,31 +40,30 @@ public class FileDialogApp {
 	Frame f = new Frame();
 	fd = new FileDialog(f, "Select a JAR File.");
 	fd.setFilenameFilter(new JarFilenameFilter());
-	fd.setFile("*.java");
 	fd.show();
     }
 
-    /*
+    /**
      * getFile --
      *
      * Gets the file of the Dialog.
      */
 
     public String getFile() {
-        return(fd.getFile());
+        return fd.getFile();
     }
 
-    /*
+    /**
      * getDirectory --
      *
      * Gets the directory of the Dialog.
      */
 
     public String getDirectory() {
-        return(fd.getDirectory());
+        return fd.getDirectory();
     }
 
-    /*
+    /**
      * setDirectory --
      *
      * Set the directory of the Dialog to the specified directory.
@@ -86,7 +85,7 @@ class JarFilenameFilter implements FilenameFilter {
     
     public boolean accept(File dir, String name) {
         System.out.println("Name: " + name);
-        if (name.endsWith(".jar")) {
+        if (name.endsWith(".jar") || name.endsWith(".zip")) {
 	    return(true);
 	} else {
 	    return(false);

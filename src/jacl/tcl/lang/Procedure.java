@@ -10,52 +10,45 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Procedure.java,v 1.3 1999/07/06 12:19:34 mo Exp $
  *
  */
 
 package tcl.lang;
 
-/*
+/**
  * This class implements the body of a Tcl procedure.
  */
 
 class Procedure implements Command, CommandWithDispose {
 
-/*
- * The formal parameters of the procedure and their default values.
- *     argList[0][0] = name of the 1st formal param
- *     argList[0][1] = if non-null, default value of the 1st formal param
- */
+// The formal parameters of the procedure and their default values.
+//     argList[0][0] = name of the 1st formal param
+//     argList[0][1] = if non-null, default value of the 1st formal param
 
-TclObject argList[][];
 
-/*
- * True if this proc takes an variable number of arguments. False
- * otherwise.
- */
+TclObject[][] argList;
+
+// True if this proc takes an variable number of arguments. False
+// otherwise.
 
 boolean isVarArgs;
 
-/*
- * The body of the procedure.
- */
+// The body of the procedure.
 
 CharPointer body;
 int body_length;
 
+// The namespace that the Command is defined in
+NamespaceCmd.Namespace ns;
 
-/*
- * Name of the source file that contains this procedure. May be null, which
- * indicates that the source file is unknown.
- */
+// Name of the source file that contains this procedure. May be null, which
+// indicates that the source file is unknown.
 
 String srcFileName;
 
-/*
- * Position where the body of the procedure starts in the source file.
- * 1 means the first line in the source file.
- */
+// Position where the body of the procedure starts in the source file.
+// 1 means the first line in the source file.
 
 int srcLineNumber;
 
@@ -79,6 +72,7 @@ int srcLineNumber;
 
 Procedure(
     Interp interp,		// Current interpreter.
+    NamespaceCmd.Namespace ns,  // The namespace that the proc is defined in.
     String name,		// Name of the procedure.
     TclObject args,		// The formal arguments of this procedure.
     TclObject b,		// The body of the procedure.
@@ -87,21 +81,18 @@ Procedure(
 throws
     TclException		// Standard Tcl exception.
 {
+    this.ns = ns;
     srcFileName = sFileName;
     srcLineNumber = sLineNumber;
 
-    /*
-     * Break up the argument list into argument specifiers, then process
-     * each argument specifier.
-     */
+    // Break up the argument list into argument specifiers, then process
+    // each argument specifier.
 
     int numArgs = TclList.getLength(interp, args);
     argList = new TclObject[numArgs][2];
 
     for (int i=0; i<numArgs; i++) {
-	/*
-	 * Now divide the specifier up into name and default.
-	 */
+	// Now divide the specifier up into name and default.
 
 	TclObject argSpec = TclList.index(interp, args, i);
 	int specLen = TclList.getLength(interp, argSpec);
@@ -159,19 +150,14 @@ cmdProc(
 throws
     TclException		// Standard Tcl exception.
 {
-    /*
-     * Create the call frame and parameter bindings
-     */
+    // Create the call frame and parameter bindings
 
     CallFrame frame = interp.newCallFrame(this, argv);
 
-    /*
-     * Execute the body
-     */
+    // Execute the body
 
     interp.pushDebugStack(srcFileName, srcLineNumber);
     try {
-      //interp.eval(body, 0);
       Parser.eval2(interp, body.array, body.index, body_length, 0);
     } catch (TclException e) {
         int code = e.getCompletionCode();
@@ -198,19 +184,17 @@ throws
     } finally {
 	interp.popDebugStack();
 
-	/*
-	 * The check below is a hack.  The problem is that there
-	 * could be unset traces on the variables, which cause
-	 * scripts to be evaluated.  This will clear the
-	 * errInProgress flag, losing stack trace information if
-	 * the procedure was exiting with an error.  The code
-	 * below preserves the flag.  Unfortunately, that isn't
-	 * really enough: we really should preserve the errorInfo
-	 * variable too (otherwise a nested error in the trace
-	 * script will trash errorInfo).  What's really needed is
-	 * a general-purpose mechanism for saving and restoring
-	 * interpreter state.
-	 */
+	// The check below is a hack.  The problem is that there
+	// could be unset traces on the variables, which cause
+	// scripts to be evaluated.  This will clear the
+	// errInProgress flag, losing stack trace information if
+	// the procedure was exiting with an error.  The code
+	// below preserves the flag.  Unfortunately, that isn't
+	// really enough: we really should preserve the errorInfo
+	// variable too (otherwise a nested error in the trace
+	// script will trash errorInfo).  What's really needed is
+	// a general-purpose mechanism for saving and restoring
+	// interpreter state.
 
 	if (interp.errInProgress) {
 	    frame.dispose();
@@ -244,7 +228,7 @@ disposeCmd()
 {
   //body.release();
   body = null;
-  for (int i=0; i<argList.length; i++) {
+  for (int i=0; i < argList.length; i++) {
     argList[i][0].release();
     argList[i][0] = null;
     
@@ -254,6 +238,95 @@ disposeCmd()
     }
   }
   argList = null;
+}
+
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclIsProc -- isProc
+ *
+ *	Tells whether a command is a Tcl procedure or not.
+ *
+ * Results:
+ *	If the given command is actually a Tcl procedure, the
+ *	return value is true. Otherwise the return value is false.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static boolean isProc(WrappedCommand cmd)
+{
+    return (cmd.cmd instanceof Procedure);
+
+    /*
+    // FIXME: do we really want to get the original command
+    // and test that? Methods like InfoCmd.InfoProcsCmd seem
+    // to do this already.
+
+    WrappedCommand origCmd;
+
+    origCmd = NamespaceCmd.getOriginalCommand(cmd);
+    if (origCmd != null) {
+	cmd = origCmd;
+    }
+    return (cmd.cmd instanceof Procedure);
+    */
+}
+
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclFindProc -- findProc
+ *
+ *	Given the name of a procedure, return a reference to the
+ *	Command instance for the given Procedure. The procedure will be
+ *	looked up using the usual rules: first in the current
+ *	namespace and then in the global namespace.
+ *
+ * Results:
+ *	null is returned if the name doesn't correspond to any
+ *	procedure. Otherwise, the return value is a pointer to
+ *	the procedure's Command. If the name is found but refers
+ *	to an imported command that points to a "real" procedure
+ *	defined in another namespace, a pointer to that "real"
+ *	procedure's structure is returned.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static Procedure
+findProc(Interp interp, String procName)
+{
+    WrappedCommand cmd;
+    WrappedCommand origCmd;
+    
+    try {
+	cmd = NamespaceCmd.findCommand(interp, procName, null, 0);
+    } catch (TclException e) {
+	// This should never happen
+	throw new TclRuntimeError("unexpected TclException: " + e);
+    }
+
+    if (cmd == null) {
+        return null;
+    }
+
+    origCmd = NamespaceCmd.getOriginalCommand(cmd);
+    if (origCmd != null) {
+	cmd = origCmd;
+    }
+    if (! (cmd.cmd instanceof Procedure)) {
+	return null;
+    }
+    return (Procedure) cmd.cmd;
 }
 
 } // end Procedure

@@ -2,21 +2,13 @@
 #
 # Implementation of the history command.
 #
-# RCS: @(#) $Id$
+# RCS: @(#) $Id: history.tcl,v 1.1.1.1 1998/10/14 21:09:21 cvsadmin Exp $
 #
 # Copyright (c) 1997 Sun Microsystems, Inc.
 #
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-
-# For now, the history command is disabled.
-
-proc history {args} {
-    return -code error "error:  the history command is currently disabled."
-}
-
-return
 
 # The tcl::history array holds the history list and
 # some additional bookkeeping variables.

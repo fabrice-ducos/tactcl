@@ -1,0 +1,42 @@
+#!/bin/sh
+# Wrapper script to start up Jacl
+
+# Do not edit this script unless it is called jaclsh.in.
+# configure takes jaclsh.in, substitutes the @xx@
+# fields and creates jaclsh.
+
+# Author:  Moses DeJong
+# Version: @(#)jaclsh.in	1.1 08/07/98
+#
+# Copyright (c) 1998, 1999, 2000 Moses DeJong
+# All Rights Reserved, see license.term for license information.
+
+# Install prefix for jacl package, defaults to /usr/local
+prefix=@prefix@
+
+# Tcl/Java version number
+TCLJAVA_VERSION=@TCLJAVA_VERSION@
+
+# Directory where platform independent files live. This
+# includes the .jar files and any .tcl files
+XP_TCLJAVA_INSTALL_DIR=${prefix}/lib/tcljava${TCLJAVA_VERSION}
+
+# Add the .jar library files to the CLASSPATH
+JACL_CLASSPATH=@JAVA_CLASSPATH@:${XP_TCLJAVA_INSTALL_DIR}/tcljava.jar:${XP_TCLJAVA_INSTALL_DIR}/jacl.jar:
+
+# Fully qualified path name of JVM executable
+JAVA=@JAVA@
+
+# Start Java runtime with 5 Meg Min Heap and 20 Meg Max Heap
+JAVA_FLAGS="@JAVA_FLAGS@ -ms5m -mx20m"
+
+
+# Run java with the args passed in from the calling environment
+# We must set the CLASSPATH env var instead of using the -classpath
+# argument because jacl might want to exec a program that also
+# depends on the CLASSPATH setting and Java can not export env vars
+
+CLASSPATH=${JACL_CLASSPATH}:${CLASSPATH}
+export CLASSPATH
+
+exec ${JAVA} ${JAVA_FLAGS} tcl.lang.Shell ${1+"$@"}

@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: GlobCmd.java,v 1.4 1999/05/09 00:21:40 dejong Exp $
  *
  */
 
@@ -127,15 +127,11 @@ throws
 	    separators = "/";
 	}
 	  
-	/*
-	 * Perform tilde substitution, if needed.
-	 */
+	// Perform tilde substitution, if needed.
 
 	index = 0;
 	if (arg.startsWith("~")) {
-	    /*
-	     * Find the first path separator after the tilde.
-	     */
+	    // Find the first path separator after the tilde.
 
 	    for ( ; index < arg.length(); index++) {
 		char c = arg.charAt(index);
@@ -148,10 +144,8 @@ throws
 		}
 	    }
 
-	    /*
-	     * Determine the home directory for the specified user.  Note 
-	     * that we don't allow special characters in the user name.
-	     */
+	    // Determine the home directory for the specified user.  Note 
+	    // that we don't allow special characters in the user name.
 	    
 	    if (strpbrk(arg.substring(1, index).toCharArray(), 
 		    specCharArr) < 0) {
@@ -199,11 +193,9 @@ throws
 	}
     }
 
-    /*
-     * If the list is empty and the nocomplain switch was not set then
-     * generate and throw an exception.  Always release the TclList upon
-     * completion.
-     */
+    // If the list is empty and the nocomplain switch was not set then
+    // generate and throw an exception.  Always release the TclList upon
+    // completion.
 
     try {
 	if ((TclList.getLength(interp, resultList) == 0) && !noComplain) {
@@ -330,10 +322,8 @@ throws
 	lastChar = headBuf.charAt(headLen - 1);
     }
 
-    /*
-     * Consume any leading directory separators, leaving tailIndex
-     * just past the last initial separator.
-     */
+    // Consume any leading directory separators, leaving tailIndex
+    // just past the last initial separator.
 
     String name = tail;
     for (tailIndex = 0; tailIndex < tailLen; tailIndex++) {
@@ -348,14 +338,13 @@ throws
 	count++;
     }
 
-    /*
-     * Deal with path separators.  On the Mac, we have to watch out
-     * for multiple separators, since they are special in Mac-style
-     * paths.
-     */
+    // Deal with path separators.  On the Mac, we have to watch out
+    // for multiple separators, since they are special in Mac-style
+    // paths.
 	
     switch (JACL.PLATFORM) {
     case JACL.PLATFORM_MAC:
+
 	if (separators.charAt(0) == '/') {
 	    if (((headLen == 0) && (count == 0))
 		    || ((headLen > 0) && (lastChar != ':'))) {
@@ -376,13 +365,12 @@ throws
 	    }
 	}
 	break;
+
     case JACL.PLATFORM_WINDOWS:
-	/*
-	 * If this is a drive relative path, add the colon and the
-	 * trailing slash if needed.  Otherwise add the slash if
-	 * this is the first absolute element, or a later relative
-	 * element.  Add an extra slash if this is a UNC path.
-	 */
+	// If this is a drive relative path, add the colon and the
+	// trailing slash if needed.  Otherwise add the slash if
+	// this is the first absolute element, or a later relative
+	// element.  Add an extra slash if this is a UNC path.
 	if (name.startsWith(":")) {
  	    headBuf.append(":");
 	    if (count > 1) {
@@ -399,10 +387,8 @@ throws
 	}
 	break;
     default:
-	/*
-	 * Add a separator if this is the first absolute element, or
-	 * a later relative element.
-	 */
+	// Add a separator if this is the first absolute element, or
+	// a later relative element.
 
 	if ((tailIndex < tailLen)
 		&& (((headLen > 0)
@@ -412,10 +398,8 @@ throws
 	}
     }
 
-    /*
-     * Look for the first matching pair of braces or the first
-     * directory separator that is not inside a pair of braces.
-     */
+    // Look for the first matching pair of braces or the first
+    // directory separator that is not inside a pair of braces.
 
     openBraceIndex = closeBraceIndex = -1;
     quoted = false;
@@ -428,16 +412,12 @@ throws
 	    quoted = true;
 	    if (((pIndex + 1) < tailLen) &&
 		    (separators.indexOf(tail.charAt(pIndex + 1)) != -1)) {
-		/* 
-		 * Quoted directory separator. 
-		 */
+		// Quoted directory separator. 
 		
 		break;
 	    }
 	} else if (separators.indexOf(ch) != -1) {
-	    /* 
-	     * Unquoted directory separator. 
-	     */
+	    // Unquoted directory separator. 
 	    
 	    break;			
 	} else if (ch == '{') {
@@ -451,20 +431,16 @@ throws
 	    throw new TclException(interp, "unmatched close-brace in file name");
 	}
     }
-    
-    /*
-     * Substitute the alternate patterns from the braces and recurse.
-     */
+
+    // Substitute the alternate patterns from the braces and recurse.
 
     if (openBraceIndex != -1) {
 	int nextIndex;
 	StringBuffer baseBuf = new StringBuffer();
-	
-	/*
-	 * For each element within in the outermost pair of braces,
-	 * append the element and the remainder to the fixed portion
-	 * before the first brace and recursively call doGlob.
-	 */
+
+	// For each element within in the outermost pair of braces,
+	// append the element and the remainder to the fixed portion
+	// before the first brace and recursively call doGlob.
 
 	baseBuf.append(tail.substring(tailIndex, openBraceIndex));
 	baseLen = baseBuf.length();
@@ -491,13 +467,11 @@ throws
 	return;
     }
 
-    /*
-     * At this point, there are no more brace substitutions to perform on
-     * this path component.  The variable p is pointing at a quoted or
-     * unquoted directory separator or the end of the string.  So we need
-     * to check for special globbing characters in the current pattern.
-     * We avoid modifying tail if p is pointing at the end of the string.
-     */
+    // At this point, there are no more brace substitutions to perform on
+    // this path component.  The variable p is pointing at a quoted or
+    // unquoted directory separator or the end of the string.  So we need
+    // to check for special globbing characters in the current pattern.
+    // We avoid modifying tail if p is pointing at the end of the string.
 	
     if (pIndex < tailLen) {
 	firstSpecCharIndex = strpbrk(
@@ -508,12 +482,10 @@ throws
     }
 	
     if (firstSpecCharIndex != -1) {
-	/*
-	 * Look for matching files in the current directory.  matchFiles
-	 * may recursively call TclDoGlob.  For each file that matches,
-	 * it will add the match onto the interp->result, or call TclDoGlob
-	 * if there are more characters to be processed.
-	 */
+	// Look for matching files in the current directory.  matchFiles
+	// may recursively call TclDoGlob.  For each file that matches,
+	// it will add the match onto the interp->result, or call TclDoGlob
+	// if there are more characters to be processed.
 	
 	matchFiles(interp, separators, headBuf.toString(), 
 		tail.substring(tailIndex), (pIndex - tailIndex),
@@ -526,12 +498,10 @@ throws
 		resultList);
 	return;
     }
-    
-    /*
-     * There are no more wildcards in the pattern and no more unprocessed
-     * characters in the tail, so now we can construct the path and verify
-     * the existence of the file.
-     */
+
+    // There are no more wildcards in the pattern and no more unprocessed
+    // characters in the tail, so now we can construct the path and verify
+    // the existence of the file.
 
     String head;
     switch (JACL.PLATFORM) {
@@ -610,11 +580,9 @@ throws
 	
     switch (JACL.PLATFORM) {
     case JACL.PLATFORM_WINDOWS:
-	/*
-	 * Convert the path to normalized form since some interfaces only
-	 * accept backslashes.  Also, ensure that the directory ends with
-	 * a separator character.
-	 */
+	// Convert the path to normalized form since some interfaces only
+	// accept backslashes.  Also, ensure that the directory ends with
+	// a separator character.
 
 	if (dirLen == 0) {
 	    dirBuf.append("./");
@@ -627,25 +595,19 @@ throws
 	    }
 	}
 
-	/*
-	 * All comparisons should be case insensitive on Windows.
-	 */
+	// All comparisons should be case insensitive on Windows.
 	
 	pattern = pattern.toLowerCase();
 	break;
     case JACL.PLATFORM_MAC:
-	/* 
-	 * Fall through to unix case--mac is not yet implemented.
-	 */  
+	// Fall through to unix case--mac is not yet implemented.
 
     default:
-	/*
-	 * Make sure that the directory part of the name really is a
-	 * directory.  If the directory name is "", use the name "."
-	 * instead, because some UNIX systems don't treat "" like "."
-	 * automatically.  Keep the "" for use in generating file names,
-	 * otherwise "glob foo.c" would return "./foo.c".
-	 */
+	// Make sure that the directory part of the name really is a
+	// directory.  If the directory name is "", use the name "."
+	// instead, because some UNIX systems don't treat "" like "."
+	// automatically.  Keep the "" for use in generating file names,
+	// otherwise "glob foo.c" would return "./foo.c".
 
 	if (dirLen == 0) {
 	    dirBuf.append(".");
@@ -659,10 +621,8 @@ throws
 	return;
     }
 
-    /*
-     * Check to see if the pattern needs to compare with hidden files.
-     * Get a list of the directory's contents.
-     */
+    // Check to see if the pattern needs to compare with hidden files.
+    // Get a list of the directory's contents.
     
     if (pattern.startsWith(".") || pattern.startsWith("\\.")) {
 	matchHidden = true;
@@ -672,27 +632,21 @@ throws
 	dirListing = dirObj.list();
     }
 
-    /*
-     * Iterate over the directory's contents.
-     */
+    // Iterate over the directory's contents.
     
     if (dirListing.length == 0) {
-	/*
-	 * Strip off a trailing '/' if necessary, before reporting 
-	 * the error.
-	 */
+	// Strip off a trailing '/' if necessary, before reporting 
+	// the error.
 
 	if (dirName.endsWith("/")) {
 	    dirName = dirName.substring(0, (dirLen - 1));
 	}
     }
-    
-    /*
-     * Clean up the end of the pattern and the tail pointer.  Leave
-     * the tail pointing to the first character after the path 
-     * separator following the pattern, or NULL.  Also, ensure that
-     * the pattern is null-terminated.
-     */
+
+    // Clean up the end of the pattern and the tail pointer.  Leave
+    // the tail pointing to the first character after the path 
+    // separator following the pattern, or NULL.  Also, ensure that
+    // the pattern is null-terminated.
 	
     if ((pIndex < patLen) && (pattern.charAt(pIndex) == '\\')) {
 	pIndex++;
@@ -702,21 +656,17 @@ throws
     }
     	
     for (int i = 0; i < dirListing.length; i++) {
-	/*
-	 * Don't match names starting with "." unless the "." is
-	 * present in the pattern.
-	 */
+	// Don't match names starting with "." unless the "." is
+	// present in the pattern.
 	
 	if (!matchHidden && (dirListing[i].startsWith("."))) {
 	    continue;
 	}
-	
-	/*
-	 * Now check to see if the file matches.  If there are more
-	 * characters to be processed, then ensure matching files are
-	 * directories before calling TclDoGlob. Otherwise, just add
-	 * the file to the resultList.
-	 */
+
+	// Now check to see if the file matches.  If there are more
+	// characters to be processed, then ensure matching files are
+	// directories before calling TclDoGlob. Otherwise, just add
+	// the file to the resultList.
 
 	String tmp = dirListing[i];
 	if (JACL.PLATFORM == JACL.PLATFORM_WINDOWS) {
@@ -850,10 +800,8 @@ throws
 {
     String prettyFileName = fileName;
     int prettyLen = fileName.length();
-    
-    /*
-     * Java IO reuqires Windows volumes [A-Za-z]: to be followed by '\\'.
-     */
+
+    // Java IO reuqires Windows volumes [A-Za-z]: to be followed by '\\'.
 
     if ((JACL.PLATFORM == JACL.PLATFORM_WINDOWS)
 	    && (prettyLen >= 2) && (fileName.charAt(1) == ':')) {
@@ -875,12 +823,9 @@ throws
 	f = new File (interp.getWorkingDir(), fileName);
     }
 
-    /*
-     * If the last character is a spearator, make sure the file is an
-     * existing directory, otherwise check that the file exists.
-     */
+    // If the last character is a spearator, make sure the file is an
+    // existing directory, otherwise check that the file exists.
 
-    char lastChar = 0;
     if ((prettyLen > 0) && 
 	    (separators.indexOf(
 		prettyFileName.charAt(prettyLen - 1)) != -1)) {
@@ -919,10 +864,7 @@ createAbsoluteFileObj(
 throws 
     TclException
 {
-    File f;
-	
     if (fileName.equals("")) {
-	//return(new File(""));
 	return(interp.getWorkingDir());
     }
 

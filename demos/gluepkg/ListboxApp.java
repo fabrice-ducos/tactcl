@@ -7,14 +7,14 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: ListboxApp.java,v 1.2 1999/05/08 23:18:04 dejong Exp $
  *
  */
 
 import java.awt.*;
 import java.awt.event.*;
 
-/*
+/**
  * A simple application that displays a listbox, with one or more 
  * items, and two buttons, 'OK' and 'Cancel'.  Once the constructor
  * is called, it runs the "application" and polls until an actionEvent
@@ -23,29 +23,14 @@ import java.awt.event.*;
  * calling 'getSelectedItems()'.
  */
 
-public class ListboxApp implements ActionListener {
+public class ListboxApp {
+    // The Java AWT Widgets (ummm... I mean Components.) 
+    public List     lst;
+    public Frame    frm;
+    public Button   okButton;
+    public Button   cancelButton;
 
-    /*
-     * Used to implement a wait mechanism
-     */
-
-    boolean wait = true;
-
-    /*
-     * The list of selected items from the AWT List widget.
-     */
-
-    private String[] items;
-
-    /*
-     * The Java AWT Widgets (ummm... I mean Components.) 
-     */
-
-    private List     lst;
-    private Frame    frm;
-    private Button   but;
-
-    /*
+    /**
      * ListboxApp --
      *
      * Create the application and insert listItems into the AWT List.
@@ -62,6 +47,9 @@ public class ListboxApp implements ActionListener {
 	gbc.gridwidth = GridBagConstraints.REMAINDER;
 	gbc.gridx = 0;
 	gbc.gridy = 0;
+	gbc.fill = GridBagConstraints.BOTH;
+	gbc.weightx = 1.0;
+	gbc.weighty = 1.0;
 		
 	lst = new List(6, true);
 	for (int i = 0; i < listItems.length; i++) {
@@ -70,73 +58,26 @@ public class ListboxApp implements ActionListener {
 	gbl.setConstraints(lst, gbc);
 	frm.add(lst);
 
+	gbc.fill = GridBagConstraints.NONE;
+	gbc.weightx = 0.0;
+	gbc.weighty = 0.0;
+
 	gbc.gridwidth = 1;
 	gbc.gridx = 0;
 	gbc.gridy = 1;
 
-	but = new Button("OK");
-	but.addActionListener(this);
-	gbl.setConstraints(but, gbc);
-	frm.add(but);
+	okButton = new Button("OK");
+	gbl.setConstraints(okButton, gbc);
+	frm.add(okButton);
 
 	gbc.gridx = 1;
 	gbc.gridy = 1;
 
-	but = new Button("Cancel");
-	but.addActionListener(this);
-	gbl.setConstraints(but, gbc);
-	frm.add(but);
+	cancelButton = new Button("Cancel");
+	gbl.setConstraints(cancelButton, gbc);
+	frm.add(cancelButton);
 
 	frm.setSize(170,170);
 	frm.show();
-	
-	/*
-	 * Since the current version of Jacl dosent have event bindins
-	 * or vwait, we must poll until an action event occurs.  Otherwise
-	 * there is now clean way to grab the selected list items.
-	 */
-
-	try {
-	    while (wait) {
-	        Thread.currentThread().sleep(100); 
-	    }
-	} catch (InterruptedException e) {
-	    /*
-	     * Do nothing...
-	     */ 
-	}
-    }
-
-    /*
-     * getSelectedItems --
-     *
-     * Gets the selected list items.
-     */
-
-    public String[] getSelectedItems() {
-        return(items);
-    }
-
-   /*
-    * actionPerformed --
-    *
-    * This is the callback when either 'OK' or 'Cancel' are pressed.
-    * In either case the window is removed, items is set, and the 
-    * wait variable is set to true, thus breaking the while loop in
-    * the constructor. If 'OK' has been pressed, the class variable
-    * 'items' equals the list of selected items, else null.  
-    */
-
-    public void actionPerformed(ActionEvent evt) {
-	
-	if ("Cancel".equals(evt.getActionCommand())) {
-	    items = null;
-	} else if ("OK".equals(evt.getActionCommand())) {
-	    items = lst.getSelectedItems();
-	}
-	frm.dispose();
-	wait = false;
     }
 }
-
-

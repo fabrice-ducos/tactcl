@@ -10,21 +10,20 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: InternalRep.java,v 1.4 1999/06/21 03:32:39 mo Exp $
  *
  */
 
 package tcl.lang;
 
-/*
+/**
  * This is the interface for implementing internal representation of Tcl
  * objects.  A class that implements InternalRep should define the
  * following:
  *
- * (1) the three abstract methods specified in this base class:
+ * (1) the two abstract methods specified in this base class:
  *		dispose()
  *		duplicate()
- *	   	getName()
  *
  * (2) The method toString()
  *
@@ -56,9 +55,7 @@ abstract public class InternalRep {
 protected void
 dispose()
 {
-    /*
-     * The default implementation does nothing.
-     */
+    // The default implementation does nothing.
 }
 
 /*

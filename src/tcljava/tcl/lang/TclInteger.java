@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclInteger.java,v 1.3 2000/03/17 23:31:31 mo Exp $
  *
  */
 
@@ -63,6 +63,8 @@ public class TclInteger extends InternalRep {
     }
 
     /**
+     * Tcl_NewIntObj -> TclInteger.newInstance
+     *
      * Creates a new instance of a TclObject with a TclInteger internal
      * representation.
      *
@@ -75,6 +77,8 @@ public class TclInteger extends InternalRep {
     }
 
     /**
+     * SetIntFromAny -> TclInteger.setIntegerFromAny
+     *
      * Called to convert the other object's internal rep to this type.
      *
      * @param interp current interpreter.
@@ -88,9 +92,7 @@ public class TclInteger extends InternalRep {
 	InternalRep rep = tobj.getInternalRep();
 
 	if (rep instanceof TclInteger) {
-	    /*
-	     * Do nothing.
-	     */
+	    // Do nothing.
 	} else if (rep instanceof TclBoolean) {
 	    boolean b = TclBoolean.get(interp, tobj);
 	    if (b) {
@@ -99,15 +101,15 @@ public class TclInteger extends InternalRep {
 		tobj.setInternalRep(new TclInteger(0));
 	    }
 	} else {
-	    /*
-	     * (ToDo) other short-cuts
-	     */
+	    // (ToDo) other short-cuts
 
 	    tobj.setInternalRep(new TclInteger(interp, tobj.toString()));
 	}
     }
 
     /**
+     * Tcl_GetIntFromObj -> TclInteger.get
+     *
      * Returns the integer value of the object.
      *
      * @param interp current interpreter.
@@ -118,40 +120,7 @@ public class TclInteger extends InternalRep {
     public static int get(Interp interp, TclObject tobj)
 	    throws TclException {
 	setIntegerFromAny(interp, tobj);
-	TclInteger tint = (TclInteger)(tobj.getInternalRep());
-	return tint.value;
-    }
-
-    /**
-     * Returns the integer value of the object that can be used as an index.
-     *
-     * @param interp current interpreter.
-     * @param tobj the object to operate on.
-     * @param endValue the value of "end".
-     * @return the integer value of the object.
-     * @exception TclException if the object is not a valid Tcl integer or
-     *      "end"
-     */
-    public static int getForIndex(Interp interp, TclObject tobj, int endValue)
-	    throws TclException {
-	InternalRep rep = tobj.getInternalRep();
-
-	if (rep instanceof TclInteger) {
-	    TclInteger tint = (TclInteger)(tobj.getInternalRep());
-	    return tint.value;
-	}
-	
-	String end = "end";
-	if (end.startsWith(tobj.toString())) {
-	    return endValue;
-	}
-	try {
-	    setIntegerFromAny(interp, tobj);
-	} catch (TclException e) {
-	    throw new TclException(interp, "bad index \"" + tobj.toString() +
-		    "\": must be integer or \"end\"");
-	}
-	TclInteger tint = (TclInteger)(tobj.getInternalRep());
+	TclInteger tint = (TclInteger) tobj.getInternalRep();
 	return tint.value;
     }
 

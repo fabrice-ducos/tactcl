@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Notifier.java,v 1.2 1999/05/09 00:46:11 dejong Exp $
  *
  */
 
@@ -147,7 +147,7 @@ Notifier(
  *
  * getNotifierForThread --
  *
- *	Get the notigier for this thread, creating the Notifier,
+ *	Get the notifier for this thread, creating the Notifier,
  *	when necessary.
  *
  * Results:
@@ -508,7 +508,7 @@ doOneEvent(
 				// TCL.TIMER_EVENTS, TCL.IDLE_EVENTS,
 				// or others defined by event sources.
 {
-    int result = 0, oldMode, i;
+    int result = 0;
 
     /*
      * No event flags is equivalent to TCL_ALL_EVENTS.

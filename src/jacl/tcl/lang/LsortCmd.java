@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: LsortCmd.java,v 1.1.1.1 1998/10/14 21:09:20 cvsadmin Exp $
  */
 
 package tcl.lang;
@@ -106,7 +106,7 @@ throws
 		throw new TclException(interp, 
 			"\"-index\" option must be followed by list index");
 	    }
-	    sortIndex = TclInteger.getForIndex(interp, argv[i + 1], -2);
+	    sortIndex = Util.getIntForIndex(interp, argv[i + 1], -2);
 	    command = argv[i + 1].toString();
 	    i++;
 	    break;

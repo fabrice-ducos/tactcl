@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: javaObj.c,v 1.3 2000/05/13 23:49:30 mo Exp $
  */
 
 #include "java.h"
@@ -317,7 +317,8 @@ Java_tcl_lang_CObject_getString(
     jstring result;
     int length, i;
     JNIEnv *oldEnv;
-
+    char *p, *end;
+    Tcl_UniChar *w;
 
     if (!objPtr) {
 	jclass nullClass = (*env)->FindClass(env,
@@ -325,23 +326,46 @@ Java_tcl_lang_CObject_getString(
 	(*env)->ThrowNew(env, nullClass, "Invalid CObject.");
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     /*
      * Convert the string rep into a Unicode string.
      */
 
     str = Tcl_GetStringFromObj(objPtr, &length);
     if (length > 0) {
-	buf = (jchar*) ckalloc(length*sizeof(jchar));
-	for (i = 0; i < length; i++) {
-	    buf[i] = ((short) str[i]) & 0x00ff;
+        buf = (jchar*) ckalloc(length*sizeof(jchar));
+
+	w = buf;
+	end = str + length;
+	for (p = str; p < end; ) {
+	  /*
+	  fprintf(stderr, "UTF index %d is %d -> '%c'\n",
+		  ((int) (p - str)), ((int) *p), *p);
+	  */
+
+	  p += Tcl_UtfToUniChar(p, w);
+	  /*
+	  if (((unsigned int) *w) > ((unsigned int) 254)) {
+	    fprintf(stderr, "unicode char %d added\n", *w);
+	  }
+	  */
+	  w++;
 	}
+
+	/*
+	 * The UTF-8 encoded string length could be larger
+	 * than the unicode version (in chars not bytes),
+	 * so we need to set the length to the number of
+	 * unicode chars that were converted from UTF-8
+	 */
+
+	length = (w - buf);
 	result = (*env)->NewString(env, buf, length);
-	ckfree((char*)buf);
+	ckfree((char*) buf);
     } else {
 	result = (*env)->NewString(env, NULL, 0);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
     return result;
 }
 
@@ -379,9 +403,9 @@ Java_tcl_lang_CObject_incrRefCount(
 		"java/lang/NullPointerException");
 	(*env)->ThrowNew(env, nullClass, "Invalid CObject.");
     }
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     Tcl_IncrRefCount(objPtr);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -417,9 +441,9 @@ void JNICALL Java_tcl_lang_CObject_decrRefCount(
 		"java/lang/NullPointerException");
 	(*env)->ThrowNew(env, nullClass, "Invalid CObject.");
     }
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     Tcl_DecrRefCount(objPtr);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -460,7 +484,7 @@ Java_tcl_lang_CObject_makeRef(
 	(*env)->ThrowNew(env, nullClass, "Invalid CObject.");
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     /*
      * Free the old internalRep before setting the new one.
      */
@@ -480,7 +504,7 @@ Java_tcl_lang_CObject_makeRef(
      */
 
     (*env)->CallVoidMethod(env, object, java.preserve);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -513,13 +537,13 @@ Java_tcl_lang_CObject_newCObject(
     jlong obj;
     JNIEnv *oldEnv;
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     objPtr = Tcl_NewObj();
     if (string) {
 	objPtr->bytes = JavaGetString(env, string, &objPtr->length);
     }
     *(Tcl_Obj **)&obj = objPtr;
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
     return obj;	
 }
 

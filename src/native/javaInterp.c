@@ -9,16 +9,11 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: javaInterp.c,v 1.6 2000/06/15 09:47:07 mo Exp $
  */
 
 #include "java.h"
 #include "javaNative.h"
-
-TCLBLEND_EXTERN void Tcl_SaveResult(Tcl_Interp *interp,
-	  			    Tcl_SavedResult *statePtr);
-TCLBLEND_EXTERN void Tcl_RestoreResult(Tcl_Interp *interp,
-				       Tcl_SavedResult *statePtr);
 
 /*
  * Structure used to hold information about variable traces:
@@ -107,7 +102,7 @@ Java_tcl_lang_Interp_create(
     Tcl_Interp *interp;
     JNIEnv *oldEnv;
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
 
     interp = Tcl_CreateInterp();
     if (JavaSetupJava(env, interp) != TCL_OK) {
@@ -121,7 +116,7 @@ Java_tcl_lang_Interp_create(
 	*(Tcl_Interp**)&lvalue = interp;
     }
 
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
     return lvalue;
 }
 
@@ -135,7 +130,7 @@ Java_tcl_lang_Interp_create(
  *
  * Class:     tcl_lang_Interp
  * Method:    init
- * Signature: ()I
+ * Signature: (J)I
  *
  * Results:
  *	Returns TCL_OK on success, else TCL_ERROR.
@@ -161,7 +156,7 @@ Java_tcl_lang_Interp_init(
 	return TCL_ERROR;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
 
     if (Tcl_Init(interp) != TCL_OK) {
 	result = TCL_ERROR;
@@ -174,7 +169,7 @@ Java_tcl_lang_Interp_init(
 	result = JavaInitBlend(env, interp, interpObj);
     }
 
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 
     return result;
 }
@@ -218,14 +213,14 @@ Java_tcl_lang_Interp_doDispose(
      * to avoid a recursive call when the interpreter is deleted.
      */
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
 
     interpObj = (jobject) Tcl_GetAssocData(interp, "java", NULL);
     (*env)->DeleteGlobalRef(env, interpObj);
     Tcl_SetAssocData(interp, "java", NULL, NULL);
     Tcl_DeleteInterp(interp);
 
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -237,7 +232,7 @@ Java_tcl_lang_Interp_doDispose(
  *
  * Class:     tcl_lang_Interp
  * Method:    eval
- * Signature: (Ljava/lang/String;)V
+ * Signature: (Ljava/lang/String;I)V
  *
  * Results:
  *	A standard Tcl result.
@@ -269,27 +264,23 @@ Java_tcl_lang_Interp_eval(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
 
     objPtr = Tcl_NewObj();
     objPtr->bytes = JavaGetString(env, string, &objPtr->length);
     Tcl_IncrRefCount(objPtr);
 
-#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION == 0) 
     if (!flags) {
 	result = Tcl_EvalObj(interp, objPtr);
     } else {
 	result = Tcl_GlobalEvalObj(interp, objPtr);
     }
-#else 
-    result = Tcl_EvalObj(interp, objPtr, TCL_EVAL_GLOBAL);
-#endif /* TCL8.0 */
 
     exception = (*env)->ExceptionOccurred(env);
     (*env)->ExceptionClear(env);
     Tcl_DecrRefCount(objPtr);
 
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 
     /*
      * Check to see if an exception is being thrown.  If so, let it
@@ -337,9 +328,9 @@ Java_tcl_lang_Interp_getResult(
 	ThrowNullPointerException(env, NULL);
 	return 0;
     }
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     obj = JavaGetTclObject(env, Tcl_GetObjResult(interp), NULL);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 
     return obj;
 }
@@ -382,9 +373,9 @@ Java_tcl_lang_Interp_setResult(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     Tcl_SetObjResult(interp, JavaGetTclObj(env, result));
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -420,9 +411,9 @@ Java_tcl_lang_Interp_resetResult(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     Tcl_ResetResult(interp);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -483,7 +474,7 @@ Java_tcl_lang_Interp_setVar(
      * Get the Tcl_Obj that corresponds to the given TclObject.
      */
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     valuePtr = JavaGetTclObj(env, value);
 
     part1Ptr = Tcl_NewObj();
@@ -518,7 +509,7 @@ Java_tcl_lang_Interp_setVar(
     } else {
 	obj = JavaGetTclObject(env, resultPtr, NULL);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
     return obj;
 }
 
@@ -571,7 +562,7 @@ Java_tcl_lang_Interp_getVar(
 	return NULL;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     part1Ptr = Tcl_NewObj();
     part1Ptr->bytes = JavaGetString(env, part1Str, &part1Ptr->length);
     Tcl_IncrRefCount(part1Ptr);
@@ -597,7 +588,7 @@ Java_tcl_lang_Interp_getVar(
     } else {
 	obj = JavaGetTclObject(env, valuePtr, NULL);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 
     return obj;
 }
@@ -650,7 +641,7 @@ Java_tcl_lang_Interp_unsetVar(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     part1 = JavaGetString(env, part1Str, NULL);
     part2 = (part2Str) ? JavaGetString(env, part2Str, NULL) : NULL;
 
@@ -663,7 +654,7 @@ Java_tcl_lang_Interp_unsetVar(
     if (result != TCL_OK) {
 	JavaThrowTclException(env, interp, result);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -672,6 +663,10 @@ Java_tcl_lang_Interp_unsetVar(
  * Java_tcl_lang_Interp_traceVar --
  *
  *	Add a trace to a variable.
+ *
+ * Class:     tcl_lang_Interp
+ * Method:    traceVar
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ltcl/lang/VarTrace;I)V
  *
  * Results:
  *	None.
@@ -717,7 +712,7 @@ Java_tcl_lang_Interp_traceVar(
      * Get the variable name.
      */
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     part1 = JavaGetString(env, part1Str, NULL);
     part2 = (part2Str) ? JavaGetString(env, part2Str, NULL) : NULL;
 
@@ -749,7 +744,7 @@ Java_tcl_lang_Interp_traceVar(
 	ckfree((char *)traceInfo);
 	JavaThrowTclException(env, interp, result);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -758,6 +753,10 @@ Java_tcl_lang_Interp_traceVar(
  * Java_tcl_lang_Interp_untraceVar --
  *
  *	Remove a trace from a variable.
+ *
+ * Class:     tcl_lang_Interp
+ * Method:    untraceVar
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ltcl/lang/VarTrace;I)V
  *
  * Results:
  *	None.
@@ -798,7 +797,7 @@ Java_tcl_lang_Interp_untraceVar(
 	return;
     }
     
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     /*
      * Get the variable name.
      */
@@ -835,7 +834,7 @@ Java_tcl_lang_Interp_untraceVar(
     if (part2) {
 	ckfree(part2);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -900,14 +899,14 @@ JavaTraceProc(
 	 * assuming anything about the state of Tcl when we return.
 	 */
 
-	(*env)->MonitorExit(env, java.NativeLock);
+	JAVA_UNLOCK();
 
 	(*env)->CallVoidMethod(env, tPtr->trace, java.traceProc,
 		interpObj, name1Str, name2Str, flags);
 	exception = (*env)->ExceptionOccurred(env);
 	(*env)->ExceptionClear(env);
 
-	(*env)->MonitorEnter(env, java.NativeLock);
+	JAVA_LOCK();
 	(*env)->DeleteLocalRef(env, name1Str);
 	if (name2Str) {
 	    (*env)->DeleteLocalRef(env, name2Str);
@@ -975,7 +974,7 @@ Java_tcl_lang_Interp_createCommand(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     name = (*env)->GetStringUTFChars(env, nameStr, NULL);
     cmd = (*env)->NewGlobalRef(env, cmd);
 
@@ -983,7 +982,7 @@ Java_tcl_lang_Interp_createCommand(
 	    (ClientData) cmd, JavaCmdDeleteProc);
 
     (*env)->ReleaseStringUTFChars(env, nameStr, name);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -1015,9 +1014,9 @@ JavaCmdDeleteProc(
 	 * We need to release the monitor while running arbitrary Java code.
 	 */
 
-	(*env)->MonitorExit(env, java.NativeLock);
+	JAVA_UNLOCK();
 	(*env)->CallVoidMethod(env, cmd, java.disposeCmd);
-	(*env)->MonitorEnter(env, java.NativeLock);
+	JAVA_LOCK();
     }
     (*env)->DeleteGlobalRef(env, (jobject)clientData);
 }
@@ -1083,11 +1082,11 @@ JavaCmdProc(
      * of the world after this call.
      */
 
-    (*env)->MonitorExit(env, java.NativeLock);
+    JAVA_UNLOCK();
     result = (*env)->CallIntMethod(env, interpObj,
 	    java.callCommand, cmd, args);
     exception = (*env)->ExceptionOccurred(env);
-    (*env)->MonitorEnter(env, java.NativeLock);
+    JAVA_LOCK();
     if (exception) {
 	(*env)->ExceptionClear(env);
     }
@@ -1142,13 +1141,78 @@ Java_tcl_lang_Interp_deleteCommand(
 	return -1;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     name = (*env)->GetStringUTFChars(env, nameStr, NULL);
     result = Tcl_DeleteCommand(interp, (/*UNCONST*/ char*) name);
     (*env)->ReleaseStringUTFChars(env, nameStr, name);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 
     return (jint) result;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * Java_tcl_lang_Interp_getCommand --
+ *
+ *	Return a tcl.lang.Command object for a given Tcl command.
+ *	This currently only works for Tcl commands implemented in Java.
+ *
+ * Class:     tcl_lang_Interp
+ * Method:    getCommand
+ * Signature: (Ljava/lang/String;)Ltcl/lang/Command;
+ *
+ * Results:
+ *	The command procedure of the given command, or null if
+ *      the command doesn't exist.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+jobject JNICALL
+Java_tcl_lang_Interp_getCommand(
+    JNIEnv *env,		/* Java environment. */
+    jobject interpObj,		/* Interp object. */
+    jstring nameStr)		/* Name of command to look for. */
+{
+    Tcl_Interp *interp = JavaGetInterp(env, interpObj);
+    const char *name;
+    jobject cmd = NULL;
+    Tcl_CmdInfo cmdInfo;
+    JNIEnv *oldEnv;
+
+    if (!interp) {
+	ThrowNullPointerException(env, NULL);
+	return NULL;
+    }
+    if (!nameStr) {
+	ThrowNullPointerException(env, "getCommand");
+	return NULL;
+    }
+
+    PUSH_JAVA_ENV();
+    name = (*env)->GetStringUTFChars(env, nameStr, NULL);    
+    if (Tcl_GetCommandInfo(interp, (/*UNCONST*/ char*) name, &cmdInfo)) {
+        /* If the command exists, find out if it is a Tcl command implemeneted in Java */
+	
+        if (cmdInfo.isNativeObjectProc &&
+                cmdInfo.objProc == JavaCmdProc) {
+            cmd = (jobject) cmdInfo.objClientData;
+	}
+
+        /*
+	 * FIXME: Figure out some way to wrap a Tcl command
+	 * in a tcl.lang.Command interface so that it can be
+	 * invoked directly from Java. We would need to deal
+	 * with deletion of commands which might be tricky
+	 */
+    }
+    (*env)->ReleaseStringUTFChars(env, nameStr, name);
+    POP_JAVA_ENV();
+    return cmd;
 }
 
 /*
@@ -1160,7 +1224,7 @@ Java_tcl_lang_Interp_deleteCommand(
  *
  * Class:     tcl_lang_Interp
  * Method:    commandComplete
- * Signature: (JLjava/lang/String;)Z
+ * Signature: (Ljava/lang/String;)Z
  *
  * Results:
  *	Returns true if the command is complete
@@ -1186,12 +1250,12 @@ Java_tcl_lang_Interp_commandComplete(
 	return JNI_FALSE;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     cmd = (*env)->GetStringUTFChars(env, cmdStr, NULL);
     result = (Tcl_CommandComplete((/*UNCONST*/ char*) cmd)
 	    ? JNI_TRUE : JNI_FALSE);
     (*env)->ReleaseStringUTFChars(env, cmdStr, cmd);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 
     return result;
 }
@@ -1235,10 +1299,10 @@ Java_tcl_lang_Interp_setErrorCode(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     errorObjPtr = JavaGetTclObj(env, code);
     Tcl_SetObjErrorCode(interp, errorObjPtr);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -1247,6 +1311,10 @@ Java_tcl_lang_Interp_setErrorCode(
  * Java_tcl_lang_Interp_addErrorInfo --
  *
  *	Add the given string to the errorInfo.
+ *
+ * Class:     tcl_lang_Interp
+ * Method:    addErrorInfo
+ * Signature: (Ljava/lang/String;)V
  *
  * Results:
  *	None.
@@ -1277,11 +1345,11 @@ Java_tcl_lang_Interp_addErrorInfo(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     str = JavaGetString(env, string, &length);
     Tcl_AddObjErrorInfo(interp, str, length);
     ckfree(str);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -1320,9 +1388,9 @@ Java_tcl_lang_Interp_backgroundError(
 	ThrowNullPointerException(env, NULL);
 	return;
     }
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     Tcl_BackgroundError(interp);
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -1418,7 +1486,7 @@ Java_tcl_lang_Interp_pkgProvide(
 	return;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     namePtr = JavaGetString(env, nameStr, NULL);
     versionPtr = JavaGetString(env, versionStr, NULL);
     
@@ -1436,7 +1504,7 @@ Java_tcl_lang_Interp_pkgProvide(
     if (result != TCL_OK) {
 	JavaThrowTclException(env, interp, result);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
 }
 
 /*
@@ -1491,7 +1559,7 @@ Java_tcl_lang_Interp_pkgRequire(
 	return NULL;
     }
 
-    JAVA_LOCK();
+    PUSH_JAVA_ENV();
     namePtr = JavaGetString(env, nameStr, NULL);
     versionPtr = JavaGetString(env, versionStr, NULL);
     flag = (exact == JNI_TRUE) ? 1 : 0;
@@ -1513,7 +1581,7 @@ Java_tcl_lang_Interp_pkgRequire(
     } else {
 	string = (*env)->NewStringUTF(env, resultPtr);
     }
-    JAVA_UNLOCK();
+    POP_JAVA_ENV();
     return string;
 }
 

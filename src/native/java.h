@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: java.h,v 1.5 2000/06/03 13:03:43 mo Exp $
  */
 
 #ifndef _JAVA
@@ -17,25 +17,6 @@
 
 #include <tcl.h>
 #include <jni.h>
-
-#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION == 0) 
-
-/*
- * The following structure is new to 8.1 so we include it here for now.
- */
-
-typedef struct Tcl_SavedResult {
-    char *result;
-    Tcl_FreeProc *freeProc;
-    Tcl_Obj *objResultPtr;
-    char *appendResult;
-    int appendAvl;
-    int appendUsed;
-    char resultSpace[TCL_RESULT_SIZE+1];
-} Tcl_SavedResult;
-
-#endif
-
 
 /*
  * Macros used to declare a function to be exported by a DLL.
@@ -160,17 +141,35 @@ extern JavaInfo java;
  * pointer.
  */
 
-#define JAVA_LOCK()	\
+/* Uncomment these macros and comment the other ones to
+   completely avoid using the global Java monitor.
+
+#define JAVA_LOCK()
+#define JAVA_UNLOCK()
+*/
+
+#define JAVA_LOCK() \
 { \
     (*env)->MonitorEnter(env, java.NativeLock); \
+}
+
+#define JAVA_UNLOCK() \
+{ \
+    (*env)->MonitorExit(env, java.NativeLock); \
+}
+
+#define PUSH_JAVA_ENV()	\
+{ \
+    JAVA_LOCK(); \
     oldEnv = JavaSetEnv(env); \
 }
 
-#define JAVA_UNLOCK()	\
+#define POP_JAVA_ENV()	\
 { \
     JavaSetEnv(oldEnv); \
-    (*env)->MonitorExit(env, java.NativeLock); \
+    JAVA_UNLOCK(); \
 }
+
 
 /*
  * Declarations for functions shared across files.
@@ -200,7 +199,6 @@ TCLBLEND_EXTERN void		JavaThrowTclException(JNIEnv *env,
  * Declarations for exported functions.
  */
 
-/*EXTERN EXPORT(int,Tclblend_Init) _ANSI_ARGS_((Tcl_Interp *interp));*/
 TCLBLEND_EXTERN int Tclblend_Init _ANSI_ARGS_((Tcl_Interp *interp));
 
 #endif /* _JAVA */

@@ -10,12 +10,12 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: CommandWithDispose.java,v 1.2 1999/05/29 23:55:49 dejong Exp $
  */
 
 package tcl.lang;
 
-/*
+/**
  * This interface is implemented by Commands that need to know when
  * they are deleted from an interpreter.  Most commands do not need
  * to know when they are deleted in Java because Java will garbage
@@ -26,8 +26,7 @@ package tcl.lang;
  */
 
 public interface CommandWithDispose extends Command {
-    public void
-    disposeCmd();	// The disposeCmd method is called when the
-			// interp is removing the Tcl command.
+    public void disposeCmd();	// The disposeCmd method is called when the
+			        // interp is removing the Tcl command.
 }
 

@@ -1,42 +1,40 @@
 /* 
  * Util.java --
  *
- *	This class handles Tcl expressions.
+ *	This class provides useful Tcl utility methods.
  *
  * Copyright (c) 1997 Cornell University.
- * Copyright (c) 1997-1998 by Sun Microsystems, Inc.
+ * Copyright (c) 1997-1999 by Sun Microsystems, Inc.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Util.java,v 1.6 2000/03/10 18:05:02 mo Exp $
  */
 
 package tcl.lang;
+
+import sunlabs.brazil.util.regexp.Regexp;
 
 import java.io.*;
 import java.util.*;
 
 public class Util {
 
-static final int TCL_DONT_USE_BRACES = 1;
-static final int USE_BRACES		 = 2;
-static final int BRACES_UNMATCHED	 = 4;
+static final int TCL_DONT_USE_BRACES     = 1;
+static final int USE_BRACES              = 2;
+static final int BRACES_UNMATCHED        = 4;
 
-/*
- * Some error messages.
- */
+// Some error messages.
 
 static final String intTooBigCode =
 "ARITH IOVERFLOW {integer value too large to represent}";
 static final String fpTooBigCode =
 "ARITH OVERFLOW {floating-point value too large to represent}";
 
-/*
- * This table below is used to convert from ASCII digits to a
- * numerical equivalent.  It maps from '0' through 'z' to integers
- * (100 for non-digit characters).
- */
+// This table below is used to convert from ASCII digits to a
+// numerical equivalent.  It maps from '0' through 'z' to integers
+// (100 for non-digit characters).
 
 static char cvtIn[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,		// '0' - '9'
@@ -50,20 +48,16 @@ static char cvtIn[] = {
     30, 31, 32, 33, 34, 35
 };
 
-/*
- * Largest possible base 10 exponent.  Any
- * exponent larger than this will already
- * produce underflow or overflow, so there's
- * no need to worry about additional digits.
- */
+// Largest possible base 10 exponent.  Any
+// exponent larger than this will already
+// produce underflow or overflow, so there's
+// no need to worry about additional digits.
 
 static final int maxExponent = 511;
 
-/*
- * Table giving binary powers of 10. Entry
- * is 10^2^i.  Used to convert decimal
- * exponents into floating-point numbers.
- */
+// Table giving binary powers of 10. Entry
+// is 10^2^i.  Used to convert decimal
+// exponents into floating-point numbers.
 
 static final double powersOf10[] = {
     10.,
@@ -77,35 +71,19 @@ static final double powersOf10[] = {
     1.0e256
 };
 
-/*
- * Used in the regex Methods below.
- */
-
-static RegexMatcher regexMatcher = checkRegexPackage();
-
-/*
- * Determines if the VM has a broken implementation of this method.
- */
-
-static boolean broken_isLetterOrDigit = checkIsLetterOrDigit();
-
-/*
- * Default precision for converting floating-point values to strings.
- */
+// Default precision for converting floating-point values to strings.
 
 static final int DEFAULT_PRECISION = 12;
 
-/*
- * The following variable determine the precision used when converting
- * floating-point values to strings. This information is linked to all
- * of the tcl_precision variables in all interpreters inside a JVM via 
- * PrecTraceProc.
- *
- * Note: since multiple threads may change precision concurrently, race
- * conditions may occur.
- *
- * It should be modified only by the PrecTraceProc class.
- */
+// The following variable determine the precision used when converting
+// floating-point values to strings. This information is linked to all
+// of the tcl_precision variables in all interpreters inside a JVM via 
+// PrecTraceProc.
+//
+// Note: since multiple threads may change precision concurrently, race
+// conditions may occur.
+//
+// It should be modified only by the PrecTraceProc class.
 
 static int precision = DEFAULT_PRECISION;
 
@@ -125,9 +103,7 @@ static int precision = DEFAULT_PRECISION;
 private
 Util()
 {
-    /*
-     * Do nothing.  This should never be called.
-     */
+    // Do nothing.  This should never be called.
 }
 
 /*
@@ -180,11 +156,8 @@ strtoul(
     int len = s.length();
     int i = start;
     char c;
-    boolean isValid;
     
-    /*
-     * Skip any leading blanks.
-     */
+    // Skip any leading blanks.
     
     while (i < len && Character.isWhitespace(s.charAt(i))) {
 	i ++;
@@ -193,10 +166,8 @@ strtoul(
 	return new StrtoulResult(0, 0, TCL.INVALID_INTEGER);
     }
     
-    /*
-     * If no base was provided, pick one from the leading characters
-     * of the string.
-     */
+    // If no base was provided, pick one from the leading characters
+    // of the string.
     
     if (base == 0) {
 	c = s.charAt(i);
@@ -210,10 +181,8 @@ strtoul(
 		}
 	    }
 	    if (base == 0) {
-		/*
-		 * Must set anyDigits here, otherwise "0" produces a
-		 * "no digits" error.
-		 */
+		// Must set anyDigits here, otherwise "0" produces a
+		// "no digits" error.
 
 		anyDigits = true;
 		base = 8;
@@ -223,9 +192,7 @@ strtoul(
 	}
     } else if (base == 16) {
 	if (i < len-2) {
-	    /*
-	     * Skip a leading "0x" from hex numbers.
-	     */
+	    // Skip a leading "0x" from hex numbers.
 
 	    if ((s.charAt(i) == '0') && (s.charAt(i+1) == 'x')) {
 		i += 2;
@@ -233,7 +200,7 @@ strtoul(
 	}
     }
 
-    long max = (((long) ((long)1 << 32)) / ((long)base));
+    long max = (((long) ((long) 1 << 32)) / ((long) base));
     boolean overflowed = false;
 
     for ( ; ; i += 1) {
@@ -257,9 +224,7 @@ strtoul(
 	anyDigits = true;
     }
 	    
-    /*
-     * See if there were any digits at all.
-     */
+    // See if there were any digits at all.
 	
     if (!anyDigits) {
 	return new StrtoulResult(0, 0, TCL.INVALID_INTEGER);
@@ -298,9 +263,7 @@ throws
     boolean sign;
     int i = 0;
 
-    /*
-     * Skip any leading blanks.
-     */
+    // Skip any leading blanks.
 
     while (i < len && Character.isWhitespace(s.charAt(i))) {
 	i ++;
@@ -348,7 +311,118 @@ throws
 	return (int)(  res.value);
     }
 }
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclGetIntForIndex -> Util.getIntForIndex
+ *
+ *	This procedure returns an integer corresponding to the list index
+ *	held in a Tcl object. The Tcl object's value is expected to be
+ *	either an integer or a string of the form "end([+-]integer)?". 
+ *
+ * Results:
+ *	The return value is the index that is found from the string. If
+ *	the Tcl object referenced by tobj has the value "end", the
+ *	value stored is endValue. If tobj's value is not of the form
+ *	"end([+-]integer)?" and it
+ *	can not be converted to an integer, an exception is raised.
+ *
+ * Side effects:
+ *	The object referenced by tobj might be converted to an
+ *	integer object.
+ *
+ *----------------------------------------------------------------------
+ */
+static final int getIntForIndex(Interp interp, TclObject tobj, int endValue)
+    throws TclException {
+    int length, offset;
 
+    if (tobj.getInternalRep() instanceof TclInteger) {
+	return TclInteger.get(interp, tobj);
+    }
+
+    String bytes = tobj.toString();
+    length = bytes.length();
+
+    String intforindex_error = "bad index \"" + bytes +
+	    "\": must be integer or end?-integer?" + checkBadOctal(interp, bytes);
+
+    // FIXME : should we replace this call to regionMatches with a generic strncmp?
+    if (! "end".regionMatches(0, bytes, 0, (length > 3) ? 3 : length)) {
+	try {
+	    offset = TclInteger.get(null, tobj);
+	} catch (TclException e) {
+	    throw new TclException(interp, intforindex_error);
+	}
+	return offset;
+    }
+
+    if (length <= 3) {
+	return endValue;
+    } else if (bytes.charAt(3) == '-') {
+	// This is our limited string expression evaluator
+
+	offset = Util.getInt(interp, bytes.substring(3));
+	return endValue + offset;
+    } else {
+	throw new TclException(interp, intforindex_error);
+    }
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclCheckBadOctal ->  Util.checkBadOctal
+ *
+ *	This procedure checks for a bad octal value and returns a
+ *	meaningful error that should be appended to the interp's result.
+ *
+ * Results:
+ *	Returns error message if it was a bad octal.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static final String
+checkBadOctal(
+	      Interp interp,    // Interpreter to use for error reporting.
+	                        // If NULL, then no error message is returned.
+	      String value)
+{
+    int p = 0;
+    final int len = value.length();
+
+    // A frequent mistake is invalid octal values due to an unwanted
+    // leading zero. Try to generate a meaningful error message.
+
+    while (p < len && Character.isWhitespace(value.charAt(p))) {
+	p++;
+    }
+    if ((p < len) && (value.charAt(p) == '+' || value.charAt(p) == '-')) {
+	p++;
+    }
+    if ((p < len) && (value.charAt(p) == '0')) {
+	while ((p < len) &&
+	       Character.isDigit(value.charAt(p))) { // INTL: digit.
+	    p++;
+	}
+	while ((p < len) &&
+	       Character.isWhitespace(value.charAt(p))) { // INTL: ISO space.
+	    p++;
+	}
+	if (p >= len) {
+	    // Reached end of string
+	    if (interp != null) {
+		return " (looks like invalid octal number)";
+	    }
+	}
+    }
+    return "";
+}
 
 /*
  *----------------------------------------------------------------------
@@ -385,9 +459,7 @@ strtod(
     int len = s.length();
     int i = start;
 
-    /*
-     * Skip any leading blanks.
-     */
+    // Skip any leading blanks.
 
     while (i < len && Character.isWhitespace(s.charAt(i))) {
 	i ++;
@@ -407,10 +479,8 @@ strtod(
 	sign = false;
     }
 
-    /*
-     * Count the number of digits in the mantissa (including the decimal
-     * point), and also locate the decimal point.
-     */
+    // Count the number of digits in the mantissa (including the decimal
+    // point), and also locate the decimal point.
 
     decPt = -1;
     for (mantSize = 0; ; mantSize += 1) {
@@ -424,9 +494,7 @@ strtod(
 	i++;
     }
 
-    /*
-     * Skim off the exponent.
-     */
+    // Skim off the exponent.
 
     if ((CharAt(s, i, len) == 'E') || (CharAt(s, i, len) == 'e')) {
 	i += 1;
@@ -443,20 +511,6 @@ strtod(
 
     s = s.substring(start, i);
     double result = 0;
-
-    /*
-     * Added the following test because Kaffe VM's Double.valueOf(s) 
-     * method does not throw an exception if s is an empty string.  Rather, 
-     * it returns 0.0 instead.
-     *
-     * That we need different tests for different VMs means one or both of
-     * two things:  1) Java VM is not well specified. 2) Other VMs are not
-     * following the Java standard properly.
-     */
-
-    if (s.length() == 0) {
-	return new StrtodResult(0, 0, TCL.INVALID_DOUBLE);
-    }
 
     try {
 	result = Double.valueOf(s).doubleValue();
@@ -481,13 +535,15 @@ strtod(
  *
  * CharAt --
  *
- *	|>description<|
+ *	This simply calls String.charAt() with an extra check to
+ *	make sure the index is bigger than 0 and smaller than
+ *	the length of the string.
  *
  * Results:
- *	|>None.<|
+ *	If the the index is out of range, \0 is returned.
  *
  * Side effects:
- *	|>None.<|
+ *	None.
  *
  *----------------------------------------------------------------------
  */
@@ -533,9 +589,7 @@ throws
     boolean sign;
     int i = 0;
 
-    /*
-     * Skip any leading blanks.
-     */
+    // Skip any leading blanks.
 
     while (i < len && Character.isWhitespace(s.charAt(i))) {
 	i ++;
@@ -604,8 +658,8 @@ throws
 static String 
 concat(
     int from, 		// The starting index.
-    int to,  		// The endinf index (inclusive).
-    TclObject argv[]) 	// The CmdArgs.
+    int to,  		// The ending index (inclusive).
+    TclObject[] argv) 	// The CmdArgs.
 {
     StringBuffer sbuf;
 
@@ -613,7 +667,7 @@ concat(
 	return "";
     }
     if (to <= argv.length) {
-	to = argv.length-1;
+	to = argv.length - 1;
     }
 
     sbuf = new StringBuffer();
@@ -675,11 +729,9 @@ stringMatch(
 	    incrIndex = false;
 	}
 
-	/* 
-	 * See if we're at the end of both the pattern and the string.
-	 * If so, we succeeded.  If we're at the end of the pattern
-	 * but not at the end of the string, we failed.
-	 */
+	// See if we're at the end of both the pattern and the string.
+	// If so, we succeeded.  If we're at the end of the pattern
+	// but not at the end of the string, we failed.
 	
 	if (pIndex == patLen) {
 	    if (sIndex == strLen) {
@@ -692,12 +744,10 @@ stringMatch(
 	    return false;
 	}
 
-	/* 
-	 * Check for a "*" as the next pattern character.  It matches
-	 * any substring.  We handle this by calling ourselves
-	 * recursively for each postfix of string, until either we
-	 * match or we reach the end of the string.
-	 */
+	// Check for a "*" as the next pattern character.  It matches
+	// any substring.  We handle this by calling ourselves
+	// recursively for each postfix of string, until either we
+	// match or we reach the end of the string.
 	
 	if (patArr[pIndex] == '*') {
 	    pIndex++;
@@ -716,21 +766,17 @@ stringMatch(
 	    }
 	}
 	
-	/* 
-	 * Check for a "?" as the next pattern character.  It matches
-	 * any single character.
-	 */
+	// Check for a "?" as the next pattern character.  It matches
+	// any single character.
 	  
 	if (patArr[pIndex] == '?') {
 	    incrIndex = true;
 	    continue;
 	}
 
-	/* 
-	 * Check for a "[" as the next pattern character.  It is followed
-	 * by a list of characters that are acceptable, or by a range
-	 * (two characters separated by "-").
-	 */
+	// Check for a "[" as the next pattern character.  It is followed
+	// by a list of characters that are acceptable, or by a range
+	// (two characters separated by "-").
 	
 	if (patArr[pIndex] == '[') {
 	    pIndex++;
@@ -769,10 +815,8 @@ stringMatch(
 	    continue;
 	}
 	
-	/* 
-	 * If the next pattern character is '/', just strip off the '/'
-	 * so we do exact matching on the character that follows.
-	 */
+	// If the next pattern character is '/', just strip off the '/'
+	// so we do exact matching on the character that follows.
 	
 	if (patArr[pIndex] == '\\') {
 	    pIndex++;
@@ -781,10 +825,8 @@ stringMatch(
 	    }
 	}
 
-	/* 
-	 * There's no special character.  Just make sure that the next
-	 * characters of each string match.
-	 */
+	// There's no special character.  Just make sure that the next
+	// characters of each string match.
 	
 	if ((sIndex == strLen) || (patArr[pIndex] != strArr[sIndex])) {
 	    return false;
@@ -809,21 +851,6 @@ stringMatch(
  *-----------------------------------------------------------------------------
  */
 
-/*
- * Checks if regex package exists.
- */
-
-static final RegexMatcher
-checkRegexPackage()
-{
-    try {
-	Class cls = Class.forName("tcl.regex.OroRegexMatcher");
-	return (RegexMatcher)cls.newInstance();
-    } catch (Exception e) {
-	return null;
-    }
-}
-
 static final boolean
 regExpMatch(
     Interp interp,   			// Current interpreter.
@@ -831,17 +858,8 @@ regExpMatch(
     TclObject pattern)   		// The regular expression.
 throws TclException
 {
-    /*
-     * If the regex package is available, the following code will call
-     * tcl.regex.OroRegexMatche.match(). Otherwise, return false
-     * because this function is not implemented internally.
-     */
-
-    if (regexMatcher != null) {
-	return regexMatcher.match(interp, string, pattern.toString());
-    } else {
-	return false;
-    }
+    Regexp r = TclRegexp.compile(interp, pattern, false);
+    return r.match(string, (String[]) null);
 }
 
 /*
@@ -938,10 +956,8 @@ throws
 
 	c = s.charAt(i);
 	switch(c) {
-	    /*
-	     * Open brace: don't treat specially unless the element is
-	     * in braces.  In this case, keep a nesting count.
-	     */
+	    // Open brace: don't treat specially unless the element is
+	    // in braces.  In this case, keep a nesting count.
 
 	case '{':
 	    if (openBraces != 0) {
@@ -951,10 +967,8 @@ throws
 	    i++;
 	    break;
 
-	    /*
-	     * Close brace: if element is in braces, keep nesting
-	     * count and quit when the last close brace is seen.
-	     */
+	    // Close brace: if element is in braces, keep nesting
+	    // count and quit when the last close brace is seen.
 
 	case '}':
 	    if (openBraces == 1) {
@@ -979,16 +993,12 @@ throws
 	    i++;
 	    break;
 
-	    /*
-	     * Backslash:  skip over everything up to the end of the
-	     * backslash sequence.
-	     */
+	    // Backslash:  skip over everything up to the end of the
+	    // backslash sequence.
 
 	case '\\':
 	    if (openBraces > 0) {
-		/*
-		 * Quotes are ignored in brace-quoted stuff
-		 */
+		// Quotes are ignored in brace-quoted stuff
 
 		sbuf.append(c);
 		i++;
@@ -1000,10 +1010,8 @@ throws
 
 	    break;
 
-	    /*
-	     * Space: ignore if element is in braces or quotes;  otherwise
-	     * terminate element.
-	     */
+	    // Space: ignore if element is in braces or quotes;  otherwise
+	    // terminate element.
 
 	case ' ':
 	case '\f':
@@ -1018,9 +1026,7 @@ throws
 	    }
 	    break;
 
-	    /*
-	     * Double-quote:  if element is in quotes then terminate it.
-	     */
+	    // Double-quote:  if element is in quotes then terminate it.
 
 	case '"':
 	    if (inQuotes) {
@@ -1054,7 +1060,7 @@ throws
 /*
  *----------------------------------------------------------------------
  *
- * scanElement --
+ *  Tcl_ScanElement -> scanElement
  *
  *	This procedure is a companion procedure to convertElement.
  *	It scans a string to see what needs to be done to it (e.g.
@@ -1083,39 +1089,39 @@ throws
     int len;
     int i;
 
-    /*
-     * This procedure and Tcl_ConvertElement together do two things:
-     *
-     * 1. They produce a proper list, one that will yield back the
-     * argument strings when evaluated or when disassembled with
-     * Tcl_SplitList.  This is the most important thing.
-     * 
-     * 2. They try to produce legible output, which means minimizing the
-     * use of backslashes (using braces instead).  However, there are
-     * some situations where backslashes must be used (e.g. an element
-     * like "{abc": the leading brace will have to be backslashed.  For
-     * each element, one of three things must be done:
-     *
-     * (a) Use the element as-is (it doesn't contain anything special
-     * characters).  This is the most desirable option.
-     *
-     * (b) Enclose the element in braces, but leave the contents alone.
-     * This happens if the element contains embedded space, or if it
-     * contains characters with special interpretation ($, [, ;, or \),
-     * or if it starts with a brace or double-quote, or if there are
-     * no characters in the element.
-     *
-     * (c) Don't enclose the element in braces, but add backslashes to
-     * prevent special interpretation of special characters.  This is a
-     * last resort used when the argument would normally fall under case
-     * (b) but contains unmatched braces.  It also occurs if the last
-     * character of the argument is a backslash or if the element contains
-     * a backslash followed by newline.
-     *
-     * The procedure figures out how many bytes will be needed to store
-     * the result (actually, it overestimates).  It also collects
-     * information about the element in the form of a flags word.
-     */
+    // This procedure and Tcl_ConvertElement together do two things:
+    //
+    // 1. They produce a proper list, one that will yield back the
+    // argument strings when evaluated or when disassembled with
+    // Tcl_SplitList.  This is the most important thing.
+    // 
+    // 2. They try to produce legible output, which means minimizing the
+    // use of backslashes (using braces instead).  However, there are
+    // some situations where backslashes must be used (e.g. an element
+    // like "{abc": the leading brace will have to be backslashed.  For
+    // each element, one of three things must be done:
+    //
+    // (a) Use the element as-is (it doesn't contain anything special
+    // characters).  This is the most desirable option.
+    //
+    // (b) Enclose the element in braces, but leave the contents alone.
+    // This happens if the element contains embedded space, or if it
+    // contains characters with special interpretation ($, [, ;, or \),
+    // or if it starts with a brace or double-quote, or if there are
+    // no characters in the element.
+    //
+    // (c) Don't enclose the element in braces, but add backslashes to
+    // prevent special interpretation of special characters.  This is a
+    // last resort used when the argument would normally fall under case
+    // (b) but contains unmatched braces.  It also occurs if the last
+    // character of the argument is a backslash or if the element contains
+    // a backslash followed by newline.
+    //
+    // The procedure figures out how many bytes will be needed to store
+    // the result (actually, it overestimates).  It also collects
+    // information about the element in the form of a flags word.
+
+    final boolean debug = false;
 
     nestingLevel = 0;
     flags = 0;
@@ -1123,7 +1129,18 @@ throws
     i = 0;
     len = string.length();
     if (len == 0) {
-	string = "\0";
+	string = String.valueOf('\0');
+
+	// FIXME : pizza compiler workaround
+	// We really should be able to use the "\0" form but there
+	// is a nasty bug in the pizza compiler shipped with kaffe
+	// that causes "\0" to be read as the empty string.
+
+	//string = "\0";
+    }
+
+    if (debug) {
+	System.out.println("scanElement string is \"" + string + "\"");
     }
 
     c = string.charAt(i);
@@ -1131,6 +1148,11 @@ throws
 	flags |= USE_BRACES;
     }
     for ( ; i < len; i++) {
+	if (debug) {
+	    System.out.println("getting char at index " + i);
+	    System.out.println("char is '" + string.charAt(i) + "'");
+	}
+
 	c = string.charAt(i);
 	switch (c) {
 	case '{':
@@ -1152,11 +1174,9 @@ throws
 	case '\t':
 	case 0x0b:
 
-	    /*
-	     * 0x0b is the character '\v' -- this escape sequence is
-	     * not available in Java, so we hard-code it. We need to
-	     * support \v to provide compatibility with native Tcl.
-	     */
+	    // 0x0b is the character '\v' -- this escape sequence is
+	    // not available in Java, so we hard-code it. We need to
+	    // support \v to provide compatibility with native Tcl.
 
 	    flags |= USE_BRACES;
 	    break;
@@ -1166,10 +1186,8 @@ throws
 	    } else {
 		BackSlashResult bs = Interp.backslash(string, i, len);
 
-		/*
-		 * Subtract 1 because the for loop will automatically
-		 * add one on the next iteration.
-		 */ 
+		// Subtract 1 because the for loop will automatically
+		// add one on the next iteration.
 
 		i = (bs.nextIndex - 1);
 		flags |= USE_BRACES;
@@ -1187,7 +1205,7 @@ throws
 /*
  *----------------------------------------------------------------------
  *
- * convertElement --
+ * Tcl_ConvertElement -> convertElement
  *
  *	This is a companion procedure to scanElement.  Given the
  * 	information produced by scanElement, this procedure converts
@@ -1212,10 +1230,8 @@ convertElement(
     char c;
     int len = s.length();
 
-    /*
-     * See the comment block at the beginning of the ScanElement
-     * code for details of how this works.
-     */
+    // See the comment block at the beginning of the ScanElement
+    // code for details of how this works.
 
     if ((s == null) || (s.length() == 0) || (s.charAt(0) == '\0')) {
 	return "{}";
@@ -1233,12 +1249,10 @@ convertElement(
     } else {
 	c = s.charAt(0);
 	if (c == '{') {
-	    /*
-	     * Can't have a leading brace unless the whole element is
-	     * enclosed in braces.  Add a backslash before the brace.
-	     * Furthermore, this may destroy the balance between open
-	     * and close braces, so set BRACES_UNMATCHED.
-	     */
+	    // Can't have a leading brace unless the whole element is
+	    // enclosed in braces.  Add a backslash before the brace.
+	    // Furthermore, this may destroy the balance between open
+	    // and close braces, so set BRACES_UNMATCHED.
 
 	    sbuf.append('\\');
 	    sbuf.append('{');
@@ -1261,14 +1275,12 @@ convertElement(
 
 	    case '{':
 	    case '}':
-		/*
-		 * It may not seem necessary to backslash braces, but
-		 * it is.  The reason for this is that the resulting
-		 * list element may actually be an element of a sub-list
-		 * enclosed in braces (e.g. if Tcl_DStringStartSublist
-		 * has been invoked), so there may be a brace mismatch
-		 * if the braces aren't backslashed.
-		 */
+		// It may not seem necessary to backslash braces, but
+		// it is.  The reason for this is that the resulting
+		// list element may actually be an element of a sub-list
+		// enclosed in braces (e.g. if Tcl_DStringStartSublist
+		// has been invoked), so there may be a brace mismatch
+		// if the braces aren't backslashed.
 
 		if ((flags & BRACES_UNMATCHED) != 0) {
 		    sbuf.append('\\');
@@ -1295,11 +1307,9 @@ convertElement(
 		sbuf.append('t');
 		continue;
 	    case 0x0b:
-		/*
-		 * 0x0b is the character '\v' -- this escape sequence is
-		 * not available in Java, so we hard-code it. We need to
-		 * support \v to provide compatibility with native Tcl.
-		 */
+		// 0x0b is the character '\v' -- this escape sequence is
+		// not available in Java, so we hard-code it. We need to
+		// support \v to provide compatibility with native Tcl.
 
 		sbuf.append('\\');
 		sbuf.append('v');
@@ -1405,9 +1415,7 @@ TrimRight (
     char strArray[] = str.toCharArray();
     int c;
     
-    /*
-     * Remove trailing characters...
-     */
+    // Remove trailing characters...
 
     while (last >= 0) {
 	c = strArray[last];
@@ -1451,10 +1459,8 @@ throws
 {
     String s = string.toLowerCase();
 
-    /*
-     * The length of 's' needs to be > 1 if it begins with 'o', 
-     * in order to compare between "on" and "off".
-     */
+    // The length of 's' needs to be > 1 if it begins with 'o', 
+    // in order to compare between "on" and "off".
 
     if (s.length() > 0) {
 	if ("yes".startsWith(s)) {
@@ -1478,66 +1484,6 @@ throws
 
     throw new TclException(interp, "expected boolean value but got \"" +
 	    string + "\"");
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * checkIsLetterOrDigit --
- *
- *	Checks if this VM has a broken Character.isLetterOrDigit()
- * 	implementation.
- *
- * Results:
- *	if this VM has a broken Character.isLetterOrDigit()
- * 	implementation.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
-
-final static boolean 
-checkIsLetterOrDigit() 
-{
-    try {
-	Character.isLetterOrDigit('c');
-	return false;
-    }
-    catch (Exception e) {
-	return true;
-    }
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * isLetterOrDigit --
- *
- *	Character.IsLetterOrDigit() is broken in MS JDK. This function is a
- * 	work-around. If it detects the bug, it uses a simplified algorithm
- * 	that returns whether the character is an ASCII letter or digit.
- *
- * Results:
- *	Trye if this character is a letter or digit.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
-
-final static boolean
-isLetterOrDigit(
-    char c)		// The character toi check.
-{
-    if (!broken_isLetterOrDigit) {
-	return Character.isLetterOrDigit(c);
-    } else {
-	return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
-		(c >= '0' && c <= '9'));
-    }
 }
 
 
@@ -1751,9 +1697,7 @@ tryGetSystemProperty(
 
 final class PrecTraceProc implements VarTrace {
 
-/*
- * Maximal precision supported by Tcl.
- */
+// Maximal precision supported by Tcl.
 
 static final int TCL_MAX_PREC = 17;
 
@@ -1787,10 +1731,8 @@ throws
     TclException		// If the action is a TCL.TRACES_WRITE and
 				// the new value doesn't make sense.
 {
-    /*
-     * If the variable is unset, then recreate the trace and restore
-     * the default value of the format string.
-     */
+    // If the variable is unset, then recreate the trace and restore
+    // the default value of the format string.
 
     if ((flags & TCL.TRACE_UNSETS) != 0) {
 	if (((flags & TCL.TRACE_DESTROYED) != 0) && 
@@ -1803,12 +1745,10 @@ throws
 	return;
     }
 
-    /*
-     * When the variable is read, reset its value from our shared
-     * value. This is needed in case the variable was modified in
-     * some other interpreter so that this interpreter's value is
-     * out of date.
-     */
+    // When the variable is read, reset its value from our shared
+    // value. This is needed in case the variable was modified in
+    // some other interpreter so that this interpreter's value is
+    // out of date.
 
     if ((flags & TCL.TRACE_READS) != 0) {
 	interp.setVar(name1, name2,
@@ -1817,17 +1757,20 @@ throws
 	return;
     }
 
-    /*
-     * The variable is being written. Check the new value and disallow
-     * it if it isn't reasonable.
-     *
-     * (ToDo) Disallow it if this is a safe interpreter (we don't want
-     * safe interpreters messing up the precision of other
-     * interpreters).
-     */
+    // The variable is being written. Check the new value and disallow
+    // it if it isn't reasonable.
+    //
+    // (ToDo) Disallow it if this is a safe interpreter (we don't want
+    // safe interpreters messing up the precision of other
+    // interpreters).
 
-    TclObject tobj = interp.getVar(name1, name2, 
-	    (flags & TCL.GLOBAL_ONLY) | TCL.DONT_THROW_EXCEPTION);
+    TclObject tobj = null;
+    try {
+	tobj = interp.getVar(name1, name2, (flags & TCL.GLOBAL_ONLY));
+    } catch (TclException e) {
+	// Do nothing when var does not exist.
+    }
+
     String value;
 
     if (tobj != null) {

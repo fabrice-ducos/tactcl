@@ -24,7 +24,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclClassLoader.java,v 1.7 1999/08/28 02:43:16 mo Exp $
  */
 
 
@@ -36,28 +36,24 @@ import java.io.*;
 class TclClassLoader extends ClassLoader
 {
 
-/*
- * Cache this value because a couple of functions use it.
- */
-
-private static String pathSep = System.getProperty("file.separator");
-
-/*
- * Caches the classes already loaded by this Loader.  It's static
- * so new instances dont load redundant classes.
- */
+// Caches the classes already loaded by this Loader.  It's static
+// so new instances dont load redundant classes.
 
 private static Hashtable classes = new Hashtable();
 
-/*
- * Each instance can have a list of additional paths to search.  This
- * needs to be stored on a per instance basis because classes may be
- * resolved at later times.  classpath is passed into the constructor,
- * and loadpath is extracted from the env(TCL_CLASSPATH) interp variable.
- */
+// Each instance can have a list of additional paths to search.  This
+// needs to be stored on a per instance basis because classes may be
+// resolved at later times.  classpath is passed into the constructor,
+// and loadpath is extracted from the env(TCL_CLASSPATH) interp variable.
 
 private String[] classpath;
 private String[] loadpath;
+
+// Used only for error reporting when something went wrong with a class
+// that was loaded out of a jar and we want to know which jar. Will
+// be null unless the last searched class was found in a jar.
+private String lastSearchedClassFile = null;
+private String lastSearchedJarFile = null;
 
 /*
  *----------------------------------------------------------------------
@@ -136,34 +132,29 @@ throws
     SecurityException       // Attempt to dynamically load tcl/java package.
 {
     Class result;           // The Class that is loaded.             
-    byte  classData[];      // The bytes that compose the class file.
+    byte[] classData;      // The bytes that compose the class file.
     
-    /* 
-     * Check our local cache of classes 
-     */
+    // Check our local cache of classes 
     
-    result = (Class)classes.get(className);
+    result = (Class) classes.get(className);
     if (result != null) {
 	return result;
     }
     
-    /*
-     * Check with the primordial class loader 
-     */
+    // Check with the primordial class loader 
     
     try {
+	//System.out.println("now to load class named \"" + className + "\"");
 	result = Class.forName(className);
-	return result;
+	return result; // do not cache classes from the CLASSPATH
     } catch (ClassNotFoundException e) {
     } catch (IllegalArgumentException e) {
     } catch (NoClassDefFoundError e) {
     } catch (IncompatibleClassChangeError e) {
     }
     
-    /*
-     * Protect against attempts to load a class that contains the 'java'
-     * or 'tcl' prefix, but is not in the corresponding file structure.
-     */
+    // Protect against attempts to load a class that contains the 'java'
+    // or 'tcl' prefix, but is not in the corresponding file structure.
     
     if ((className.startsWith("java.")) 
 	    || (className.startsWith("tcl."))) {
@@ -173,30 +164,58 @@ throws
                 "check your CLASSPATH.");
     }
 
-    /* 
-     * Try to load it from one of the -classpath paths 
-     */
+    // Try to load it from one of the -classpath paths 
     
     classData = getClassFromPath(classpath, className);		
     if (classData == null) {					
-	/*							
-	 * The class couldnt be found by the system or in one	
-	 * of the paths specified by -classpath.  Last attempt	
-	 * is to search the env(TCL_CLASSPATH) paths.			
-	 */
+	// The class couldnt be found by the system or in one	
+	// of the paths specified by -classpath.  Last attempt	
+	// is to search the env(TCL_CLASSPATH) paths.			
 
 	classData = getClassFromPath(loadpath, className);	
     }								
-    
+
     if (classData == null) {
 	throw new ClassNotFoundException(className);
     }
-	
-    /*
-     * Define it (parse the class file)
-     */
-    
-    result = defineClass(className, classData, 0, classData.length);
+
+    // Define it (parse the class file)
+
+
+    // we have to include this catch for java.lang.NoClassDefFoundError
+    // because Sun seems to have changed the Spec for JDK 1.2
+    try {
+	result = defineClass(className, classData, 0, classData.length);
+    } catch (NoClassDefFoundError err) {
+	throw new ClassFormatError();
+    } catch (ClassFormatError err) {
+	// This exception can be generated when the className argument
+	// does not match the actual name of the class. For instance
+	// if we try to define Test.class with data from tester/Test.class
+	// we will get this error. Sadly, there does not seem to be any
+	// to find out the real name of the class without knowing the
+	// format of the .class file and parsing it.
+
+	StringBuffer buf = new StringBuffer(50);
+	buf.append(err.getMessage());
+	buf.append(". ");
+	if (lastSearchedClassFile != null) {
+	    buf.append(lastSearchedClassFile);
+	} else {
+	    buf.append(className);
+	}
+
+	if (lastSearchedJarFile != null) {
+	    buf.append(" loaded from ");
+	    buf.append(lastSearchedJarFile);
+	}
+
+	buf.append(": class name does not match");
+	buf.append(" the name defined in the classfile");
+
+	throw new ClassFormatError(buf.toString());
+    }
+
     if (result == null) {
 	throw new ClassFormatError();
     }
@@ -204,9 +223,7 @@ throws
 	resolveClass(result);
     }
 
-    /*
-     * Store it in our local cache
-     */
+    // Store it in our local cache
 	
     classes.put(className, result);
     return result;
@@ -238,9 +255,7 @@ defineClass(
 {
     Class result = null;      // The Class object defined by classData.
 
-    /*
-     * Create a class from the array of bytes
-     */
+    // Create a class from the array of bytes
     
     try {
 	result = defineClass(null, classData, 0, classData.length);
@@ -248,19 +263,15 @@ defineClass(
     }
 
     if (result != null) {
-	/*
-	 * If the name of the class is null, extract the className
-	 * from the Class object, and use that as the key.
-	 */
+	// If the name of the class is null, extract the className
+	// from the Class object, and use that as the key.
 	
 	if (className == null) {
 	    className = result.getName();
 	}
 	
-	/*
-	 * If a class was created,  then store the class
-	 * in the loaders cache.
-	 */
+	// If a class was created,  then store the class
+	// in the loaders cache.
 	
 	classes.put(className, result);
     }
@@ -296,93 +307,87 @@ getClassFromPath(
     String className)    // the name of the class trying to be resolved
 {
     int i = 0;
-    byte[] classData = null;       // The bytes that compose the class file.
+    byte[] classData = null;    // The bytes that compose the class file.
     String curDir;       	// The directory to search for the class file.
     File file;           	// The class file.                            
+    int total;                  // Total number of bytes read from the stream
 
-    /*
-     * Search through the list of "paths" for the className.  
-     * ".jar" or ".zip" files found in the path will also be 
-     * searched.  Yhe first occurence found is returned.
-     */
+    // Search through the list of "paths" for the className.  
+    // ".jar" or ".zip" files found in the path will also be 
+    // searched.  Yhe first occurence found is returned.
+    lastSearchedClassFile = null;
+    lastSearchedJarFile = null;
 
     if (paths != null) {
-	/*
-	 * When the class being loaded implements other classes that are
-	 * not yet loaded, the TclClassLoader will recursively call this
-	 * procedure.  However the format of the class name is 
-	 * foo.bar.name and it needs to be foo/bar/name.  Convert to 
-	 * proper format.
-	 */
-	  
-	while ((i = className.indexOf(".", i)) != -1) {
-	    className = className.substring(0, i) + pathSep +
-		    className.substring(i + 1);
-	}
-	className = className + ".class";
+	// When the class being loaded implements other classes that are
+	// not yet loaded, the TclClassLoader will recursively call this
+	// procedure.  However the format of the class name is 
+	// foo.bar.name and it needs to be foo/bar/name.  Convert to 
+	// proper format.
+
+	className = className.replace('.', File.separatorChar) + ".class";
 	
 	for (i = 0; i < paths.length; i++) {
 	    curDir = paths[i].toString();
 	    try {
 		if ((curDir.endsWith(".jar")) || (curDir.endsWith(".zip"))) {
-		    /*
-		     * If curDir points to a jar file, search it
-		     * for the class.  If classData is not null
-		     * then the class was found in the jar file.
-		     */
+		    // If curDir points to a jar file, search it
+		    // for the class.  If classData is not null
+		    // then the class was found in the jar file.
 		    
 		    classData = extractClassFromJar(curDir, className);
 		    if (classData != null) {
 			return(classData);
 		    }
 		} else {		
-		    /*
-		     * If curDir and className point to an existing file,
-		     * then the class is found.  Extract the bytes from 
-		     * the file.
-		     */
+		    // If curDir and className point to an existing file,
+		    // then the class is found.  Extract the bytes from 
+		    // the file.
 		    
 		    file = new File(curDir, className);
 		    if (file.exists()) {
 			FileInputStream fi = new FileInputStream(file);
 			classData = new byte[fi.available()];
-			fi.read(classData);
-			return(classData);
+
+			total = fi.read(classData);
+			while (total != classData.length) {
+			    total += fi.read(classData, total,
+					     (classData.length - total));
+
+			}
+
+			// Set this so we can get the full name of the
+			// file we loaded the class from later
+			lastSearchedClassFile = file.toString();
+
+			return (classData);
 		    }
 		}
 	    } catch (Exception e) {
-		/*
-		 * No error thrown, because the class may be found
-		 * in subsequent paths.
-		 */
+		// No error thrown, because the class may be found
+		// in subsequent paths.
 	    }
 	}
 	for (i = 0; i < paths.length; i++) {
 	    curDir = paths[i].toString();
 	    try {
-		/*
-		 * The class was not found in the paths list.
-		 * Search all the directories in paths for 
-		 * any jar files, in an attempt to locate
-		 * the class inside a jar file.
-		 */
+		// The class was not found in the paths list.
+		// Search all the directories in paths for 
+		// any jar files, in an attempt to locate
+		// the class inside a jar file.
 
 		classData = getClassFromJar(curDir, className);
 		if (classData != null) {
 		    return(classData);
 		}
 	    } catch (Exception e) {
-		/*
-		 * No error thrown, because the class may be found
-		 * in subsequent paths.
-		 */
+		// No error thrown, because the class may be found
+		// in subsequent paths.
 	    }
 	}
     }
 
-    /*
-     * No matching classes found.
-     */
+    // No matching classes found.
 
     return null;
 }
@@ -424,7 +429,7 @@ throws IOException
 
     for (int i = 0; i < jarFiles.length; i++) {
 	result = extractClassFromJar(
-	    curDir + pathSep + jarFiles[i], className);
+	    curDir + File.separatorChar + jarFiles[i], className);
 	if (result != null) {
 	    break;
 	}
@@ -469,11 +474,9 @@ throws IOException
 
     try {
 	while ((entry = zin.getNextEntry()) != null) { 
-	    /*
-	     * see if the current ZipEntry's name equals 
-	     * the file we want to extract.  If equal
-	     * get the extract and return.
-	     */
+	    // see if the current ZipEntry's name equals 
+	    // the file we want to extract. If equal
+	    // get the extract and return the contents of the file.
 	      
 	    if (className.equals(entry.getName())) {
 		size = getEntrySize(jarName, className);
@@ -483,10 +486,16 @@ throws IOException
 		    total += zin.read(result, total, 
 			    (size - total));
 		}
+
+		// Set these so we can determine which
+		// Jar a class was extracted from later
+		lastSearchedClassFile = className;
+		lastSearchedJarFile = jarName;
+
 		return result;
 	    }
 	}
-	return(null);
+	return null;
     } finally {
 	zin.close();
     }
@@ -521,7 +530,6 @@ getEntrySize(
     String className) 
 throws IOException
 {
-    ZipInputStream zin;        // The jar file input stream.           
     ZipEntry       entry;      // A file contained in the jar file.    
     ZipFile        zip;        // Used to get the enum of ZipEntries.  
     Enumeration    enum;       // List of the contents of the jar file.
@@ -530,15 +538,13 @@ throws IOException
     enum = zip.entries();
 
     while (enum.hasMoreElements()) { 
-	/*
-	 * see if the current ZipEntry's
-	 * name equals the file we want to extract.
-	 */
+	// see if the current ZipEntry's
+	// name equals the file we want to extract.
 	  
-	entry = (ZipEntry)enum.nextElement();
+	entry = (ZipEntry) enum.nextElement();
 	if (className.equals(entry.getName())) {
 	    zip.close();
-	    return((int)entry.getSize());
+	    return((int) entry.getSize());
 	}
     }
     return(-1);
@@ -566,12 +572,13 @@ getEnvTclClasspath(
     Interp interp) 
 throws TclException
 {
-    TclObject tobj = interp.getVar("env", "TCL_CLASSPATH",
-             TCL.DONT_THROW_EXCEPTION | TCL.GLOBAL_ONLY);
-    if (tobj != null) {
-	return(TclList.getElements(interp, tobj));
+    try {
+	return TclList.getElements(interp,
+	           interp.getVar("env", "TCL_CLASSPATH", TCL.GLOBAL_ONLY));
+    } catch (TclException e) {
+	interp.resetResult();
+	return null;
     }
-    return(null);
 }
 
 /*
@@ -616,7 +623,7 @@ throws
  *
  * removeCache --
  *
- *	|>description<|
+ *	Remove the given className from the internal cache.
  *
  * Results:
  *	|>None.<|
@@ -629,9 +636,9 @@ throws
 
 void
 removeCache(
-    String key)
+    String className)
 {
-    classes.remove(key);
+    classes.remove(className);
 }
 
 } // end TclClassLoader
@@ -680,5 +687,4 @@ accept(
 }
 
 } // end JarFilenameFilter
-
 

@@ -1,48 +1,46 @@
 # This file contains a top-level script to run all of the tests
-# for Tcl Blend or Jacl. Execute it by invoking "source all" when
-# running the tcl.lang.Shell or tclTest in this directory.
+# for Tcl Blend or Jacl. Execute it by invoking "make test" where
+# you from the build directory. You can also bring up a shell by
+# typing "make shell" in the build directory and then you can run
+# all the tests my by typing "cd .. ; cd tests ; source all".
 #
 # Copyright (c) 1997-1998 by Sun Microsystems, Inc.
 #
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# RCS: @(#) $Id$
+# RCS: @(#) $Id: all,v 1.3 1999/05/10 02:42:20 dejong Exp $
 
 if {$tcl_platform(platform) == "java"} {
     # run the Jacl tests
-    eval lappend tests [glob -nocomplain tcljava/*.test jacl/*.test]
 
-    # These are currently the tests that Jacl can pass comfortably.
-    # (ToDo) Add others!
+    eval lappend tests [glob -nocomplain tcljava/*.test \
+	jacl/*.test inprogress/*.test tcl/*.test]
 
-    set fileList {append assocd case concat error eval expr 
-	fileName for format get 
-        if incr info join lindex linsert list llength lrange
-	lreplace lsort parse parseOld pkg proc rename scan set split
-	string subst trace unknown uplevel upvar while
-    }
+} elseif {[info exists env(TCLBLEND_RUN_ALL_TESTS)]} {
+    # run the Tcl Blend tests
 
-    foreach file $fileList {
-	lappend tests tcl/${file}.test
-    }
-
+    set tests [glob -nocomplain tcljava/*.test \
+	inprogress/*.test tclblend/*.test tcl/*.test ]
 } else {
     # run the Tcl Blend tests
 
-    set tests [glob -nocomplain tcljava/*.test tclblend/*.test]
+    set tests [glob -nocomplain tcljava/*.test \
+	tclblend/*.test ]
 }
 
-
-#foreach i [lsort $tests] 
-
 foreach i $tests {
-    if [string match l.*.test [file tail $i]] {
+
+    if {[string match l.*.test [file tail $i]]} {
 	# This is an SCCS lock file;  ignore it.
 	continue
     }
+
     puts stdout $i
-    if [catch {source $i} msg] {
+    flush stdout
+
+    if {[catch {source $i} msg]} {
 	puts $msg
     }
+
 }

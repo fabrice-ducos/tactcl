@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclNumArgsException.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
@@ -46,7 +46,6 @@ public class TclNumArgsException extends TclException {
 	super(TCL.ERROR);
 
 	if (interp != null) {
-	    InternalRep rep;
 	    String s = "wrong # args: should be \"";
 
 	    for (int i = 0; i < argc; i++) {

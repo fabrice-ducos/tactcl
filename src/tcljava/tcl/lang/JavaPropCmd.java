@@ -9,14 +9,15 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: JavaPropCmd.java,v 1.2.1.3 1999/03/05 22:17:31 dejong Exp $
  *
  */
 
 package tcl.lang;
 
-/*
+/**
  * This class implements the built-in "java::prop" command.
+ * The java::prop command is used to manipulate Java Bean properties from Tcl. 
  */
 
 class JavaPropCmd implements Command {
@@ -54,10 +55,8 @@ throws
 	throw new TclException(interp, usage(argv[0]));
     }
 
-    /*
-     * Check the validity of the arguments. N.B., the -noconvert flag
-     * is allowed only in value query.
-     */
+    // Check the validity of the arguments. N.B., the -noconvert flag
+    // is allowed only in value query.
 
     String arg1 = argv[1].toString();
     if ((arg1.length() >= 2) && ("-noconvert".startsWith(arg1))) {
@@ -83,16 +82,12 @@ throws
     }
 
     if (query) {
-	/*
-	 * Query one property.
-	 */
+	// Query one property.
 
 	interp.setResult(JavaInvoke.getProperty(interp, argv[objIndex],
 		argv[objIndex+1], convert));
     } else {
-	/*
-	 * Set one or more properties.
-	 */
+	// Set one or more properties.
 
 	for (int i = objIndex + 1; i < argv.length; i += 2) {
 	    JavaInvoke.setProperty(interp, argv[objIndex], argv[i], argv[i+1]);
@@ -122,8 +117,7 @@ usage(
     TclObject cmd)		// The command name.
 {
     return "wrong # args: should be \"" +
-	    cmd + " ?-noconvert? object property\" or \"" + 
-	    cmd + " object property value ?property value ...?\"";
+	    cmd + " ?-noconvert? javaObj property ?value property value ...?\"";
 }
 
 } // end JavaPropCmd

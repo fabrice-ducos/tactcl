@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Interp.java,v 1.15 2000/07/13 17:05:26 mo Exp $
  *
  */
 
@@ -23,61 +23,64 @@ import java.net.*;
  */
 public class Interp {
 
-/*
- * Initialize the Interp class by loading the native methods.
- */
+
+// Initialize the Interp class by loading the native methods.
 
 static {
-    System.loadLibrary("tclblend");
+    String shlibname = "tclblend";
+
+    try {
+        System.loadLibrary(shlibname);
+    } catch (UnsatisfiedLinkError e) {
+        System.out.println("System.loadLibrary(\"" + shlibname + "\") failed because of UnsatisfiedLinkError");
+        e.printStackTrace(System.out);
+    } catch (Throwable t) {
+        System.out.println("System.loadLibrary(\"" + shlibname + "\") failed because of Unknown Throwable");
+        t.printStackTrace(System.out);
+    }
 }
 
-/*
- * The interpPtr contains the C Tcl_Interp* used in native code.  This
- * field is declared with package visibility so that it can be passed
- * to native methods by other classes in this package.
- */
+
+// The interpPtr contains the C Tcl_Interp* used in native code.  This
+// field is declared with package visibility so that it can be passed
+// to native methods by other classes in this package.
 
 long interpPtr;
 
-/*
- * The following three variables are used to maintain a translation
- * table between ReflectObject's and their string names. These two
- * variables are accessed by the ReflectObject class (the variables
- * are here because we want one translation table per Interp).
- */
 
-/*
- * Translates integer ID to ReflectObject.
- */
+// The following three variables are used to maintain a translation
+// table between ReflectObject's and their string names. These
+// variables are accessed by the ReflectObject class, they
+// are defined here be cause we need them to be per interp data.
 
-Hashtable reflectIDTable;
+// Translates Object to ReflectObject. This makes sure we have only
+// one ReflectObject internalRep for the same Object -- this
+// way Object identity can be done by string comparison.
 
-/*
- * Translates Object to ReflectObject. This makes sure we have only
- * one ReflectObject internalRep for the same Object -- this
- * way Object identity can be done by string comparison.
- */
+Hashtable reflectObjTable = new Hashtable();
 
-Hashtable reflectObjTable;
+// Number of reflect objects created so far inside this Interp
+// (including those that have be freed)
 
-/*
- * Counter used for reflect object id's
- */
+long reflectObjCount = 0;
 
-long reflectObjCount;
+// Table used to store reflect hash index conflicts, see
+// ReflectObject implementation for more details
 
-/*
- * The Notifier associated with this Interp.
- */
+Hashtable reflectConflictTable = new Hashtable();
+
+// The Notifier associated with this Interp.
 
 private Notifier notifier;
 
-/*
- * Hash table for associating data with this interpreter. Cleaned up
- * when this interpreter is deleted.
- */
+// Hash table for associating data with this interpreter. Cleaned up
+// when this interpreter is deleted.
 
 Hashtable assocDataTab;
+
+// Used ONLY by JavaImportCmd
+Hashtable[] importTable = {new Hashtable(), new Hashtable()};
+
 
 
 /*
@@ -104,7 +107,6 @@ Interp(
 
     notifier = Notifier.getNotifierForThread(Thread.currentThread());
     notifier.preserve();
-    ReflectObject.init(this);
 }
 
 /*
@@ -119,8 +121,7 @@ Interp(
  *
  * Side effects:
  *	Calls init() on the new interpreter.  If init() fails,
- *	disposes of the interpreter.  Initializes the ReflectObject
- *	tables, too.
+ *	disposes of the interpreter.
  *
  *----------------------------------------------------------------------
  */
@@ -133,7 +134,6 @@ Interp()
     notifier = Notifier.getNotifierForThread(Thread.currentThread());
     notifier.preserve();
 
-    ReflectObject.init(this);
     if (init(interpPtr) != TCL.OK) {
 	String result = getResult().toString();
 	dispose();
@@ -182,9 +182,7 @@ create();
 public void
 dispose()
 {
-    /*
-     * Remove all the assoc data tied to this interp.
-     */
+    // Remove all the assoc data tied to this interp.
 	
     if (assocDataTab != null) {
 	for (Enumeration e = assocDataTab.keys(); e.hasMoreElements();) {
@@ -196,18 +194,14 @@ dispose()
 	assocDataTab = null;
     }
 
-    /*
-     * Release the notifier.
-     */
+    // Release the notifier.
 
     if (notifier != null) {
 	notifier.release();
 	notifier = null;
     }
 
-    /*
-     * Clean up the C state.
-     */
+    // Clean up the C state.
 
     if (interpPtr != 0) {
 	doDispose(interpPtr);
@@ -284,9 +278,9 @@ setVar(
 				// null.
     TclObject value,		// New value for variable.
     int flags)			// Various flags that tell how to set value:
-				// any of GLOBAL_ONLY, NAMESPACE_ONLY,
-				// APPEND_VALUE, LIST_ELEMENT, LEAVE_ERR_MSG,
-				// or PARSE_PART1. 
+				// any of TCL.GLOBAL_ONLY, TCL.NAMESPACE_ONLY,
+				// TCL.APPEND_VALUE, TCL.LIST_ELEMENT, TCL.LEAVE_ERR_MSG,
+				// or TCL.PARSE_PART1. 
 throws
     TclException;
 
@@ -312,9 +306,9 @@ setVar(
 				// to set.
     TclObject value,		// New value for variable.
     int flags)			// Various flags that tell how to set value:
-				// any of GLOBAL_ONLY, NAMESPACE_ONLY,
-				// APPEND_VALUE, LIST_ELEMENT, or
-				// LEAVE_ERR_MSG. 
+				// any of TCL.GLOBAL_ONLY, TCL.NAMESPACE_ONLY,
+				// TCL.APPEND_VALUE, TCL.LIST_ELEMENT, or
+				// TCL.LEAVE_ERR_MSG. 
 throws
     TclException
 {
@@ -345,8 +339,8 @@ getVar(
     String name2,		// Name of an element within an array, or
 				// null.
     int flags)			// Various flags that tell how to get value:
-				// any of GLOBAL_ONLY, NAMESPACE_ONLY,
-				// LEAVE_ERR_MSG, or PARSE_PART1. 
+				// any of TCL.GLOBAL_ONLY, TCL.NAMESPACE_ONLY,
+				// TCL.LEAVE_ERR_MSG, or TCL.PARSE_PART1. 
 throws
     TclException;
 
@@ -371,8 +365,8 @@ getVar(
     String name,		// The name of a variable, array, or array
 				// element.
     int flags)			// Various flags that tell how to get value:
-				// any of GLOBAL_ONLY, NAMESPACE_ONLY,
-				// or LEAVE_ERR_MSG.
+				// any of TCL.GLOBAL_ONLY, TCL.NAMESPACE_ONLY,
+				// or TCL.LEAVE_ERR_MSG.
 throws TclException
 {
     return getVar(name, null, (flags | TCL.PARSE_PART1));
@@ -399,8 +393,8 @@ unsetVar(
     String name,		// The name of a variable, array, or array
 				// element.
     int flags)			// Various flags that tell how to get value:
-				// any of GLOBAL_ONLY, NAMESPACE_ONLY,
-				// or LEAVE_ERR_MSG.
+				// any of TCL.GLOBAL_ONLY, TCL.NAMESPACE_ONLY,
+				// or TCL.LEAVE_ERR_MSG.
 throws
     TclException
 {
@@ -431,8 +425,8 @@ unsetVar(
     String name2,		// Name of an element within an array, or
 				// null.
     int flags)			// Various flags that tell how to get value:
-				// any of GLOBAL_ONLY, NAMESPACE_ONLY,
-				// LEAVE_ERR_MSG, or PARSE_PART1. 
+				// any of TCL.GLOBAL_ONLY, TCL.NAMESPACE_ONLY,
+				// TCL.LEAVE_ERR_MSG, or TCL.PARSE_PART1. 
 throws
     TclException;
 
@@ -621,12 +615,9 @@ deleteCommand(
  *----------------------------------------------------------------------
  */
 
-public Command
+public native Command
 getCommand(
-    String name) 		// String name of the command.
-{
-    throw new TclRuntimeError("Not implemented yet.");
-}
+    String name); 		// String name of the command.
 
 /*
  *----------------------------------------------------------------------
@@ -803,6 +794,38 @@ throws
 /*
  *----------------------------------------------------------------------
  *
+ * Tcl_RecordAndEvalObj -> recordAndEval
+ *
+ *	This procedure adds its command argument to the current list of
+ *	recorded events and then executes the command by calling eval.
+ *
+ * Results:
+ *	The return value is void.  However, a standard Tcl Exception
+ *	may be generated.  The interpreter's result object will contain
+ *	the value of the evaluation but will persist only until the next 
+ *	call to one of the eval functions.
+ *
+ * Side effects:
+ *	The side effects will be determined by the exact Tcl code to be 
+ *	evaluated.
+ *
+ *----------------------------------------------------------------------
+ */
+
+public void 
+recordAndEval(
+    TclObject script,	// A script to evaluate.
+    int flags)		// Flags, either 0 or TCL_GLOBAL_ONLY.
+throws 
+    TclException 	// A standard Tcl exception.
+{
+    // FIXME : need native implementation
+    throw new TclRuntimeError("Not implemented yet.");
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
  * evalFile --
  *	Loads a Tcl script from a file and evaluates it in the
  * 	current interpreter.
@@ -823,6 +846,7 @@ evalFile(
 throws 
     TclException
 {
+    // FIXME : need implementation
     throw new TclRuntimeError("Not implemented yet.");
 }
 
@@ -855,48 +879,39 @@ evalResource(
 throws 
     TclException
 {
-    InputStream stream = this.getClass().getResourceAsStream(resName);
+    InputStream stream = Interp.class.getResourceAsStream(resName);
     if (stream == null) {
 	throw new TclException(this, "cannot read resource \"" + resName
 		+ "\"");
     }
 
     try {
-	
-	//we must do a workaround for compressed files BUG in JDK1.2B4
 
-	if (System.getProperty("java.version").equals("1.2beta4") &&
-	    stream.getClass().getName().equals("java.util.zip.ZipFile$1")) {
-	  int used = 0;
-	  int cur;
-	  int size = stream.available() * 4;
+	// FIXME : ugly JDK 1.2 only hack
+	// Ugly workaround for compressed files BUG in JDK1.2
+        // this bug first showed up in  JDK1.2beta4. I have sent
+        // a number of emails to Sun but they have deemed this a "feature"
+        // of 1.2. This is flat out wrong but I do not seem to change thier
+        // minds. Because of this, there is no way to do non blocking IO
+        // on a compressed Stream in Java. (mo)
 
-	  byte[] byteArray = new byte[size];
-
-	  cur = stream.read();
-
-	  while (cur != -1) {
+        if (System.getProperty("java.version").startsWith("1.2") &&
+            stream.getClass().getName().equals("java.util.zip.ZipFile$1")) {
 	    
-	    //expand the byte array if we need to make more room
-	    if (used >= size) {
-	      byte[] oldArray = byteArray;
-	      int new_size = size * 2;
-	      
-	      byteArray = new byte[new_size];
-	      System.arraycopy(oldArray, 0, byteArray, 0, used);
-	      oldArray = null;
-	      
-	      size = new_size;
-	    }
-	    byteArray[used++] = (byte) cur;
-	    cur = stream.read();
+	  ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+	  byte[] buffer = new byte[1024];
+	  int numRead;
+
+	  // Read all data from the stream into a resizable buffer
+	  while ((numRead = stream.read(buffer, 0, buffer.length)) != -1) {
+	      baos.write(buffer, 0, numRead);
 	  }
-	  
-	  //now we are done reading the stream so eval it
-	  eval(new String(byteArray,0,used), 0);	  
+
+	  // Convert bytes into a String and eval them
+	  eval(new String(baos.toByteArray()), 0);	  
 	  
 	} else {	  
-	  //other systems do not need the compressed jar hack
+	  // Other systems do not need the compressed jar hack
 
 	  int num = stream.available();
 	  byte[] byteArray = new byte[num];
@@ -940,7 +955,7 @@ closeInputStream(
     try {
 	fs.close();
     }
-    catch (IOException e) {;}
+    catch (IOException e) {}
 }
 
 /*
@@ -1150,7 +1165,7 @@ getAssocData(
     if (assocDataTab == null) {
 	return null;
     } else {
-	return (AssocData)assocDataTab.get(name);
+	return (AssocData) assocDataTab.get(name);
     }
 }
 

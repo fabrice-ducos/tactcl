@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: JavaBindCmd.java,v 1.2.1.2 1999/01/30 07:27:08 mo Exp $
  */
 
 package tcl.lang;
@@ -18,30 +18,26 @@ import java.lang.reflect.*;
 import java.beans.*;
 import java.util.*;
 
-/*
+/**
  * This class implements the built-in "java::bind" command in Tcl.
  */
 
 class JavaBindCmd implements Command {
 
-/*
- * The Bean Event Manager associated with the interp that owns this
- * BindCmd instance.
- */
+// The Bean Event Manager associated with the interp that owns this
+// BindCmd instance.
 
 BeanEventMgr eventMgr = null;
 
-/*
- * Caches the BeanInfo for each Java class. The
- * Introspector.getBeanInfo class in JDK 1.2 returns new instances of
- * BeanInfo for each call.  That causes a lot of problems in Jacl,
- * which assumes that there is the BeanInfo (and EventSetDescriptor,
- * etc) associated with each class is always constant (i.e., always the
- * same object).
- *
- * This cache allows us to always use the same BeanInfo instance for each
- * Java class.
- */
+// Caches the BeanInfo for each Java class. The
+// Introspector.getBeanInfo class in JDK 1.2 returns new instances of
+// BeanInfo for each call.  That causes a lot of problems in Jacl,
+// which assumes that there is the BeanInfo (and EventSetDescriptor,
+// etc) associated with each class is always constant (i.e., always the
+// same object).
+//
+// This cache allows us to always use the same BeanInfo instance for each
+// Java class.
 
 private Hashtable beanInfoCache = new Hashtable();
 
@@ -77,23 +73,23 @@ throws
     }
 
     ReflectObject robj = ReflectObject.getReflectObject(interp, argv[1]);
-    Object obj = robj.javaObj;
 
     if (eventMgr == null) {
 	eventMgr = BeanEventMgr.getBeanEventMgr(interp);
     }
 
     if (argv.length == 2) {
-	/*
-	 * Return the list of all events handled by this widget.
-	 */
+	// Return the list of all events handled by this widget.
 
 	interp.setResult(eventMgr.getHandledEvents(robj));
     } else {
 	EventSetDescriptor eventDesc;
 	Method method;
 
-	Object arr[] = getEventMethod(interp, obj, argv[2].toString());
+	Object arr[] = getEventMethod(interp,
+				      robj.javaObj, robj.javaClass,
+				      argv[2].toString());
+
 	eventDesc = (EventSetDescriptor)arr[0];
 
 	if (!eventDesc.getListenerType().isInterface()) {
@@ -105,9 +101,7 @@ throws
 	method = (Method)arr[1];
 
 	if (argv.length == 3) {
-	    /*
-	     * Return the script for the given event.
-	     */
+	    // Return the script for the given event.
 
 	    TclObject script = eventMgr.getBinding(interp, robj, eventDesc,
 		    method);
@@ -118,9 +112,7 @@ throws
 		interp.resetResult();
 	    }
 	} else {
-	    /*
-	     * Set the script for the given event.
-	     */
+	    // Set the script for the given event.
 
 	    eventMgr.setBinding(interp, robj, eventDesc, method, argv[3]);
 	}
@@ -156,6 +148,7 @@ getEventMethod(
     Interp interp,		// Current interpreter.
     Object obj,			// The object whose event listener methods
 				// are to be queried.
+    Class  cls,                 // The class of the event object
     String eventName)		// The string name of the event.
 throws
    TclException			// If the method cannot be found, or if
@@ -169,9 +162,9 @@ throws
 	BeanInfo beanInfo;
 
 	try {
-	    Class cls = obj.getClass();
-	    beanInfo = (BeanInfo)beanInfoCache.get(cls);
+	    beanInfo = (BeanInfo) beanInfoCache.get(cls);
 	    if (beanInfo == null) {
+		//System.out.println("Introspecting " + cls);
 		beanInfo = Introspector.getBeanInfo(cls);
 		beanInfoCache.put(cls, beanInfo);
 		
@@ -179,7 +172,7 @@ throws
 	} catch (IntrospectionException e) {
 	    break search;
 	}
-	EventSetDescriptor events[] = beanInfo.getEventSetDescriptors();
+	EventSetDescriptor[] events = beanInfo.getEventSetDescriptors();
 
 	if (events == null) {
 	    break search;
@@ -187,11 +180,9 @@ throws
 
 	dotPos = eventName.lastIndexOf('.');
 	if (dotPos == -1) {
-	    /*
-	     * the event string specifies only the event method. Must
-	     * ensure that exactly one event interface has this
-	     * method.
-	     */
+	    // the event string specifies only the event method. Must
+	    // ensure that exactly one event interface has this
+	    // method.
 
 	    for (i = 0; i < events.length; i++) {
 		Method methods[] = events[i].getListenerType().getMethods();
@@ -213,6 +204,10 @@ throws
 
 	    for (i = 0; i < events.length; i++) {
 		Class lsnType = events[i].getListenerType();
+                //System.out.println("event index " + i);
+                //if (evtCls == null) {System.out.println("null 1");}
+                //if (lsnType == null) {System.out.println("null 2");}
+                //if ((lsnType != null) && (evtCls == null)) {System.out.println("null 3");}
 		if (evtCls.equals(lsnType.getName())) {
 		    eventDesc = events[i];
 		    break;
