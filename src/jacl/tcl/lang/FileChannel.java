@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: FileChannel.java,v 1.19 2003/03/06 22:53:06 mdejong Exp $
+ * RCS: @(#) $Id: FileChannel.java,v 1.20 2003/03/08 03:42:44 mdejong Exp $
  *
  */
 
@@ -161,6 +161,7 @@ class FileChannel extends Channel {
             super.close();
         } finally {
             file.close();
+            file = null;
         }
     }
 
