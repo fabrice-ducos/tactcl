@@ -12,7 +12,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ClockCmd.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
+ * RCS: @(#) $Id: ClockCmd.java,v 1.2.2.1 1999/03/17 06:36:25 dejong Exp $
  *
  */
 
@@ -1200,8 +1200,8 @@ private ClockToken LookupWord(
 )
 {
     int ix;
-    String names[];
-    String zones[][];
+    String[] names;
+    String[][] zones;
 
     if (word.equalsIgnoreCase("am") || word.equalsIgnoreCase("a.m.")) {
         return new ClockToken(ClockToken.MERIDIAN, Calendar.AM);
