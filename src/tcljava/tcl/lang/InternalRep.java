@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: InternalRep.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
@@ -56,9 +56,7 @@ abstract public class InternalRep {
 protected void
 dispose()
 {
-    /*
-     * The default implementation does nothing.
-     */
+    // The default implementation does nothing.
 }
 
 /*
