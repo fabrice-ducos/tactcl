@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: AfterCmd.java,v 1.1.1.1 1998/10/14 21:09:19 cvsadmin Exp $
  *
  */
 
@@ -498,7 +498,7 @@ processTimerEvent()
 {
     try {
 	assocData.handlers.removeElement(this);
-	interp.eval(command, TCL.GLOBAL_ONLY);
+	interp.eval(command, TCL.EVAL_GLOBAL);
     } catch (TclException e) {
 	interp.addErrorInfo("\n    (\"after\" script)");
 	interp.backgroundError();
@@ -580,7 +580,7 @@ processIdleEvent()
 {
     try {
 	assocData.handlers.removeElement(this);
-	interp.eval(command, TCL.GLOBAL_ONLY);
+	interp.eval(command, TCL.EVAL_GLOBAL);
     } catch (TclException e) {
 	interp.addErrorInfo("\n    (\"after\" script)");
 	interp.backgroundError();
