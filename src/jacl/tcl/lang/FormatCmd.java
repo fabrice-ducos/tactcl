@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: FormatCmd.java,v 1.1.1.1 1998/10/14 21:09:19 cvsadmin Exp $
  *
  */
 
@@ -683,6 +683,9 @@ class FormatCmd implements Command {
 	 */
 
 	exp = 0;
+ 	if ((new Double(dblValue)).isNaN()) {
+            return "NaN";
+        }
 	if (dblValue>0.0) {
 	    int k = 0;
 	    while ((dblValue >= 1e8) && (k++ < 100)) {
