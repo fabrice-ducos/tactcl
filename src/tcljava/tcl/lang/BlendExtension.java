@@ -8,7 +8,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: BlendExtension.java,v 1.2.1.3 1999/02/20 09:29:32 dejong Exp $
+ * RCS: @(#) $Id: BlendExtension.java,v 1.2.1.4 1999/03/07 07:28:22 dejong Exp $
  */
 
 package tcl.lang;
@@ -57,6 +57,14 @@ throws TclException
     loadOnDemand(interp, "java::prop",        "tcl.lang.JavaPropCmd");
     loadOnDemand(interp, "java::throw",       "tcl.lang.JavaThrowCmd");
     loadOnDemand(interp, "java::try",         "tcl.lang.JavaTryCmd");
+
+
+
+    // load unsupported command(s)
+    loadOnDemand(interp, "unsupported::jdetachcall",
+		 "tcl.lang.UnsupportedJDetachCallCmd");
+
+
 
 
     // Part of the java package is defined in Tcl code.  We source
