@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.24 2000/01/25 21:48:59 mo Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.25 2000/02/23 22:14:16 mo Exp $
  *
  */
 
@@ -556,6 +556,7 @@ createCommands()
     Extension.loadOnDemand(this, "after",	  "tcl.lang.AfterCmd");
     Extension.loadOnDemand(this, "append",	  "tcl.lang.AppendCmd");
     Extension.loadOnDemand(this, "array",	  "tcl.lang.ArrayCmd");
+    Extension.loadOnDemand(this, "binary",	  "tcl.lang.BinaryCmd");
     Extension.loadOnDemand(this, "break",	  "tcl.lang.BreakCmd");
     Extension.loadOnDemand(this, "case",	  "tcl.lang.CaseCmd");
     Extension.loadOnDemand(this, "catch",	  "tcl.lang.CatchCmd");
