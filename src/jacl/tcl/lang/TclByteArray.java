@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclByteArray.java,v 1.1 2000/03/02 04:08:34 mo Exp $
  *
  */
 
@@ -93,7 +93,7 @@ public class TclByteArray extends InternalRep {
     public String toString() {
 	char[] c = new char[used];
 	for (int ix = 0; ix < used; ix++) {
-	    c[ix] = (char) bytes[ix];
+	    c[ix] = (char) (bytes[ix] & 0xff);
 	}
 	return new String(c);
     }
