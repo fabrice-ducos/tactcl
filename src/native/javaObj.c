@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: javaObj.c,v 1.4.2.3 2000/08/27 05:09:00 mo Exp $
+ * RCS: @(#) $Id: javaObj.c,v 1.4.2.4 2000/10/21 14:49:28 mdejong Exp $
  */
 
 #include "java.h"
@@ -607,6 +607,8 @@ JavaGetTclObject(
 	/*
 	 * This object is of an unknown type, so we create a new TclObject
 	 * with an internal rep of CObject that points to the Tcl_Obj *.
+	 *
+	 * Calls : TclObject tobj = CObject.newInstance(long objPtr);
 	 */
 
 	*(Tcl_Obj **)&lvalue = objPtr;
