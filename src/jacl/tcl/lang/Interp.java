@@ -1878,6 +1878,13 @@ throws
 	pushDebugStack(s, 1);
 	eval(fileContent, 0);
     }
+    catch( TclException e) {
+        if( e.getCompletionCode()==TCL.ERROR ) {
+            addErrorInfo("\n    (file \"" + s + "\" line "
+            + errorLine + ")");
+        }
+        throw e;
+    }
     finally {
 	scriptFile = oldScript;
 	popDebugStack();
