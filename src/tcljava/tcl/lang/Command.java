@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Command.java,v 1.2 1999/05/29 23:55:49 dejong Exp $
  */
 
 package tcl.lang;
@@ -17,7 +17,7 @@ package tcl.lang;
 
 import java.util.*;
 
-/*
+/**
  * The Command interface specifies the method that a new Tcl command
  * must implement.  See the createCommand method of the Interp class
  * to see how to add a new command to an interperter.
