@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: StdChannel.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
@@ -144,7 +144,6 @@ class StdChannel extends Channel {
 
 	switch (readType) {
 	    case TclIO.READ_ALL: {
-	        int  byteRead = 0;
 		char[] charArr = new char[BUF_SIZE];
 		StringBuffer sbuf = new StringBuffer();
 		    
@@ -283,7 +282,7 @@ class StdChannel extends Channel {
      * @return For now just return -1
      */
     long tell()  throws IOException {
-        return((long)-1);
+        return((long) -1);
     }
 
 
