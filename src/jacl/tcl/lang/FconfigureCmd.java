@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: FconfigureCmd.java,v 1.7 2001/12/24 08:01:12 mdejong Exp $
+ * RCS: @(#) $Id: FconfigureCmd.java,v 1.8 2001/12/24 21:08:06 mdejong Exp $
  *
  */
 
@@ -120,7 +120,7 @@ class FconfigureCmd implements Command {
 
                 TclList.append(interp, list, eofchar_pair);
             } else {
-                throw new TclRuntimeError("Invalid channel mode");
+                // Not readable or writeable, do nothing
             }
 
             // -translation
@@ -151,7 +151,7 @@ class FconfigureCmd implements Command {
 
                 TclList.append(interp, list, translation_pair);
             } else {
-                throw new TclRuntimeError("Invalid channel mode");
+                // Not readable or writeable, do nothing
             }
 
             interp.setResult(list);
@@ -213,7 +213,7 @@ class FconfigureCmd implements Command {
 
                         interp.setResult(eofchar_pair);
                     } else {
-                        throw new TclRuntimeError("Invalid channel mode");
+                        // Not readable or writeable, do nothing
                     }
 
                     break;
@@ -241,7 +241,7 @@ class FconfigureCmd implements Command {
 
                         interp.setResult(translation_pair);
                     } else {
-                        throw new TclRuntimeError("Invalid channel mode");
+                        // Not readable or writeable, do nothing
                     }
 
                     break;
@@ -357,7 +357,7 @@ class FconfigureCmd implements Command {
                         chan.setInputTranslation(inputTranslation);
                         chan.setOutputTranslation(outputTranslation);
                     } else {
-                        throw new TclRuntimeError("Invalid channel mode");
+                        // Not readable or writeable, do nothing
                     }
 
                     break;
