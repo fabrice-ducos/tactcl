@@ -7,7 +7,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# RCS: @(#) $Id$
+# RCS: @(#) $Id: all,v 1.2 1998/11/03 20:23:57 hylands Exp $
 
 if {$tcl_platform(platform) == "java"} {
     # run the Jacl tests
@@ -19,7 +19,7 @@ if {$tcl_platform(platform) == "java"} {
     set fileList {append assocd case concat error eval expr 
 	fileName for format get 
         if incr info join lindex linsert list llength lrange
-	lreplace lsort parse parseOld pkg proc rename scan set split
+	lreplace lsort parse parseOld pkg proc regexp rename scan set split
 	string subst trace unknown uplevel upvar while
     }
 
