@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: FileUtil.java,v 1.4 1999/05/09 00:15:34 dejong Exp $
+ * RCS: @(#) $Id: FileUtil.java,v 1.5 1999/10/29 01:46:14 redman Exp $
  *
  */
 
@@ -957,7 +957,7 @@ throws
 
     if (user.length() == 0) {
 	try {
-	    dir = interp.getVar("env", "HOME", 0).toString();
+	    dir = interp.getVar("env", "HOME", TCL.GLOBAL_ONLY).toString();
 	} catch (Exception e) {
 	    throw new TclException(interp, 
 		    "couldn't find HOME environment variable to expand path");
