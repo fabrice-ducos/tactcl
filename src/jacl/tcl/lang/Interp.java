@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.20 1999/08/09 08:52:36 mo Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.21 1999/08/09 09:18:34 mo Exp $
  *
  */
 
@@ -1676,6 +1676,15 @@ protected void renameCommand(
     cmd.table   = newNs.cmdTable;
     cmd.hashKey = newTail;
     cmd.ns      = newNs;
+
+    // FIXME : this is a nasty hack that fixes renaming for Procedures
+    // that move from one namespace to another, but the real problem
+    // is that a rename does not work for Command instances in general
+
+    if (cmd.cmd instanceof Procedure) {
+	Procedure p = (Procedure) cmd.cmd;
+	p.ns = cmd.ns;
+    }
 
     /*
     // Now check for an alias loop. If we detect one, put everything back
