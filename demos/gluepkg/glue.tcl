@@ -8,7 +8,7 @@
 #  See the file "license.terms" for information on usage and 
 #  redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-#  SCCS @(#) glue.tcl 1.3 97/10/10 16:08:07
+#  Version: $Id$
 
 
 # Load the package necessary to run the new commands.
