@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: ArrayCmd.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
  *
  */
 
@@ -198,7 +198,7 @@ class ArrayCmd implements Command {
 
 		Hashtable table = (Hashtable)var.value;
 	        TclObject tobj = TclList.newInstance();
-	        String key, strValue;
+	        String key;
 
  	        /*
 		 * Go through each key in the hash table.  If there is a 
