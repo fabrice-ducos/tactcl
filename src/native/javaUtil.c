@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: javaUtil.c,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  */
 
 #include "java.h"
@@ -19,7 +19,20 @@
  * Declaration of non-exported Tcl routines that we need to use.
  */
 
+
+#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION == 0) /* Tcl 8.0 */
+
 EXTERN char *TclGetCwd(Tcl_Interp *);
+
+#else /* it is Tcl 8.1 or above */
+
+EXTERN char *TclpGetCwd(Tcl_Interp *);
+
+#endif /* Tcl 8.0 */
+
+
+
+
 
 
 /*
@@ -226,7 +239,19 @@ Java_tcl_lang_Util_getCwd(
     jobject obj;
 
     JAVA_LOCK();
-    obj = (*env)->NewStringUTF(env, TclGetCwd(NULL));
+    obj = (*env)->NewStringUTF(env,
+
+#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION == 0) /* Tcl 8.0 */
+
+                                   TclGetCwd(NULL));
+
+#else /* it is Tcl 8.1 or above */
+
+                                   TclpGetCwd(NULL));
+
+#endif /* Tcl 8.0 */
+
+
     JAVA_UNLOCK();
     return obj;
 }
