@@ -11,7 +11,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclIndex.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  */
 
 package tcl.lang;
@@ -86,7 +86,6 @@ public class TclIndex extends InternalRep {
 
 	checking: {
 	    if (strLen > 0) {
-		char c = str.charAt(0);
 
 		for (int i = 0; i < tableLen; i++) {
 		    String option = table[i];
