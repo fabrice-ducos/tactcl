@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: BeanEvent.java,v 1.2.1.2 1999/02/22 06:09:47 dejong Exp $
+ * RCS: @(#) $Id: BeanEvent.java,v 1.3 1999/07/06 12:19:35 mo Exp $
  *
  */
 
@@ -109,8 +109,7 @@ processEvent(
 	    // errorCode.
 
 	    try {
-		TclObject errCode = interp.getVar("errorCode", null,
-		        TCL.GLOBAL_ONLY|TCL.DONT_THROW_EXCEPTION);
+		TclObject errCode = interp.getVar("errorCode", null, TCL.GLOBAL_ONLY);
 
 		if (errCode != null) {
 		    TclObject elm1 = TclList.index(interp, errCode, 0);
