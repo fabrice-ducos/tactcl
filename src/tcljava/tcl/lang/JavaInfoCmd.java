@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: JavaInfoCmd.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  */
 
 package tcl.lang;
@@ -82,7 +82,6 @@ throws
     boolean typeOpt = false;
     TclObject resultListObj;
     Class c;
-    Object obj;
 
     if (argv.length < 2) {
 	throw new TclNumArgsException(interp, 1, argv, 
@@ -506,7 +505,6 @@ throws
     } catch (SecurityException e) {
 	throw new TclException(interp, e.toString());
     }
-    Hashtable methodTable = new Hashtable(methodArray.length + 1);
     
     /*
      * Check whether each method is static.  Based on -static
