@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: CdCmd.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
  *
  */
 
@@ -18,9 +18,7 @@ package tcl.lang;
 
 import java.io.*;
 
-/*
- * This class implements the built-in "cd" command in Tcl.
- */
+// This class implements the built-in "cd" command in Tcl.
 
 class CdCmd implements Command {
 
@@ -65,9 +63,7 @@ throws
 	dirName = dirName + "/";
     }
 
-    /*
-     * Set the interp's working dir.
-     */
+    // Set the interp's working dir.
 
     interp.setWorkingDir(dirName);
 }

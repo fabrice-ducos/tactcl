@@ -11,22 +11,19 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: CharPointer.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
  */
 
 package tcl.lang;
 
 class CharPointer {
 
-/*
- * A string of characters.
- */
+// A string of characters.
 
 char[] array;
 
-/*
- * The current index into the array.
- */
+// The current index into the array.
+
 
 int index;
 
