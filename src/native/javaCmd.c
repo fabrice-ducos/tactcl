@@ -10,7 +10,7 @@
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
  *
- * RCS: @(#) $Id: javaCmd.c,v 1.7 1999/08/31 00:46:37 redman Exp $
+ * RCS: @(#) $Id: javaCmd.c,v 1.8 2000/05/13 23:49:29 mo Exp $
  */
 
 /*
@@ -267,7 +267,7 @@ EXPORT(int,Tclblend_Init)(
 	 * in a safe place.
 	 */
 
-	(*env)->MonitorEnter(env, java.NativeLock);
+	JAVA_LOCK();
     }
 
     /*
