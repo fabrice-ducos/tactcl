@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: FileChannel.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
+ * RCS: @(#) $Id: FileChannel.java,v 1.2.2.1 1999/03/17 06:36:30 dejong Exp $
  *
  */
 
@@ -173,7 +173,7 @@ class FileChannel extends Channel {
      *            the next line, or a specified number of bytes.
      * @param numBytes number of bytes to read.  Only used when the readType
      *            is TclIO.READ_N_BYTES.
-     * @return String of data that was read from file.
+     * @return String of data that was read from file. (can not be null)
      * @exception TclException is thrown if read occurs on WRONLY channel.
      * @exception IOException is thrown when an IO error occurs that was not
      *                correctly tested for.  Most cases should be caught.
