@@ -9,11 +9,13 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: JavaCastCmd.java,v 1.2.1.2 1999/03/05 23:11:38 dejong Exp $
+ * RCS: @(#) $Id: JavaCastCmd.java,v 1.2 1999/05/09 21:51:20 dejong Exp $
  *
  */
 
 package tcl.lang;
+
+import tcl.lang.reflect.PkgInvoker;
 
 /**
  * Implements the built-in "java::cast" command.
@@ -53,6 +55,13 @@ throws
     }
 
     Class cast_to = ClassRep.get(interp,argv[1]);
+
+    // A cast to an inaccessible type is not legal in Java.
+    if (!PkgInvoker.isAccessible(cast_to)) {
+        throw new TclException(interp, "Class \"" + cast_to.getName() +
+            "\" is not accessible");
+    }
+
     Object obj = ReflectObject.get(interp,argv[2]);
 
     // The null object can be cast to any type

@@ -8,7 +8,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: MethodFailure3.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
+ * RCS: @(#) $Id: MethodFailure3.java,v 1.1 1999/05/10 04:09:07 dejong Exp $
  *
  */
 
@@ -30,10 +30,10 @@ public class MethodFailure3 {
   // call( getC() );
 
   
-  private static interface I {}
-  private static class A {}
-  private static class B extends A {}
-  private static class C extends B implements I {}
+  public static interface I {}
+  public static class A {}
+  public static class B extends A {}
+  public static class C extends B implements I {}
 
 
 

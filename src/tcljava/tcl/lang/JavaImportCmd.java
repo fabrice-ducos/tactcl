@@ -12,11 +12,13 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: JavaImportCmd.java,v 1.2 2000/01/10 23:43:18 mo Exp $
+ * RCS: @(#) $Id: JavaImportCmd.java,v 1.3 2001/01/29 04:32:25 mdejong Exp $
  *
  */
 
 package tcl.lang;
+
+import tcl.lang.reflect.PkgInvoker;
 
 import java.util.*;
 
@@ -326,7 +328,12 @@ public class JavaImportCmd implements Command {
 			"\", it does not exist");
 
 		try {
-		    tclClassLoader.loadClass(fullyqualified);
+		    Class c = tclClassLoader.loadClass(fullyqualified);
+		    if (!PkgInvoker.isAccessible(c)) {
+		        throw new TclException(interp, "Class \"" + c.getName() +
+		                "\" is not accessible");
+		    }
+
 		} catch (ClassNotFoundException e) {
 		    throw notfound;
 		} catch (SecurityException e) {
