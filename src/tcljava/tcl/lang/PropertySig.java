@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: PropertySig.java,v 1.2.1.2 1999/02/04 08:44:10 dejong Exp $
  *
  */
 
@@ -20,31 +20,25 @@ import tcl.lang.reflect.*;
 import java.lang.reflect.*;
 import java.beans.*;
 
-/*
+/**
  * This class implements the internal representation of a Java Property
  * signature.
  */
 
 class PropertySig extends InternalRep {
 
-/*
- * The class that the property signature is used against. It is the
- * class of the java object specified in the java::prop command.
- * targetCls is used to test the validity of a cached PropertySig
- * internal rep.
- */
+// The class that the property signature is used against. It is the
+// class of the java object specified in the java::prop command.
+// targetCls is used to test the validity of a cached PropertySig
+// internal rep.
 
 Class targetCls;
 
-/*
- * Property descriptor of the property.
- */
+// Property descriptor of the property.
 
 PropertyDescriptor desc;
 
-/*
- * The PkgInvoker used to access the property. 
- */
+// The PkgInvoker used to access the property. 
 
 PkgInvoker pkgInvoker;
 
@@ -122,13 +116,11 @@ throws
     InternalRep rep = signature.getInternalRep();
 
     if ((rep instanceof PropertySig) &&
-		(targetCls == ((PropertySig)rep).targetCls)) {
-	/*
-	 * The cached internal rep is a valid property signature for
-	 * the given targetCls. Return it.
-	 */
+		(targetCls == ((PropertySig) rep).targetCls)) {
+	// The cached internal rep is a valid property signature for
+	// the given targetCls. Return it.
 
-	return (PropertySig)rep;
+	return (PropertySig) rep;
     }
 
     String propName = signature.toString();
@@ -149,11 +141,20 @@ throws
 	    break search_prop;
 	}
 
-	/*
-	 * Search for a property that has the same name as propName.
-	 */
+	// Search for a property that has the same name as propName.
 
 	for (int i = 0; i < descriptors.length; i++) {
+	    // FIXME : null tests are just for debugging
+	    if (descriptors[i] == null) {
+		throw new NullPointerException("descriptor is null");
+	    }
+	    if (descriptors[i].getName() == null) {
+		throw new NullPointerException("descriptor.getName() is null");
+	    }
+	    if (propName == null) {
+		throw new NullPointerException("propName is null");
+	    }
+
 	    if (descriptors[i].getName().equals(propName)) {
 		if (descriptors[i] instanceof IndexedPropertyDescriptor) {
 		    throw new TclException(interp,
@@ -171,8 +172,9 @@ throws
 		"\"");
     }
 
-    PropertySig sig = new PropertySig(targetCls, PkgInvoker.getPkgInvoker(
-	    targetCls), desc);
+    PropertySig sig = new PropertySig(targetCls,
+			      PkgInvoker.getPkgInvoker(targetCls), desc);
+
     signature.setInternalRep(sig);
 
     return sig;

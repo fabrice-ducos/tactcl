@@ -11,7 +11,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: PwdCmd.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
@@ -54,16 +54,12 @@ throws
 	throw new TclNumArgsException(interp, 1, argv, null);
     }
 
-    /*
-     * Get the name of the working dir.
-     */
+    // Get the name of the working dir.
 
     String dirName = interp.getWorkingDir().toString();
 
-    /*
-     * Java File Object methods use backslashes.  Convert them to forward
-     * slashes before returning the dirName to Tcl.
-     */
+    // Java File Object methods use backslashes on Windows.
+    // Convert them to forward slashes before returning the dirName to Tcl.
 
     if (JACL.PLATFORM == JACL.PLATFORM_WINDOWS) {
 	dirName = dirName.replace('\\', '/');

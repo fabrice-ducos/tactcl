@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: ClassRep.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
@@ -18,16 +18,14 @@ package tcl.lang;
 
 import java.lang.reflect.*;
 
-/*
+/**
  * This class implements the internal representation of a Java class
  * name.
  */
 
 class ClassRep extends InternalRep {
 
-/*
- * The class referred to by this ClassRep.
- */
+// The class referred to by this ClassRep.
 
 Class cls;
 
@@ -103,8 +101,8 @@ throws
     InternalRep rep = tclObj.getInternalRep();
 
     if (rep instanceof ClassRep) {
-        //If a ClassRep is already cached, return it right away.
-	return ((ClassRep)rep).cls;
+        // If a ClassRep is already cached, return it right away.
+	return ((ClassRep) rep).cls;
     } else {
 	Class c = JavaInvoke.getClassByName(interp, tclObj.toString());
 	tclObj.setInternalRep(new ClassRep(c));

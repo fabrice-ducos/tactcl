@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: JavaInvoke.java,v 1.10 1999/08/15 19:38:47 mo Exp $
  *
  */
 
@@ -21,7 +21,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.beans.*;
 
-/*
+/**
  * This class implements the common routines used by the java::*
  * commands to create Java objects, call Java methods and access fields
  * and properties. It also has auxiliary routines for converting between
@@ -30,10 +30,8 @@ import java.beans.*;
 
 class JavaInvoke {
 
-/*
- * We need to use empty array Object[0] a lot. We keep a static copy
- * and re-use it to avoid garbage collection.
- */
+// We need to use empty array Object[0] a lot. We keep a static copy
+// and re-use it to avoid garbage collection.
 
 static private Object EMPTY_ARGS[] = new Object[0];
 
@@ -111,7 +109,7 @@ throws
     Class  javaCl  = ReflectObject.getClass(interp, reflectObj);
     FuncSig sig = FuncSig.get(interp, javaCl, signature, argv,
                                                startIdx, count);
-    Method method = (Method)sig.func;
+    Method method = (Method) sig.func;
 	
     Object result = call(interp, sig.pkgInvoker, signature, method, javaObj,
 	    argv, startIdx, count);
@@ -160,7 +158,7 @@ throws
     FuncSig sig = FuncSig.get(interp, cls, signature, argv,
 	    startIdx, count);
 
-    Method method = (Method)sig.func;
+    Method method = (Method) sig.func;
     if (!Modifier.isStatic(method.getModifiers())) {
 	throw new TclException(interp, "\"" + signature +
 		"\" is not a static method of class \"" + classObj + "\"");
@@ -221,10 +219,10 @@ throws
     boolean isConstructor = (func instanceof Constructor);
 
     if (isConstructor) {
-	cons = (Constructor)func;
+	cons = (Constructor) func;
 	paramTypes = cons.getParameterTypes();
     } else {
-	method = (Method)func;
+	method = (Method) func;
 	paramTypes = method.getParameterTypes();
     }
 
@@ -247,11 +245,21 @@ throws
     }
 
     try {
+	final boolean debug = false;
+	Object result;
+
 	if (isConstructor) {
-	    return invoker.invokeConstructor(cons, args);
+	    result = invoker.invokeConstructor(cons, args);
 	}  else {
-	    return invoker.invokeMethod(method, obj, args);
+	    result = invoker.invokeMethod(method, obj, args);
 	}
+
+	if (debug) {
+	    System.out.println("result object from invocation is \""
+			       + result + "\"");
+	}
+
+	return result;
     } catch (Exception e) {
 	throw new ReflectException(interp, e);
     }
@@ -368,6 +376,14 @@ throws
 	cls = ReflectObject.getClass(interp, classOrObj);
     }
 
+    // Check for the special case where the field is named "class"
+    // which has a special meaning and is enforced by the javac compiler.
+    // If found, return the java.lang.Class object for the named class.
+
+    if (isStatic && isget && signature.toString().equals("class")) {
+	return wrap(interp, Class.class, cls, false);
+    }
+
     FieldSig sig = FieldSig.get(interp, signature, cls);
     Field field = sig.field;
     if (isStatic && (!(Modifier.isStatic(field.getModifiers())))) {
@@ -427,7 +443,7 @@ throws
 	throw new TclException(interp, "can't get property from null object");
     }
 
-    Class  javaClass = ReflectObject.getClass(interp, reflectObj);
+    Class javaClass = ReflectObject.getClass(interp, reflectObj);
     PropertySig sig = PropertySig.get(interp, javaClass, propName);
 
     Method readMethod = sig.desc.getReadMethod();
@@ -528,41 +544,63 @@ throws
     Class result = null;
     int dimension;
 
-    /*
-     * If the string is of the form className[][]..., strip out the trailing
-     * []s and record the dimension of the array.
-     */
+    // If the string is of the form className[][]..., strip out the trailing
+    // []s and record the dimension of the array.
 
-    String prefix = "";
-    String suffix = "";
-    for (dimension = 0; clsName.endsWith("[]"); dimension++) {
-	int newLen = clsName.length() - 2;
-	clsName = clsName.substring(0, newLen);
-	prefix = prefix + "[";
+    StringBuffer prefix_buf = new StringBuffer();
+    StringBuffer suffix_buf = new StringBuffer();
+    StringBuffer clsName_buf = new StringBuffer(clsName);
+
+    int clsName_len;
+    for (dimension = 0; true ; dimension++) {
+        clsName_len = clsName_buf.length();
+
+        if ((clsName_len > 2) &&
+            (clsName_buf.charAt(clsName_len - 2) == '[') &&
+            (clsName_buf.charAt(clsName_len - 1) == ']')) {
+
+            clsName_buf.setLength(clsName_len - 2);
+            prefix_buf.append('[');
+        } else {
+            break;
+        }
     }
 
     try {
+        clsName = clsName_buf.toString(); // Use shortened form of name
+
+        // Search for the char '.' in the name. If '.' is in
+        // the name then we know it is not a builtin type
+
 	if (clsName.indexOf('.') == -1) {
 	    if (dimension > 0) {
 		if (clsName.equals("int")) {
-		    return Class.forName(prefix + "I");
+		    prefix_buf.append('I');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("boolean")) {
-		    return Class.forName(prefix + "Z");
+		    prefix_buf.append('Z');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("long")) {
-		    return Class.forName(prefix + "J");
+		    prefix_buf.append('J');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("float")) {
-		    return Class.forName(prefix + "F");
+		    prefix_buf.append('F');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("double")) {
-		    return Class.forName(prefix + "D");
+		    prefix_buf.append('D');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("byte")) {
-		    return Class.forName(prefix + "B");
+		    prefix_buf.append('B');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("short")) {
-		    return Class.forName(prefix + "S");
+		    prefix_buf.append('S');
+		    return Class.forName(prefix_buf.toString());
 		} else if (clsName.equals("char")) {
-		    return Class.forName(prefix + "C");
+		    prefix_buf.append('C');
+		    return Class.forName(prefix_buf.toString());
 		} else {
-		    prefix = prefix + "L";
-		    suffix = ";";
+		    prefix_buf.append('L');
+		    suffix_buf.append(';');
 		}
 	    } else {
 		if (clsName.equals("int")) {
@@ -583,23 +621,32 @@ throws
 		    return Character.TYPE;
 		}
 	    }
-	    
+	   
 	    TclClassLoader tclClassLoader = new TclClassLoader(interp, null);
 
 	    try {
-		result = tclClassLoader.loadClass(prefix + clsName + suffix);
+		result = tclClassLoader.loadClass(prefix_buf + clsName + suffix_buf);
 	    } catch (ClassNotFoundException e) {
-		/*
-		 * The code below should really be in a java::import command.
-		 * Since we dont have one yet, do a simple check for the class
-		 * in java.lang.  If the system class loader cannot resolve the
-		 * class, than a SecurityException is thrown, catch this and 
-		 * throw the standard error.
-		 */
-	    
+		// If the class loader can not find the class then check with
+		// the "import" feature to see if the given clsName maps to
+		// a fully qualified class name.
+
+		String fullyqualified = JavaImportCmd.getImport(interp, clsName);
+
+		// If we do not find a fully qualified name in the import table
+		// then try to fully qualify the class with the java.lang prefix 
+		
+		if (fullyqualified == null) {
+		    fullyqualified = "java.lang." + clsName;
+		}
+
+		// If the system class loader cannot resolve the class, than a
+		// SecurityException is thrown, catch this and 
+		// throw the standard error.
+
 		try {
-		    result = tclClassLoader.loadClass(prefix + "java.lang." +
-			    clsName + suffix);
+		    result = tclClassLoader.loadClass(prefix_buf +
+			        fullyqualified +  suffix_buf);
 		} catch (SecurityException e2) {
 		    result = null;
 		}
@@ -608,7 +655,7 @@ throws
 	    TclClassLoader tclClassLoader = new TclClassLoader(interp, null);
 	
 	    if (dimension > 0) {
-		clsName = prefix + "L" + clsName + ";";
+		clsName = prefix_buf + "L" + clsName + ";";
 	    }
 	    result = tclClassLoader.loadClass(clsName);
 	}
@@ -620,7 +667,7 @@ throws
     }
 
     if (result == null) {
-	throw new TclException(interp, "unknown class \"" + clsName + "\"");
+	throw new TclException(interp, "unknown class \"" + clsName_buf + "\"");
     }
 
     return result;
@@ -631,9 +678,9 @@ throws
  *
  *  convertJavaObject --
  *
- *	Converts the java.lang.Object into a Tcl object and set the
- *	interpreter's result with this Tcl object. Primitive data
- *	types are converted into primitive Tcl data types. Otherwise,
+ *	Converts the java.lang.Object into a Tcl object and return
+ *	TclObject that holds the reult. Primitive data types
+ *	are converted into primitive Tcl data types. Otherwise,
  *	a ReflectObject wrapper is created for the object so that it
  *	can be later accessed with the Reflection API.
  *
@@ -649,8 +696,7 @@ throws
 static TclObject
 convertJavaObject(
     Interp interp,	// Current interpreter.
-    Class cls,		// The class of the Java Object (we can't use
-			// javaObj.getClass because javaObj may be null.)
+    Class cls,		// The class of the Java Object
     Object javaObj)	// The java.lang.Object to convert to a TclObject.
 throws TclException
 {
@@ -658,33 +704,35 @@ throws TclException
 	if (cls == String.class) {
 	    return TclString.newInstance("");
 	} else {
-	    return JavaNullCmd.getNullObj();
+	    return ReflectObject.newInstance(interp, cls, javaObj);
 	}
-    } else if (javaObj instanceof Integer) {
+
+    } else if ((cls == Integer.TYPE) || (cls == Integer.class)) {
 	return TclInteger.newInstance(((Integer) javaObj).intValue());
 
-    } else if (javaObj instanceof Long) {
-	return TclInteger.newInstance(((Long) javaObj).intValue());
+    } else if ((cls == Long.TYPE) || (cls == Long.class)) {
+	// A long can not be represented as a TclInteger
+	return TclString.newInstance(javaObj.toString());
 
-    } else if (javaObj instanceof Short) {
+    } else if ((cls == Short.TYPE) || (cls == Short.class)) {
 	return TclInteger.newInstance(((Short) javaObj).intValue());
 
-    } else if (javaObj instanceof Byte) {
+    } else if ((cls == Byte.TYPE) || (cls == Byte.class)) {
 	return TclInteger.newInstance(((Byte) javaObj).intValue());
 
-    } else if (javaObj instanceof Double) {
+    } else if ((cls == Double.TYPE) || (cls == Double.class)) {
 	return TclDouble.newInstance(((Double) javaObj).doubleValue());
 
-    } else if (javaObj instanceof Float) {
+    } else if ((cls == Float.TYPE) || (cls == Float.class)) {
 	return TclDouble.newInstance(((Float) javaObj).doubleValue());
 
-    } else if (javaObj instanceof Boolean) {
+    } else if ((cls == Boolean.TYPE) || (cls == Boolean.class)) {
 	return TclBoolean.newInstance(((Boolean) javaObj).booleanValue());
 
-    } else if (javaObj instanceof Character) {
+    } else if ((cls == Character.TYPE) || (cls == Character.class)) {
 	return TclString.newInstance(((Character) javaObj).toString());
 
-    } else if (javaObj instanceof String) {
+    } else if (cls == String.class) {
 	return TclString.newInstance((String)javaObj);
 
     } else {
@@ -727,15 +775,13 @@ throws
     }
 
 
-    if (!isReflectObj) {
-	/*
-	 * tclObj a Tcl "primitive" value. We try convert it to the 
-	 * corresponding primitive value in Java.
-	 *
-	 * To optimize performance, the following "if" statements are
-	 * arranged according to (my guesstimation of) the frequency
-	 * that a certain type is used.
-	 */
+    if (! isReflectObj) {
+	// tclObj a Tcl "primitive" value. We try convert it to the 
+	// corresponding primitive value in Java.
+	//
+	// To optimize performance, the following "if" statements are
+	// arranged according to (my guesstimation of) the frequency
+	// that a certain type is used.
 
 	if (type == String.class) {
 	    return tclObj.toString();
@@ -750,7 +796,21 @@ throws
 	    return new Boolean(TclBoolean.get(interp, tclObj));
 
 	} else if ((type == Long.TYPE) || (type == Long.class)) {
-	    return new Long((long) TclInteger.get(interp, tclObj));
+	    // A tcl integer can be converted a long (widening conversion)
+	    // and a Java long may be represented as a tcl integer if it
+	    // is small enogh, so we try to convert the string to a
+	    // tcl integer and if that fails we try to convert to a
+	    // java Long object. If both of these fail throw original error.
+
+	    try {
+	        return new Long(TclInteger.get(interp, tclObj));
+	    } catch (TclException e1) {
+	        try {
+	            return new Long( tclObj.toString() );
+	        } catch (NumberFormatException e2) {
+	            throw e1;
+	        }
+	    }
 
 	} else if ((type == Float.TYPE) || (type == Float.class)) {
 	    return new Float((float) TclDouble.get(interp, tclObj));
@@ -760,7 +820,7 @@ throws
 
 	} else if ((type == Byte.TYPE) || (type == Byte.class)) {
 	    int i = TclInteger.get(interp, tclObj);
-	    if ((i < -128) || (i > 127)) {
+	    if ((i < Byte.MIN_VALUE) || (i > Byte.MAX_VALUE)) {
 		throw new TclException(interp,
 		   "integer value too large to represent in a byte");
 	    }
@@ -768,7 +828,7 @@ throws
 
 	} else if ((type == Short.TYPE) || (type == Short.class)) {
 	    int i = TclInteger.get(interp, tclObj);
-	    if ((i < -32768) || (i > 32767)) {
+	    if ((i < Short.MIN_VALUE) || (i > Short.MAX_VALUE)) {
 		throw new TclException(interp,
 		    "integer value too large to represent in a short");
 	    }
@@ -785,24 +845,76 @@ throws
 	    }
 	} else {
 	    throw new TclException(interp, "\"" + tclObj +
-		    "\" is not an object handle of class \"" + type.getName() +
+		    "\" is not an object handle of class \"" +
+                     JavaInfoCmd.getNameFromClass(type) +
 		    "\"");
 	}
     } else {
-	/*
-	 * The TclObject is a ReflectObject that contains javaObj. We
-	 * check to see if javaObj can be converted to the required
-	 * type.  If javaObj is an numberical type, we attempt to
-	 * widen it to the required type.
-	 */
+	// The TclObject is a ReflectObject that contains javaObj. We
+	// check to see if javaObj can be converted to the required
+	// type. If javaObj is a wrapper for a primitive type then
+	// we check to see if the object is an instanceof the type.
 
-	if ((javaObj == null) || type.isInstance(javaObj)) {
+	if (javaObj == null) {
+	    return null;
+	}
+
+	if (type.isInstance(javaObj)) {
 	    return javaObj;
 	}
 
+	if (type.isPrimitive()) {
+	    if (type == Boolean.TYPE) {
+	        if (javaObj instanceof Boolean) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Character.TYPE) {
+	        if (javaObj instanceof Character) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Byte.TYPE) {
+	        if (javaObj instanceof Byte) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Short.TYPE) {
+	        if (javaObj instanceof Short) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Integer.TYPE) {
+	        if (javaObj instanceof Integer) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Long.TYPE) {
+	        if (javaObj instanceof Long) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Float.TYPE) {
+	        if (javaObj instanceof Float) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Double.TYPE) {
+	        if (javaObj instanceof Double) {
+	            return javaObj;
+	        }
+	    }
+	    else if (type == Void.TYPE) {
+	        // void is not a valid type for conversions
+	    }
+	}
+
 	throw new TclException(interp, "expected object of type " +
-		type.getName() + " but got \"" + tclObj + "\" (" +
-		javaObj.getClass().getName() + ")");
+                JavaInfoCmd.getNameFromClass(type) +
+		" but got \"" + tclObj + "\" (" +
+                JavaInfoCmd.getNameFromClass(
+        	    ReflectObject.getClass(interp, tclObj) ) +
+                ")");
     }
 }
 

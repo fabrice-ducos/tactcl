@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclInteger.java,v 1.2.2.2 1999/03/18 08:30:42 mo Exp $
  *
  */
 
@@ -88,9 +88,7 @@ public class TclInteger extends InternalRep {
 	InternalRep rep = tobj.getInternalRep();
 
 	if (rep instanceof TclInteger) {
-	    /*
-	     * Do nothing.
-	     */
+	    // Do nothing.
 	} else if (rep instanceof TclBoolean) {
 	    boolean b = TclBoolean.get(interp, tobj);
 	    if (b) {
@@ -99,9 +97,7 @@ public class TclInteger extends InternalRep {
 		tobj.setInternalRep(new TclInteger(0));
 	    }
 	} else {
-	    /*
-	     * (ToDo) other short-cuts
-	     */
+	    // (ToDo) other short-cuts
 
 	    tobj.setInternalRep(new TclInteger(interp, tobj.toString()));
 	}
@@ -118,7 +114,7 @@ public class TclInteger extends InternalRep {
     public static int get(Interp interp, TclObject tobj)
 	    throws TclException {
 	setIntegerFromAny(interp, tobj);
-	TclInteger tint = (TclInteger)(tobj.getInternalRep());
+	TclInteger tint = (TclInteger) tobj.getInternalRep();
 	return tint.value;
     }
 

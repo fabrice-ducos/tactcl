@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TraceCmd.java,v 1.5 1999/08/03 02:37:01 mo Exp $
  *
  */
 
@@ -17,7 +17,7 @@ package tcl.lang;
 
 import java.util.*;
 
-/*
+/**
  * The TraceCmd class implements the Command interface for specifying
  * a new Tcl command. The method cmdProc implements the built-in Tcl
  * command "trace" which is used to manupilate variable traces.  See
@@ -26,26 +26,22 @@ import java.util.*;
 
 class TraceCmd implements Command {
 
-/*
- * Valid sub-commands for the trace command.
- */
+// Valid sub-commands for the trace command.
 
-static final private String validCmds[] = {
+static final private String[] validCmds = {
     "variable",
     "vdelete",
     "vinfo",
 };
 
-static final private int OPT_VARIABLE 	= 0;
-static final private int OPT_VDELETE   	= 1;
-static final private int OPT_VINFO 		= 2;
+static final private int OPT_VARIABLE   = 0;
+static final private int OPT_VDELETE    = 1;
+static final private int OPT_VINFO      = 2;
 
-/*
- * An array for quickly generating the Tcl strings corresponding to
- * the TCL.TRACE_READS, TCL.TRACE_WRITES and TCL.TRACE_UNSETS flags.
- */
+// An array for quickly generating the Tcl strings corresponding to
+// the TCL.TRACE_READS, TCL.TRACE_WRITES and TCL.TRACE_UNSETS flags.
 
-private static TclObject opStr[] = initOptStr();
+private static TclObject[] opStr = initOptStr();
 
 /*
  *----------------------------------------------------------------------
@@ -67,7 +63,7 @@ private static TclObject opStr[] = initOptStr();
 private static TclObject[]
 initOptStr()
 {
-    TclObject strings[] = new TclObject[8];
+    TclObject[] strings = new TclObject[8];
     strings[0] = TclString.newInstance("error");
     strings[1] = TclString.newInstance("r");
     strings[2] = TclString.newInstance("w");
@@ -87,7 +83,7 @@ initOptStr()
 /*
  *----------------------------------------------------------------------
  *
- * cmdProc --
+ * Tcl_TraceObjCmd -> TraceCmd.cmdProc
  *
  *	This procedure is invoked as part of the Command interface to 
  *	process the "trace" Tcl command.  See the user documentation for
@@ -103,34 +99,34 @@ initOptStr()
  */
 
 public void cmdProc(
-    Interp interp,	/* Current interpreter. */
-    TclObject argv[])	/* Argument list. */
+    Interp interp,	// Current interpreter.
+    TclObject[] objv)	// Argument list.
 throws 
-    TclException 	/* A standard Tcl exception. */
+    TclException 	// A standard Tcl exception.
 {
     int len;
 
-    if (argv.length < 2) {
-	throw new TclNumArgsException(interp, 1, argv, 
-		"option arg ?arg ...?");
+    if (objv.length < 2) {
+	throw new TclNumArgsException(interp, 1, objv, 
+		"option [arg arg ...]");
     }
-    int opt = TclIndex.get(interp, argv[1], validCmds, "option", 0);
+    int opt = TclIndex.get(interp, objv[1], validCmds, "option", 0);
 
     switch (opt) {
     case OPT_VARIABLE:
     case OPT_VDELETE:
-	if (argv.length != 5) {
+	if (objv.length != 5) {
 	    if (opt == OPT_VARIABLE) {
-		throw new TclNumArgsException(interp, 1, argv, 
+		throw new TclNumArgsException(interp, 1, objv, 
 			"variable name ops command");
 	    } else {
-		throw new TclNumArgsException(interp, 1, argv, 
+		throw new TclNumArgsException(interp, 1, objv, 
 			"vdelete name ops command");
 	    }
 	}
 
 	int flags = 0;
-	String ops = argv[3].toString();
+	String ops = objv[3].toString();
 	len = ops.length();
     check_ops: {
 	    for (int i = 0; i < len; i++) {
@@ -152,32 +148,30 @@ throws
 	}
 
 	if (flags == 0) {
-	    throw new TclException(interp, "bad operations \"" + argv[3] +
+	    throw new TclException(interp, "bad operations \"" + objv[3] +
 		    "\": should be one or more of rwu");
 	}
 
 	if (opt == OPT_VARIABLE) {
-	    CmdTraceProc trace = new CmdTraceProc(argv[4].toString(), flags);
-	    interp.varFrame.traceVar(argv[2], trace, flags);
+	    CmdTraceProc trace = new CmdTraceProc(objv[4].toString(), flags);
+	    Var.traceVar(interp, objv[2], flags, trace);
 	} else {
-	    /*
-	     * Search through all of our traces on this variable to
-	     * see if there's one with the given command.  If so, then
-	     * delete the first one that matches.
-	     */
+	    // Search through all of our traces on this variable to
+	    // see if there's one with the given command.  If so, then
+	    // delete the first one that matches.
 		
-	    Vector traces = interp.varFrame.getTraces(argv[2], 0);
+	    Vector traces = Var.getTraces(interp, objv[2].toString(), 0);
 	    if (traces != null) {
 		len = traces.size();
 		for (int i = 0; i < len; i++) {
-		    TraceRecord rec = (TraceRecord)traces.elementAt(i);
+		    TraceRecord rec = (TraceRecord) traces.elementAt(i);
 
 		    if (rec.trace instanceof CmdTraceProc) {
-			CmdTraceProc proc = (CmdTraceProc)(rec.trace);
+			CmdTraceProc proc = (CmdTraceProc) rec.trace;
 			if (proc.flags == flags && proc.command.toString().
-				equals(argv[4].toString())) {
-			    interp.varFrame.untraceVar(argv[2],
-				    proc, flags);
+				equals(objv[4].toString())) {
+			    Var.untraceVar(interp, objv[2],
+				    flags, proc);
 			    break;
 			}
 		    }
@@ -187,11 +181,11 @@ throws
 	break;
 
     case OPT_VINFO:
-	if (argv.length != 3) {
-	    throw new TclNumArgsException(interp, 2, argv, 
+	if (objv.length != 3) {
+	    throw new TclNumArgsException(interp, 2, objv, 
 		    "name");
 	}
-	Vector traces = interp.varFrame.getTraces(argv[2], 0);
+	Vector traces = Var.getTraces(interp, objv[2].toString(), 0);
 	if (traces != null) {
 	    len = traces.size();
 	    TclObject list = TclList.newInstance();
@@ -200,10 +194,10 @@ throws
 
 	    try {
 		for (int i = 0; i < len; i++) {
-		    TraceRecord rec = (TraceRecord)traces.elementAt(i);
+		    TraceRecord rec = (TraceRecord) traces.elementAt(i);
 
 		    if (rec.trace instanceof CmdTraceProc) {
-			CmdTraceProc proc = (CmdTraceProc)(rec.trace);
+			CmdTraceProc proc = (CmdTraceProc) rec.trace;
 			int mode = proc.flags;
 			mode &= (TCL.TRACE_READS|TCL.TRACE_WRITES
 				|TCL.TRACE_UNSETS);
@@ -227,16 +221,12 @@ throws
 
 } // TraceCmd
 
-/*
- * The CmdTraceProc object holds the information for a specific
- * trace.
- */
+// The CmdTraceProc object holds the information for a specific
+// trace.
 class CmdTraceProc implements VarTrace {
 
-/*
- * The command holds the Tcl script that will execute. The flags
- * hold the mode flags that define what conditions to fire under.
- */
+// The command holds the Tcl script that will execute. The flags
+// hold the mode flags that define what conditions to fire under.
 
 String command;
 int flags;
@@ -316,12 +306,10 @@ throws
 	    throw new TclRuntimeError("unexpected TclException: " + e);
 	}
 
-	/*
-	 * Execute the command.
-	 */
+	// Execute the command.
 
 	interp.eval(sbuf.toString(), 0);
     }
 }
 
-} //CmdTraceProc
+} // CmdTraceProc

@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: FileDialogCmd.java,v 1.2 1999/05/08 23:15:49 dejong Exp $
  *
  */
 
@@ -15,13 +15,13 @@ import tcl.lang.*;
 import java.awt.*;
 import java.io.*;
 
-/*
+/**
  * This class implements the "filedialog" demo command.
  */
 
 class FileDialogCmd implements Command {
   
-    /*
+    /**
      * cmdProc --
      *
      * This procedure is invoked to process the FileDialogApp application.
@@ -30,53 +30,45 @@ class FileDialogCmd implements Command {
      * If dir and file are valid the result is set to the valid absolute path.
      */
 
-    public void cmdProc(Interp interp, TclObject argv[])
+    public void cmdProc(Interp interp, TclObject[] objv)
             throws TclException {
-        FileDialogApp fileDialog;      /* The FileDialog widget         */
-	String        dirName = null;  /* The dir to start with, if any */
+        FileDialogApp fileDialog;      // The FileDialog widget
+	String        dirName = null;  // The dir to start with, if any
 
 
-	if ((argv.length != 1) && (argv.length != 3)) {
-	    throw new TclNumArgsException(interp, 1, argv,
+	if ((objv.length != 1) && (objv.length != 3)) {
+	    throw new TclNumArgsException(interp, 1, objv,
 		    "?-directory dirName?");
 	}
 
-	if ((argv.length == 3)) {
-	    if("-directory".startsWith(argv[1].toString())) {
-	        dirName = argv[2].toString();
+	if ((objv.length == 3)) {
+	    if("-directory".startsWith(objv[1].toString())) {
+	        dirName = objv[2].toString();
 	    } else {
 	        throw new TclException(interp, "bad filedialog option \""
-                        + argv[1].toString() + "\": must be -directory");
+                        + objv[1].toString() + "\": must be -directory");
 	    }
 	}
 
-	/*
-	 * Run the "application".  This blocks until the window has been
-	 * removed, either by pressing 'OK' or 'Cancel' or destroying the 
-	 * window.
-	 */ 
+	// Run the "application".  This blocks until the window has been
+	// removed, either by pressing 'OK' or 'Cancel' or destroying the 
+	// window.
 
 	fileDialog = new FileDialogApp();
 	if (dirName != null) {
 	    fileDialog.setDirectory(dirName);
 	}
 
-	/*
-	 * Pull out the dir and filename from the fileDialog object
-	 */
+	// Pull out the dir and filename from the fileDialog object
 
 	String dir  = fileDialog.getDirectory();
 	String file = fileDialog.getFile();
 
-	/*
-	 * If a dir and filename are not null then a valid path
-	 * been choosen (i.e. The Cancel Button wasnt pressed)
-	 */
+	// If a dir and filename are not null then a valid path
+	// been choosen (i.e. The Cancel Button wasnt pressed)
 
 	if ((dir != null) && (file != null) && (!file.equals(""))) {
 	    interp.setResult(dir + file);
 	}
     }
 }
-
-

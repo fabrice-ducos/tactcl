@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Extension.java,v 1.2.1.1 1999/01/29 20:52:09 mo Exp $
  *
  */
 
@@ -125,7 +125,7 @@ class AutoloadStub implements Command {
 	}
 
 	try {
-	    cmd = (Command)cmdClass.newInstance();
+	    cmd = (Command) cmdClass.newInstance();
 	} catch (IllegalAccessException e1) {
 	    throw new TclException(interp,
 		    "IllegalAccessException for class \"" + cmdClass.getName()

@@ -9,21 +9,19 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: SayhelloCmd.java,v 1.2.1.2 1999/02/01 00:40:46 mo Exp $
  */
 
 import tcl.lang.*;
 
-/*
+/**
  * This class implements the "sayhello" command in SimplePackage.
  */
 
 class SayhelloCmd implements Command {
-    /*
-     * This procedure is invoked to process the "sayhello" Tcl command
-     * -- it takes no arguments and returns "Hello World!" string as
-     * its result.
-     */
+    // This procedure is invoked to process the "sayhello" Tcl command.
+    // It takes no arguments and returns "Hello World!" string as
+    // its result.
 
     public void cmdProc(Interp interp, TclObject argv[])
 	    throws TclException {

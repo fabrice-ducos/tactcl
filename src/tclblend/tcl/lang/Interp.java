@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Interp.java,v 1.8 1999/08/09 08:52:36 mo Exp $
  *
  */
 
@@ -23,61 +23,60 @@ import java.net.*;
  */
 public class Interp {
 
-/*
- * Initialize the Interp class by loading the native methods.
- */
+
+// Initialize the Interp class by loading the native methods.
 
 static {
-    System.loadLibrary("tclblend");
+
+    try {
+        System.loadLibrary("tclblend");
+    } catch (UnsatisfiedLinkError e) {
+        System.out.println("System.loadLibrary(\"tclblend\") failed because of UnsatisfiedLinkError");
+        e.printStackTrace(System.out);
+    } catch (Throwable t) {
+        System.out.println("System.loadLibrary(\"tclblend\") failed because of Unknown Throwable");
+        t.printStackTrace(System.out);
+    }
 }
 
-/*
- * The interpPtr contains the C Tcl_Interp* used in native code.  This
- * field is declared with package visibility so that it can be passed
- * to native methods by other classes in this package.
- */
+
+// The interpPtr contains the C Tcl_Interp* used in native code.  This
+// field is declared with package visibility so that it can be passed
+// to native methods by other classes in this package.
 
 long interpPtr;
 
-/*
- * The following three variables are used to maintain a translation
- * table between ReflectObject's and their string names. These two
- * variables are accessed by the ReflectObject class (the variables
- * are here because we want one translation table per Interp).
- */
+// The following three variables are used to maintain a translation
+// table between ReflectObject's and their string names. These two
+// variables are accessed by the ReflectObject class (the variables
+// are here because we want one translation table per Interp).
 
-/*
- * Translates integer ID to ReflectObject.
- */
+// Translates integer ID to ReflectObject.
 
-Hashtable reflectIDTable;
+Hashtable reflectIDTable = new Hashtable();
 
-/*
- * Translates Object to ReflectObject. This makes sure we have only
- * one ReflectObject internalRep for the same Object -- this
- * way Object identity can be done by string comparison.
- */
+// Translates Object to ReflectObject. This makes sure we have only
+// one ReflectObject internalRep for the same Object -- this
+// way Object identity can be done by string comparison.
 
-Hashtable reflectObjTable;
+Hashtable reflectObjTable = new Hashtable();
 
-/*
- * Counter used for reflect object id's
- */
+// Counter used for reflect object id's
 
-long reflectObjCount;
+long reflectObjCount = 0;
 
-/*
- * The Notifier associated with this Interp.
- */
+// The Notifier associated with this Interp.
 
 private Notifier notifier;
 
-/*
- * Hash table for associating data with this interpreter. Cleaned up
- * when this interpreter is deleted.
- */
+// Hash table for associating data with this interpreter. Cleaned up
+// when this interpreter is deleted.
 
 Hashtable assocDataTab;
+
+// Used ONLY by JavaImportCmd
+Hashtable[] importTable = {new Hashtable(), new Hashtable()};
+
 
 
 /*
@@ -104,7 +103,7 @@ Interp(
 
     notifier = Notifier.getNotifierForThread(Thread.currentThread());
     notifier.preserve();
-    ReflectObject.init(this);
+    //ReflectObject.init(this);
 }
 
 /*
@@ -133,7 +132,8 @@ Interp()
     notifier = Notifier.getNotifierForThread(Thread.currentThread());
     notifier.preserve();
 
-    ReflectObject.init(this);
+    //ReflectObject.init(this);
+
     if (init(interpPtr) != TCL.OK) {
 	String result = getResult().toString();
 	dispose();
@@ -182,9 +182,7 @@ create();
 public void
 dispose()
 {
-    /*
-     * Remove all the assoc data tied to this interp.
-     */
+    // Remove all the assoc data tied to this interp.
 	
     if (assocDataTab != null) {
 	for (Enumeration e = assocDataTab.keys(); e.hasMoreElements();) {
@@ -196,18 +194,14 @@ dispose()
 	assocDataTab = null;
     }
 
-    /*
-     * Release the notifier.
-     */
+    // Release the notifier.
 
     if (notifier != null) {
 	notifier.release();
 	notifier = null;
     }
 
-    /*
-     * Clean up the C state.
-     */
+    // Clean up the C state.
 
     if (interpPtr != 0) {
 	doDispose(interpPtr);
@@ -862,41 +856,32 @@ throws
     }
 
     try {
-	
-	//we must do a workaround for compressed files BUG in JDK1.2B4
 
-	if (System.getProperty("java.version").equals("1.2beta4") &&
-	    stream.getClass().getName().equals("java.util.zip.ZipFile$1")) {
-	  int used = 0;
-	  int cur;
-	  int size = stream.available() * 4;
+	// FIXME : ugly JDK 1.2 only hack
+	// Ugly workaround for compressed files BUG in JDK1.2
+        // this bug first showed up in  JDK1.2beta4. I have sent
+        // a number of emails to Sun but they have deemed this a "feature"
+        // of 1.2. This is flat out wrong but I do not seem to change thier
+        // minds. Because of this, there is no way to do non blocking IO
+        // on a compressed Stream in Java. (mo)
 
-	  byte[] byteArray = new byte[size];
-
-	  cur = stream.read();
-
-	  while (cur != -1) {
+        if (System.getProperty("java.version").startsWith("1.2") &&
+            stream.getClass().getName().equals("java.util.zip.ZipFile$1")) {
 	    
-	    //expand the byte array if we need to make more room
-	    if (used >= size) {
-	      byte[] oldArray = byteArray;
-	      int new_size = size * 2;
-	      
-	      byteArray = new byte[new_size];
-	      System.arraycopy(oldArray, 0, byteArray, 0, used);
-	      oldArray = null;
-	      
-	      size = new_size;
-	    }
-	    byteArray[used++] = (byte) cur;
-	    cur = stream.read();
+	  ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+	  byte[] buffer = new byte[1024];
+	  int numRead;
+
+	  // Read all data from the stream into a resizable buffer
+	  while ((numRead = stream.read(buffer, 0, buffer.length)) != -1) {
+	      baos.write(buffer, 0, numRead);
 	  }
-	  
-	  //now we are done reading the stream so eval it
-	  eval(new String(byteArray,0,used), 0);	  
+
+	  // Convert bytes into a String and eval them
+	  eval(new String(baos.toByteArray()), 0);	  
 	  
 	} else {	  
-	  //other systems do not need the compressed jar hack
+	  // Other systems do not need the compressed jar hack
 
 	  int num = stream.available();
 	  byte[] byteArray = new byte[num];
@@ -940,7 +925,7 @@ closeInputStream(
     try {
 	fs.close();
     }
-    catch (IOException e) {;}
+    catch (IOException e) {}
 }
 
 /*
@@ -1150,7 +1135,7 @@ getAssocData(
     if (assocDataTab == null) {
 	return null;
     } else {
-	return (AssocData)assocDataTab.get(name);
+	return (AssocData) assocDataTab.get(name);
     }
 }
 

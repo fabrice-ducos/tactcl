@@ -11,28 +11,28 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: TclIndex.java,v 1.3 1999/05/30 00:33:52 dejong Exp $
  */
 
 package tcl.lang;
 
 public class TclIndex extends InternalRep {
 
-    /*
+    /**
      * The variable slots for this object.
      */
     private int index;
 
-    /*
+    /**
      * Table of valid options.
      */
 
-    private String table[];
+    private String[] table;
 
     /**
      * Construct a TclIndex representation with the given index & table.
      */
-    private TclIndex(int i, String tab[]) {
+    private TclIndex(int i, String[] tab) {
 	index = i;
 	table = tab;
     }
@@ -68,7 +68,7 @@ public class TclIndex extends InternalRep {
      * @paran flags may be TCL.EXACT.
      */
 
-    public static int get(Interp interp, TclObject tobj, String table[],
+    public static int get(Interp interp, TclObject tobj, String[] table,
 	    String msg, int flags) throws TclException {
 	InternalRep rep = tobj.getInternalRep();
 
@@ -86,7 +86,6 @@ public class TclIndex extends InternalRep {
 
 	checking: {
 	    if (strLen > 0) {
-		char c = str.charAt(0);
 
 		for (int i = 0; i < tableLen; i++) {
 		    String option = table[i];
@@ -96,9 +95,8 @@ public class TclIndex extends InternalRep {
 			continue;
 		    }
 		    if (option.equals(str)) {
-			/*
-			 * Found an exact match already. Return it.
-			 */
+			// Found an exact match already. Return it.
+
 			index = i;
 			break checking;
 		    }
@@ -133,9 +131,7 @@ public class TclIndex extends InternalRep {
 	    }
 	}
 
-	/*
-	 * Create a new index object.
-	 */
+	// Create a new index object.
 
 	tobj.setInternalRep(new TclIndex(index, table));
 	return index;

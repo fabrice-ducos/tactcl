@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: BeanEvent.java,v 1.3 1999/07/06 12:19:35 mo Exp $
  *
  */
 
@@ -17,40 +17,30 @@ package tcl.lang;
 
 import java.util.*;
 
-/*
+/**
  * This class handles JavaBean events in Tcl.
  */
 
 class BeanEvent extends TclEvent {
 
-/*
- * The interpreter to execute the callback command.
- */
+// The interpreter to execute the callback command.
 
 Interp interp;
 
-/*
- * The callback command to execute when the event is fired.
- */
+// The callback command to execute when the event is fired.
 
 TclObject command;
 
-/*
- * Types of the event parameters.
- */
+// Types of the event parameters.
 
 Class paramTypes[];
 
-/*
- * The parameters for the event.
- */
+// The parameters for the event.
 
 Object params[];
 
-/*
- * If an Exception is throws during the execution of the callback
- * script, it is stored in this member variable.
- */
+// If an Exception is throws during the execution of the callback
+// script, it is stored in this member variable.
 
 Throwable exception;
 
@@ -114,15 +104,12 @@ processEvent(
 	if (code == TCL.ERROR) {
 	    exception = e;
 
-	    /*
-	     * If the exception is a ReflectException, we throw the
-	     * actual Java exception, which is stored in the
-	     * errorCode.
-	     */
+	    // If the exception is a ReflectException, we throw the
+	    // actual Java exception, which is stored in the
+	    // errorCode.
 
 	    try {
-		TclObject errCode = interp.getVar("errorCode", null,
-		        TCL.GLOBAL_ONLY|TCL.DONT_THROW_EXCEPTION);
+		TclObject errCode = interp.getVar("errorCode", null, TCL.GLOBAL_ONLY);
 
 		if (errCode != null) {
 		    TclObject elm1 = TclList.index(interp, errCode, 0);
@@ -137,12 +124,10 @@ processEvent(
 			    try {
 				obj = ReflectObject.get(interp, elm2);
 			    } catch (TclException e3) {
-				/*
-				 * The second element in errorCode
-				 * doesn't contain a Java object
-				 * handle. Let's restore the interp's
-				 * result to the old result.
-				 */
+				// The second element in errorCode
+				// doesn't contain a Java object
+				// handle. Let's restore the interp's
+				// result to the old result.
 
 				interp.setResult(oldResult);
 			    } finally {
@@ -160,11 +145,9 @@ processEvent(
 		throw new TclRuntimeError("unexpected TclException " + e2);
 	    }
 	} else if (code == TCL.RETURN) {
-	    /*
-	     * The script invoked the "return" command. We treat this
-	     * as a normal completion -- even if the command
-	     * was "return -code error".
-	     */
+	    // The script invoked the "return" command. We treat this
+	    // as a normal completion -- even if the command
+	    // was "return -code error".
 
 	} else if (code == TCL.BREAK) {
 	    exception = new TclException(interp, 
