@@ -8,11 +8,12 @@
 #  See the file "license.terms" for information on usage and 
 #  redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-#  RCS: @(#) $Id: glue.tcl,v 1.3 1998/11/04 23:46:46 hylands Exp $
+#  SCCS @(#) glue.tcl 1.3 97/10/10 16:08:07
 
-package require java
 
 # Load the package necessary to run the new commands.
+
+package require java
 
 java::load -classpath . GlueExtension
 
