@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: LrangeCmd.java,v 1.1.1.1 1998/10/14 21:09:20 cvsadmin Exp $
  *
  */
 
@@ -35,8 +35,8 @@ class LrangeCmd implements Command {
 	int first;
 	int last;
 
-	first = TclInteger.getForIndex(interp, argv[2], size-1);
-	last  = TclInteger.getForIndex(interp, argv[3], size-1);
+	first = Util.getIntForIndex(interp, argv[2], size-1);
+	last  = Util.getIntForIndex(interp, argv[3], size-1);
 
 	if (last < 0) {
 	    interp.resetResult();
