@@ -9,16 +9,11 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: javaInterp.c,v 1.2 1999/05/09 01:55:01 dejong Exp $
+ * RCS: @(#) $Id: javaInterp.c,v 1.3 1999/05/17 02:28:53 dejong Exp $
  */
 
 #include "java.h"
 #include "javaNative.h"
-
-TCLBLEND_EXTERN void Tcl_SaveResult(Tcl_Interp *interp,
-	  			    Tcl_SavedResult *statePtr);
-TCLBLEND_EXTERN void Tcl_RestoreResult(Tcl_Interp *interp,
-				       Tcl_SavedResult *statePtr);
 
 /*
  * Structure used to hold information about variable traces:

@@ -10,12 +10,10 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: winNotifier.c,v 1.1.1.1 1998/10/14 21:09:22 cvsadmin Exp $
  */
 
 #include "java.h"
-
-EXTERN void panic(char*);
 
 #define WM_WAKEUP WM_USER	/* Message that is send by
 				 * TclpAlertNotifier. */
