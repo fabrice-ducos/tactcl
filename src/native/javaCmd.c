@@ -10,7 +10,7 @@
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
  *
- * RCS: @(#) $Id: javaCmd.c,v 1.12 2002/07/20 05:36:54 mdejong Exp $
+ * RCS: @(#) $Id: javaCmd.c,v 1.13 2002/07/22 10:00:47 mdejong Exp $
  */
 
 /*
@@ -196,6 +196,7 @@ EXPORT(int,Tclblend_Init)(
     env = JavaGetEnv();
     jcache = JavaGetCache();
 
+    lvalue = 0;
     *(Tcl_Interp**)&lvalue = interp;
     local = (*env)->NewObject(env, jcache->Interp,
 	    jcache->interpC, lvalue);
