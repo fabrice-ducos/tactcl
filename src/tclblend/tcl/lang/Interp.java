@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.13 2000/05/14 23:30:44 mo Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.14 2000/05/24 08:07:49 mo Exp $
  *
  */
 
@@ -65,6 +65,10 @@ Hashtable reflectObjTable = new Hashtable();
 // Counter used for reflect object id's
 
 long reflectObjCount = 0;
+
+// Table used to store reflect hash index conflicts
+
+Hashtable reflectConflictTable = new Hashtable();
 
 // The Notifier associated with this Interp.
 
