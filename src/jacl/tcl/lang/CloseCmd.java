@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: CloseCmd.java,v 1.1.1.1 1998/10/14 21:09:19 cvsadmin Exp $
  *
  */
 
@@ -43,13 +43,6 @@ class CloseCmd implements Command {
                     + argv[1].toString() + "\"");
 	}
 
-	try {
-	    chan.close();
-	    TclIO.unregisterChannel(interp, chan);
-	} catch (IOException e) {
-	    throw new TclRuntimeError(
-		    "CloseCmd.cmdProc() Error: IOException when closing " +
-		    chan.getChanName());
-	}
+	TclIO.unregisterChannel(interp, chan);
     }
 }
