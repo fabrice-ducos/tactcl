@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: ConvertTest.java,v 1.2.1.2 1999/02/05 01:47:29 dejong Exp $
+ * RCS: @(#) $Id: ConvertTest.java,v 1.2.2.2 1999/03/18 07:30:46 mo Exp $
  *
  */
 
@@ -107,7 +107,7 @@ public class ConvertTest {
 	return null;
     }
 
-    public Object emptyStringMethod() {
+    public String emptyStringMethod() {
 	// The Tcl result should be "".
 
 	return "";
