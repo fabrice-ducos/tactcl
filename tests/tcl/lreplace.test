@@ -13,12 +13,10 @@
 #
 # RCS: @(#) $Id: lreplace.test,v 1.7 2000/04/10 17:19:01 ericm Exp $
 
-#if {[lsearch [namespace children] ::tcltest] == -1} {
-#    package require tcltest
-#    namespace import -force ::tcltest::*
-#}
-
-if {[string compare test [info procs test]] == 1} then {source defs}
+if {[lsearch [namespace children] ::tcltest] == -1} {
+    package require tcltest
+    namespace import -force ::tcltest::*
+}
 
 test lreplace-1.1 {lreplace command} {
     lreplace {1 2 3 4 5} 0 0 a
@@ -136,5 +134,5 @@ test lreplace-3.1 {lreplace won't modify shared argument objects} {
 
 # cleanup
 catch {unset foo}
-#::tcltest::cleanupTests
-#return
+::tcltest::cleanupTests
+return
