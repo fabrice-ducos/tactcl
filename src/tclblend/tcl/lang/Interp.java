@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.2.1.3 1999/02/16 07:30:02 dejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.2.2.2 1999/03/23 06:25:45 dejong Exp $
  *
  */
 
@@ -853,6 +853,7 @@ throws
 
     try {
 
+	// FIXME : ugly JDK 1.2 only hack
 	// Ugly workaround for compressed files BUG in JDK1.2
         // this bug first showed up in  JDK1.2beta4. I have sent
         // a number of emails to Sun but they have deemed this a "feature"
