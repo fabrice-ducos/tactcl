@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: java.h,v 1.15 2002/12/30 05:53:29 mdejong Exp $
+ * RCS: @(#) $Id: java.h,v 1.16 2002/12/31 05:22:15 mdejong Exp $
  */
 
 #ifndef _JAVA
@@ -108,7 +108,8 @@ typedef struct JavaInfo {
     jclass TclObject;
     jmethodID preserve;
     jmethodID release;
-    jmethodID getInternalRep;
+    jmethodID getCObjectPtr;
+    jmethodID getCObjectInst;
     jclass TclException;
     jmethodID tclexceptionC;
     jmethodID tclexceptionCcode;
@@ -118,7 +119,6 @@ typedef struct JavaInfo {
     jmethodID newCObjectInstance;
     jclass TclList;
     jmethodID newTclListInstance;
-    jfieldID objPtr;
     jclass Extension;
     jmethodID init;
     jclass BlendExtension;

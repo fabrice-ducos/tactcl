@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: CObject.java,v 1.2 2000/10/29 06:00:42 mdejong Exp $
+ * RCS: @(#) $Id: CObject.java,v 1.3 2002/12/21 04:02:54 mdejong Exp $
  */
 
 package tcl.lang;
@@ -370,6 +370,28 @@ private static final native void
 makeRef(
     long objPtr,		// Pointer to Tcl_Obj.
     TclObject object);		// Object that Tcl_Obj should refer to.
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * getCObjectPtr --
+ *
+ *	Return the objPtr member, this method should only be called
+ *	from the TclObject.getCObjectPtr() method.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+final long
+getCObjectPtr() {
+    return objPtr;
+}
 
 /*
  *----------------------------------------------------------------------
