@@ -8,7 +8,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: BlendExtension.java,v 1.2.1.2 1999/01/31 11:55:52 mo Exp $
+ * RCS: @(#) $Id: BlendExtension.java,v 1.2.1.3 1999/02/20 09:29:32 dejong Exp $
  */
 
 package tcl.lang;
@@ -37,7 +37,7 @@ init(
 throws TclException
 {
     // init Java object reflection system
-    ReflectObject.init(interp);
+    ReflectObject.ensureInit(interp);
 
     // Create the commands in the Java package
 
