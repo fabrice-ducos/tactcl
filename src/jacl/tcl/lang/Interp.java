@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.11 1999/05/17 02:21:43 dejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.12 1999/05/17 03:01:16 dejong Exp $
  *
  */
 
@@ -606,6 +606,7 @@ createCommands()
     Extension.loadOnDemand(this, "update",	  "tcl.lang.UpdateCmd");
     Extension.loadOnDemand(this, "uplevel",	  "tcl.lang.UplevelCmd");
     Extension.loadOnDemand(this, "upvar",	  "tcl.lang.UpvarCmd");
+    Extension.loadOnDemand(this, "variable",	  "tcl.lang.VariableCmd");
     Extension.loadOnDemand(this, "vwait",	  "tcl.lang.VwaitCmd");
     Extension.loadOnDemand(this, "while",	  "tcl.lang.WhileCmd");
 
