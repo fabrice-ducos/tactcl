@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: SocketCmd.java,v 1.2 1999/05/09 01:28:41 dejong Exp $
+ * RCS: @(#) $Id: SocketCmd.java,v 1.3 2001/11/16 09:39:18 mdejong Exp $
  *
  */
 
@@ -179,7 +179,7 @@ class SocketCmd implements Command {
                 // Provide client side socket support here.
                 SocketChannel sock = new SocketChannel(
                     interp, 
-                    (TclIO.RDWR|TclIO.RDONLY|TclIO.WRONLY), 
+                    TclIO.RDWR,
                     myaddr, myport, async, host, port);
 
                 TclIO.registerChannel(interp, sock);
