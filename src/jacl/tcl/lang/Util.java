@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: Util.java,v 1.7 2000/03/17 23:31:30 mo Exp $
+ * RCS: @(#) $Id: Util.java,v 1.8 2000/08/20 08:37:48 mo Exp $
  */
 
 package tcl.lang;
@@ -1035,16 +1035,15 @@ throws
 	    // backslash sequence.
 
 	case '\\':
+	    BackSlashResult bs = Interp.backslash(s, i, len);
 	    if (openBraces > 0) {
 		// Quotes are ignored in brace-quoted stuff
 
-		sbuf.append(c);
-		i++;
+		sbuf.append(s.substring(i, bs.nextIndex));
 	    } else {
-		BackSlashResult bs = Interp.backslash(s, i, len);
 		sbuf.append(bs.c);
-		i = bs.nextIndex;
 	    }
+	    i = bs.nextIndex;
 
 	    break;
 
