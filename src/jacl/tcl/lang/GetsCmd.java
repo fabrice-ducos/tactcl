@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: GetsCmd.java,v 1.2.2.1 1999/03/17 06:36:32 dejong Exp $
  *
  */
 
@@ -32,10 +32,9 @@ class GetsCmd implements Command {
     public void cmdProc(Interp interp, TclObject argv[])
             throws TclException {
 
-	boolean writeToVar = false;  /* If true write to var passes as arg */
-	String  varName    = "";     /* The variable to write value to */
-	Channel chan;                /* The channel being operated on this 
-				      * method */
+	boolean writeToVar = false;  // If true write to var passes as arg
+	String  varName    = "";     // The variable to write value to
+	Channel chan;                // The channel being operated on
 
 	if ((argv.length < 2) || (argv.length > 3)) {
 	    throw new TclNumArgsException(interp, 1, argv, 
@@ -53,7 +52,7 @@ class GetsCmd implements Command {
                     + argv[1].toString() + "\"");
 	}
 
-	try { 
+	try {
 	    String inStr = chan.read(interp, TclIO.READ_LINE, 0);
  	    if (writeToVar) {
 	        interp.setVar(varName, TclString.newInstance(inStr), 0);
