@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: JavaInfoCmd.java,v 1.2.1.2 1999/01/30 07:27:08 mo Exp $
+ * RCS: @(#) $Id: JavaInfoCmd.java,v 1.3 1999/05/09 21:59:47 dejong Exp $
  */
 
 package tcl.lang;
@@ -384,7 +384,7 @@ throws
 
     Field[] fieldArray;
     try {
-	fieldArray = c.getFields();
+	fieldArray = FieldSig.getAccessibleFields(c);
     } catch (SecurityException e) {
 	throw new TclException(interp, e.toString());
     }
