@@ -8,7 +8,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: BlendExtension.java,v 1.19 2000/05/14 23:21:46 mo Exp $
+ * RCS: @(#) $Id: BlendExtension.java,v 1.20 2002/07/20 05:39:32 mdejong Exp $
  */
 
 package tcl.lang;
@@ -137,7 +137,7 @@ throws TclException
     // win/makefile.vc
     // unix/configure.in
 
-    interp.eval("package provide java 1.3.0");
+    interp.eval("package provide java 1.3.1");
 
 }
 
