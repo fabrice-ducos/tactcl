@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TclIO.java,v 1.7 2001/12/24 08:01:12 mdejong Exp $
+ * RCS: @(#) $Id: TclIO.java,v 1.8 2002/01/21 06:09:36 mdejong Exp $
  *
  */
 
@@ -30,6 +30,8 @@ class TclIO {
     static final int RDWR   = 4;
     static final int APPEND = 8;
     static final int CREAT  = 16;
+    static final int EXCL   = 32;
+    static final int TRUNC  = 64;
 
     static final int BUFF_FULL  = 0;
     static final int BUFF_LINE  = 1;
