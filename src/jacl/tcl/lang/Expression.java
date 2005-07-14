@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Expression.java,v 1.10 2003/02/04 00:35:41 mdejong Exp $
+ * RCS: @(#) $Id: Expression.java,v 1.11 2005/07/14 00:43:50 mdejong Exp $
  *
  */
 
@@ -599,6 +599,9 @@ class Expression {
 		value2 = ExprGetValue(interp, precTable[operator]);
 	    }
 
+	    if (value2 == null) {
+		SyntaxError(interp);
+	    }
 
 	    if ((m_token < MULT) && (m_token != VALUE)
 		    && (m_token != END) && (m_token != COMMA)
