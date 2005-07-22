@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Shell.java,v 1.13 2003/03/13 22:28:11 mdejong Exp $
+ * RCS: @(#) $Id: Shell.java,v 1.14 2004/09/18 22:15:27 mdejong Exp $
  */
 
 package tcl.lang;
@@ -465,7 +465,7 @@ private void getLine() {
                 //        " bytes can be read from System.in");
                 //}
 
-		Thread.currentThread().sleep(100);
+		Thread.sleep(100);
             }
 	} catch (InterruptedException e) {
 	    System.exit(0);

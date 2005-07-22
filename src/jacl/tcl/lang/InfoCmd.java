@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: InfoCmd.java,v 1.8 2001/11/16 23:57:13 mdejong Exp $
+ * RCS: @(#) $Id: InfoCmd.java,v 1.9 2004/09/18 22:28:29 mdejong Exp $
  *
  */
 
@@ -414,7 +414,7 @@ class InfoCmd implements Command {
 	    throw new TclNumArgsException(interp, 2, objv, "command");
 	}
 
-	interp.setResult(interp.commandComplete(objv[2].toString()));
+	interp.setResult(Interp.commandComplete(objv[2].toString()));
 	return;
     }
 
