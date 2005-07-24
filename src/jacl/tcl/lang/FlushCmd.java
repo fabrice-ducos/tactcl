@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: FlushCmd.java,v 1.1.1.1 1998/10/14 21:09:18 cvsadmin Exp $
  *
  */
 
@@ -47,6 +47,7 @@ class FlushCmd implements Command {
 	try {
 	    chan.flush(interp);
 	} catch (IOException e) {
+	    e.printStackTrace();
 	    throw new TclRuntimeError(
 		    "FlushCmd.cmdProc() Error: IOException when flushing " +
 		    chan.getChanName());
