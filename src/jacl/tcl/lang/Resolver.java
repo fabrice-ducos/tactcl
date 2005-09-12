@@ -11,7 +11,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: Resolver.java,v 1.1 2001/05/05 22:38:13 mdejong Exp $
  */
 
 package tcl.lang;
@@ -29,7 +29,7 @@ public interface Resolver {
     resolveCmd (
 	Interp interp,			// The current interpreter.
 	String name,			// Command name to resolve.
-	NamespaceCmd.Namespace context,	// The namespace to look in.
+	Namespace context,		// The namespace to look in.
 	int flags)			// 0 or TCL.LEAVE_ERR_MSG.
     throws
 	TclException;		// Tcl exceptions are thrown for Tcl errors.
@@ -38,7 +38,7 @@ public interface Resolver {
     resolveVar (
 	Interp interp,			// The current interpreter.
 	String name,			// Variable name to resolve.
-	NamespaceCmd.Namespace context,	// The namespace to look in.
+	Namespace context,		// The namespace to look in.
 	int flags)			// 0 or TCL.LEAVE_ERR_MSG.
     throws
 	TclException;		// Tcl exceptions are thrown for Tcl errors.

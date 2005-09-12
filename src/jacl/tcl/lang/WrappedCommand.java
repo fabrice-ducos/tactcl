@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: WrappedCommand.java,v 1.2 1999/08/05 03:42:05 mo Exp $
+ * RCS: @(#) $Id: WrappedCommand.java,v 1.3 2005/09/11 20:56:57 mdejong Exp $
  */
 
 package tcl.lang;
@@ -40,7 +40,7 @@ class WrappedCommand {
                       // This name is NOT fully qualified.
 
     public
-    NamespaceCmd.Namespace ns; // The namespace where the command is located
+    Namespace ns;     // The namespace where the command is located
 
     public
     Command cmd;      // The actual Command interface that we are wrapping.

@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.1 2000/08/20 06:08:43 mo Exp $
  *
  */
 
@@ -347,7 +347,7 @@ throws
 
     masterInterp.createCommand(pathString, slaveInterp.slave);
     slaveInterp.slave.interpCmd =
-	NamespaceCmd.findCommand(masterInterp, pathString, null, 0);
+	Namespace.findCommand(masterInterp, pathString, null, 0);
 
     masterInterp.slaveTable.put(pathString, slaveInterp.slave);
 
