@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ExprCmd.java,v 1.2.1.1 1999/01/29 20:52:08 mo Exp $
+ * RCS: @(#) $Id: ExprCmd.java,v 1.2 1999/05/08 23:59:30 dejong Exp $
  *
  */
 
@@ -32,8 +32,7 @@ class ExprCmd implements Command {
 	}
 
 	if (argv.length == 2) {
-	    interp.setResult(
-		interp.expr.eval(interp, argv[1].toString()) );
+	    interp.expr.evalSetResult(interp, argv[1].toString());
 	} else {
 	    StringBuffer sbuf = new StringBuffer();
 	    sbuf.append(argv[1].toString());
@@ -41,8 +40,7 @@ class ExprCmd implements Command {
 		sbuf.append(' ');
 		sbuf.append(argv[i].toString());
 	    }
-	    interp.setResult(
-			interp.expr.eval(interp, sbuf.toString()) );
+	    interp.expr.evalSetResult(interp, sbuf.toString());
 	}
     }
 }
