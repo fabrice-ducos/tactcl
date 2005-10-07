@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: LlengthCmd.java,v 1.1.1.1 1998/10/14 21:09:21 cvsadmin Exp $
  *
  */
 
@@ -34,8 +34,8 @@ class LlengthCmd implements Command {
 	if (argv.length != 2) {
 	    throw new TclNumArgsException(interp, 1, argv, "list");
         }
-	interp.setResult(TclInteger.newInstance(TclList.getLength(interp,
-		argv[1])));
+	interp.setResult(TclList.getLength(interp,
+		argv[1]));
     }
 }
 

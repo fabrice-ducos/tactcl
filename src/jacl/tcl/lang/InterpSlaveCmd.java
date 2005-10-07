@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.1 2000/08/20 06:08:43 mo Exp $
+ * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.2 2005/09/12 00:00:50 mdejong Exp $
  *
  */
 
@@ -535,13 +535,12 @@ throws
     }
 
     TclObject result = TclList.newInstance();
-    interp.setResult(result);
-
     Enumeration hiddenCmds = slaveInterp.hiddenCmdTable.keys();
     while (hiddenCmds.hasMoreElements()) {
 	String cmdName = (String) hiddenCmds.nextElement();
 	TclList.append(interp, result, TclString.newInstance(cmdName));
     }
+    interp.setResult(result);
 }
 
 /*
