@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: StringCmd.java,v 1.6 2005/09/30 02:12:17 mdejong Exp $
+ * RCS: @(#) $Id: StringCmd.java,v 1.7 2005/10/07 06:50:09 mdejong Exp $
  *
  */
 
@@ -365,7 +365,7 @@ throws
 		case STR_IS_TRUE:
 		case STR_IS_FALSE: {
 		    try {
-		        boolean i = TclBoolean.get(null, obj);
+		        boolean i = Util.getBoolean(null, string1);
 		        if (((index == STR_IS_TRUE) && !i) ||
 		                ((index == STR_IS_FALSE) && i)) {
 		            result = false;

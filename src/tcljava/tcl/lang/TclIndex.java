@@ -11,7 +11,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TclIndex.java,v 1.4 2000/10/29 06:00:42 mdejong Exp $
+ * RCS: @(#) $Id: TclIndex.java,v 1.5 2003/01/10 01:35:58 mdejong Exp $
  */
 
 package tcl.lang;
@@ -144,5 +144,13 @@ public class TclIndex implements InternalRep {
 	tobj.setInternalRep(new TclIndex(index, table));
 	return index;
     }
+
+    /**
+     * Invoked only when testing the TclIndex implementation in TestObjCmd.java
+     */
+    void testUpdateIndex(int index) {
+        this.index = index;
+    }
+
 }
 
