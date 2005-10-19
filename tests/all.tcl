@@ -7,7 +7,7 @@
 # Copyright (c) 1998-2000 Ajuba Solutions.
 # All rights reserved.
 # 
-# RCS: @(#) $Id: all.tcl,v 1.3 2004/10/01 06:08:31 mdejong Exp $
+# RCS: @(#) $Id: all.tcl,v 1.4 2005/09/11 20:56:58 mdejong Exp $
 
 if {[lsearch [namespace children] ::tcltest] == -1} {
 
@@ -79,6 +79,9 @@ if {$tcl_platform(platform) == "java"} {
     foreach test [lsort -dictionary [glob -nocomplain itcl/*.test]] {
         lappend tests $test
     }
+    foreach test [lsort -dictionary [glob -nocomplain tclparser/*.test]] {
+        lappend tests $test
+    }
 } elseif {[info exists env(TCLBLEND_RUN_ALL_TESTS)]} {
     # run the Tcl Blend tests
 
@@ -93,7 +96,21 @@ if {$tcl_platform(platform) == "java"} {
     set tests [lsort -dictionary $tests]
 }
 
-set tests [lsort -dictionary $tests]
+
+# Run only parser tests
+if {0} {
+    if {$tcl_platform(platform) == "java"} {
+        set tcltest::verbose pb
+    } else {
+        configure -verbose pb
+    }
+
+    set tests [list]
+    foreach test [lsort -dictionary [glob -nocomplain tclparser/*.test]] {
+        lappend tests $test
+    }
+}
+
 
 foreach i $tests {
 

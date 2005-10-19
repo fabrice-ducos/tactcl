@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.53 2005/09/30 02:12:17 mdejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.54 2005/10/07 06:50:09 mdejong Exp $
  *
  */
 
@@ -814,6 +814,20 @@ createCommands()
 
     try {
         eval("package ifneeded Itcl 3.3 {jaclloaditcl ; package provide Itcl 3.3}");
+    } catch (TclException e) {
+	System.out.println(getResult());
+	e.printStackTrace();
+	throw new TclRuntimeError("unexpected TclException: " + e);
+    }
+
+    // Load the parser package as a result of the user
+    // running "package require parser".
+
+    Extension.loadOnDemand(this, "jaclloadparser",
+        "tcl.lang.TclParserExtension");
+
+    try {
+        eval("package ifneeded parser 1.4 {jaclloadparser}");
     } catch (TclException e) {
 	System.out.println(getResult());
 	e.printStackTrace();
