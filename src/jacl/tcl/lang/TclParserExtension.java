@@ -46,8 +46,8 @@ TclParserExtension extends Extension implements Command {
     }
 
     /*
-     * Invoked when [package require Itcl] is run from Tcl.
-     * This method is needed so that Itcl can be loaded
+     * Invoked when [package require parser] is run from Tcl.
+     * This method is needed so that parser can be loaded
      * without having first loaded the Java package.
      */
 
