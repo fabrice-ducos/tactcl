@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.2 2005/09/12 00:00:50 mdejong Exp $
+ * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.3 2005/10/07 06:50:09 mdejong Exp $
  *
  */
 
@@ -418,8 +418,8 @@ throws
         result = e.getCompletionCode();
     }
 
-    slaveInterp.release();
     interp.transferResult(slaveInterp, result);
+    slaveInterp.release();
 }
 
 /*
@@ -596,8 +596,8 @@ throws
         result = e.getCompletionCode();
     }
 
-    slaveInterp.release();
     interp.transferResult(slaveInterp, result);
+    slaveInterp.release();
 }
 
 /*
