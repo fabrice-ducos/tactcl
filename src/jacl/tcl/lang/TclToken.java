@@ -13,7 +13,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: TclToken.java,v 1.2 1999/05/09 01:34:50 dejong Exp $
+ * RCS: @(#) $Id: TclToken.java,v 1.3 2005/10/19 23:37:38 mdejong Exp $
  */
 
 package tcl.lang;
@@ -26,6 +26,8 @@ class TclToken {
 
 
 char[] script_array;
+// FIXME: Might be better to rename this as start so that
+// the Java impl looks more like the C impl in source code.
 int    script_index;
 
 // Number of bytes in token. 
