@@ -16,7 +16,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: Namespace.java,v 1.14 2005/09/11 20:56:57 mdejong Exp $
+ * RCS: @(#) $Id: Namespace.java,v 1.1 2005/09/12 00:00:50 mdejong Exp $
  */
 
 package tcl.lang;
