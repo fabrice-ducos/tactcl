@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.61 2005/11/22 01:46:21 mdejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.62 2005/11/22 05:17:14 mdejong Exp $
  *
  */
 
@@ -1670,7 +1670,7 @@ createCommand(
 	ns   = gnfqnr.ns;
 	tail = gnfqnr.simpleName;
 
-       if ((ns == null) || (tail == null)) {
+	if ((ns == null) || (tail == null)) {
 	    return;
 	}
     } else {
