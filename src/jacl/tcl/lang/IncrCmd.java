@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: IncrCmd.java,v 1.2 1999/06/30 00:13:36 mo Exp $
+ * RCS: @(#) $Id: IncrCmd.java,v 1.2 1999/08/03 02:56:23 mo Exp $
  *
  */
 
@@ -51,7 +51,7 @@ class IncrCmd implements Command {
 
 	// Increment the variable's value.
 	
-	newValue = Var.incrVar(interp, objv[1], null, incrAmount,
+	newValue = Var.incrVar(interp, objv[1].toString(), null, incrAmount,
 				  TCL.LEAVE_ERR_MSG);
 	
 	// FIXME: we need to look at this exception throwing problem again
