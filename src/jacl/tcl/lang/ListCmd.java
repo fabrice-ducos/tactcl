@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id$
+ * RCS: @(#) $Id: ListCmd.java,v 1.1.1.1 1998/10/14 21:09:19 cvsadmin Exp $
  *
  */
 
@@ -26,15 +26,15 @@ class ListCmd implements Command {
 	    throws TclException {
 	TclObject list = TclList.newInstance();
 
-	list.preserve();
 	try {
 	    for (int i = 1; i<argv.length; i++) {
 		TclList.append(interp, list, argv[i]);
 	    }
 	    interp.setResult(list);
-	} finally {
-	    list.release();
-	}
+        } catch (TclException te) {
+            list.release();
+            throw te;
+        }
     }
 }
 
