@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: LindexCmd.java,v 1.2 2000/03/17 23:31:30 mo Exp $
+ * RCS: @(#) $Id: LindexCmd.java,v 1.3 2005/10/21 21:32:06 mdejong Exp $
  *
  */
 
@@ -102,6 +102,7 @@ throws
  *----------------------------------------------------------------------
  */
 
+static
 TclObject
 TclLindexList(
     Interp interp,		// Tcl interpreter
@@ -219,6 +220,7 @@ TclLindexList(
  *----------------------------------------------------------------------
  */
 
+static
 TclObject
 TclLindexFlat(
     Interp interp,		// Tcl interpreter
