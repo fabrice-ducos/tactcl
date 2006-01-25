@@ -23,7 +23,7 @@
  *           mmclennan@lucent.com
  *           http://www.tcltk.com/itcl
  *
- *     RCS:  $Id: Class.java,v 1.1 2005/09/11 20:56:57 mdejong Exp $
+ *     RCS:  $Id: Class.java,v 1.2 2005/09/12 00:00:50 mdejong Exp $
  * ========================================================================
  *           Copyright (c) 1993-1998  Lucent Technologies, Inc.
  * ------------------------------------------------------------------------
@@ -545,7 +545,6 @@ FreeClass(
         }
     }
     ItclAccess.deleteVars(cdefn.interp, varTable);
-    cdefn.resolveVars.clear();
     cdefn.resolveVars = null;
 
     //  Tear down the virtual method table...
