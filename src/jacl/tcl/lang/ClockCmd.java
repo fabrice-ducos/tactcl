@@ -12,7 +12,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ClockCmd.java,v 1.5 2000/08/20 06:36:14 mo Exp $
+ * RCS: @(#) $Id: ClockCmd.java,v 1.6 2003/02/03 04:48:46 mdejong Exp $
  *
  */
 
@@ -1457,14 +1457,14 @@ GetTokens (
 {
     ParsePosition parsePos = new ParsePosition(0);
     ClockToken dt;
-    Vector tokenVector = new Vector(in.length());
+    ArrayList tokens = new ArrayList(in.length());
 
     while ((dt = GetNextToken(in, parsePos)) != null) {
-        tokenVector.addElement(dt);
+        tokens.add(dt);
     }
 
-    ClockToken[] tokenArray = new ClockToken[tokenVector.size()];
-    tokenVector.copyInto(tokenArray);
+    ClockToken[] tokenArray = { (ClockToken) null };
+    tokenArray = (ClockToken []) tokens.toArray( tokenArray );
 
     if (debug) {
         for (int ix = 0; ix < tokenArray.length; ix++) {

@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: InterpAliasCmd.java,v 1.3 2005/10/07 06:50:09 mdejong Exp $
+ * RCS: @(#) $Id: InterpAliasCmd.java,v 1.4 2005/10/20 21:35:55 mdejong Exp $
  *
  */
 
@@ -347,9 +347,9 @@ throws
     TclException
 {
     TclObject result = TclList.newInstance();
-    Enumeration aliases = slaveInterp.aliasTable.elements();
-    while (aliases.hasMoreElements()) {
-	InterpAliasCmd alias = (InterpAliasCmd) aliases.nextElement();
+    for (Iterator iter = slaveInterp.aliasTable.entrySet().iterator(); iter.hasNext() ; ) {
+	Map.Entry entry = (Map.Entry) iter.next();
+	InterpAliasCmd alias = (InterpAliasCmd) entry.getValue();
 	TclList.append(interp, result, alias.name);
     }
     interp.setResult(result);
