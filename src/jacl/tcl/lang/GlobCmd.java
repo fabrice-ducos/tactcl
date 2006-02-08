@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: GlobCmd.java,v 1.4 1999/05/09 00:21:40 dejong Exp $
+ * RCS: @(#) $Id: GlobCmd.java,v 1.5 1999/08/28 03:55:18 mo Exp $
  *
  */
 
@@ -755,8 +755,8 @@ addHiddenToDirList(
 
     
     try {
-	fullListing = (String[]) Array.newInstance(
-	    Class.forName("java.lang.String"), arrayLen + 2);
+	fullListing = (String[]) Array.newInstance(String.class,
+	    arrayLen + 2);
     } catch (Exception e) {
 	return dirListing;    
     }
