@@ -5,7 +5,7 @@
 #  redistribution of this file, and for a DISCLAIMER OF ALL
 #   WARRANTIES.
 #
-#  RCS: @(#) $Id: File.tcl,v 1.19 2005/11/23 21:19:14 mdejong Exp $
+#  RCS: @(#) $Id: tjc.tcl,v 1.1 2005/12/20 23:00:11 mdejong Exp $
 #
 #
 
@@ -62,6 +62,7 @@ if {[info exists env(TJC_LIBRARY)]} {
     set cwd [pwd]
     cd $tjc_dir/../..
     set _tjc(root) [pwd]
+    set _tjc(jardir) $tjc_dir
     if {$debug} {
         puts "set _tjc(root) to \"$_tjc(root)\""
     }
