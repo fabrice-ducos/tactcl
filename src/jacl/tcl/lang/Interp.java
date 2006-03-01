@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.69 2006/02/12 21:22:49 mdejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.70 2006/02/16 03:03:22 mdejong Exp $
  *
  */
 
@@ -144,7 +144,7 @@ int nestLevel;
 
 // Used to catch infinite loops in Parser.eval2.
 
-int maxNestingDepth;
+final int maxNestingDepth = 1000;
 
 // Flags used when evaluating a command.
 
@@ -433,7 +433,6 @@ Interp()
 
     expr             = new Expression();
     nestLevel        = 0;
-    maxNestingDepth  = 1000;
 
     frame            = null;
     varFrame         = null;
@@ -2611,7 +2610,6 @@ throws
 
         final int llength = TclList.getLength(this, tobj);
         objv = Parser.grabObjv(this, llength);
-        java.util.Arrays.fill(objv, null);
         for (int i=0; i < llength; i++) {
             objv[i] = TclList.index(this, tobj, i);
             objv[i].preserve();
@@ -2676,10 +2674,9 @@ throws
                 TclObject obj = objv[i];
                 if (obj != null) {
                     obj.release();
-                    objv[i] = null;
                 }
             }
-            Parser.releaseObjv(this, objv);
+            Parser.releaseObjv(this, objv, objv.length);
         }
         tobj.release();
     }

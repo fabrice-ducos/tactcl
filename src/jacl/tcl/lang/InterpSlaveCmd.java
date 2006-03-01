@@ -9,7 +9,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.4 2005/10/20 21:35:55 mdejong Exp $
+ * RCS: @(#) $Id: InterpSlaveCmd.java,v 1.5 2006/01/26 19:49:18 mdejong Exp $
  *
  */
 
@@ -358,7 +358,7 @@ throws
     
     // Inherit the recursion limit.
 
-    slaveInterp.maxNestingDepth = masterInterp.maxNestingDepth;
+    //slaveInterp.maxNestingDepth = masterInterp.maxNestingDepth;
 
     if (safe) {
 	try {
