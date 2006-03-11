@@ -8,7 +8,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: TestEvalObjvCmd.java,v 1.2 2000/05/14 23:10:21 mo Exp $
+ * RCS: @(#) $Id: TestEvalExCmd.java,v 1.1 2005/10/29 00:27:43 mdejong Exp $
  */
 package tcl.lang;
 

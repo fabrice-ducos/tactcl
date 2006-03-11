@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: TestExprParserCmd.java,v 1.1 1999/05/10 04:08:51 dejong Exp $
+ * RCS: @(#) $Id: TestExprParserCmd.java,v 1.1 2005/10/29 00:27:43 mdejong Exp $
  */
 
 package tcl.lang;
