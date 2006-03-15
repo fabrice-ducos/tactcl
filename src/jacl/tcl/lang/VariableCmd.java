@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: VariableCmd.java,v 1.4 2005/10/07 06:50:09 mdejong Exp $
+ * RCS: @(#) $Id: VariableCmd.java,v 1.5 2005/12/29 21:32:25 mdejong Exp $
  */
 
 package tcl.lang;
@@ -120,7 +120,7 @@ class VariableCmd implements Command {
 
 		Var.makeUpvar(interp, null,
 			  varName, null, TCL.NAMESPACE_ONLY,
-			  varTail, 0);
+			  varTail, 0, -1);
 	    }
 	}
     }
