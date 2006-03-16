@@ -6,7 +6,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# RCS: @(#) $Id: compiledLocals.test,v 1.4 2005/11/21 02:02:41 mdejong Exp $
+# RCS: @(#) $Id: compiledLocals.test,v 1.1 2006/03/15 23:07:24 mdejong Exp $
 
 if {[lsearch [namespace children] ::tcltest] == -1} {
     package require tcltest
