@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ExprValue.java,v 1.4 2005/11/17 08:24:20 mdejong Exp $
+ * RCS: @(#) $Id: ExprValue.java,v 1.5 2006/02/10 02:20:12 mdejong Exp $
  *
  */
 
@@ -60,6 +60,11 @@ public final class ExprValue {
     public
     ExprValue(String s) {
         setStringValue(s);
+    }
+
+    public
+    ExprValue(boolean b) {
+        setIntValue(b);
     }
 
     public
