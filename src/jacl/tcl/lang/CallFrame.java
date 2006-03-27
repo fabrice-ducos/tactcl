@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: CallFrame.java,v 1.15 2006/03/15 23:07:22 mdejong Exp $
+ * RCS: @(#) $Id: CallFrame.java,v 1.16 2006/03/24 21:33:49 mdejong Exp $
  *
  */
 
@@ -95,7 +95,7 @@ class CallFrame {
      * array variables could appear in this array.
      */
 
-    Var.CompiledLocal[] compiledLocals;
+    Var[] compiledLocals;
     String[] compiledLocalsNames;
 
     /**
