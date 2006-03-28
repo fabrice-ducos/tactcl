@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.32 2006/01/26 19:49:19 mdejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.33 2006/02/08 23:53:47 mdejong Exp $
  *
  */
 
@@ -1101,8 +1101,16 @@ evalFile(
 throws 
     TclException
 {
-    // FIXME : need implementation
-    throw new TclRuntimeError("Not implemented yet.");
+    // Create pure list object, then evaluate the
+    // list object as a command.
+
+    TclObject cmd = TclList.newInstance();
+    TclList.append(this, cmd,
+        TclString.newInstance("source"));
+    TclList.append(this, cmd,
+        TclString.newInstance(s));
+
+    eval(cmd, 0);
 }
 
 /*
