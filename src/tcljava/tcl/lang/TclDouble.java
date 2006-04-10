@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TclDouble.java,v 1.4 2005/09/30 02:12:17 mdejong Exp $
+ * RCS: @(#) $Id: TclDouble.java,v 1.5 2006/04/07 22:33:41 mdejong Exp $
  *
  */
 
@@ -48,9 +48,9 @@ private double value;
 
 private
 TclDouble(
-    double i)		// Initial value.
+    double d)		// Initial value.
 {
-    value = i;
+    value = d;
 
     if (TclObject.saveObjRecords) {
         String key = "TclDouble";
