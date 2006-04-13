@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.73 2006/04/06 00:25:26 mdejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.74 2006/04/11 00:59:19 mdejong Exp $
  *
  */
 
@@ -469,7 +469,6 @@ Interp()
     flags            = 0;
     isSafe           = false;
     assocData        = null;
-
 
     globalNs         = null; // force creation of global ns below
     globalNs         = Namespace.createNamespace(this, null, null);
@@ -4743,7 +4742,11 @@ getResourceAsStream(String resName)
         // the env(TCL_CLASSPATH).
 
 	return classLoader.getResourceAsStream(resName);
-    } catch (SecurityException e2) {
+    } catch (PackageNameException e) {
+        // Failed attempt to load resource with java or tcl prefix.
+
+        return null;
+    } catch (SecurityException e) {
         // Resource loading does not work in an applet, and Jacl
         // has never really worked as an applet anyway.
 
