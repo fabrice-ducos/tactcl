@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TimerHandler.java,v 1.1.1.1 1998/10/14 21:09:21 cvsadmin Exp $
+ * RCS: @(#) $Id: TimerHandler.java,v 1.2 2006/01/26 19:49:18 mdejong Exp $
  *
  */
 
@@ -75,12 +75,12 @@ TimerHandler(
     int i;
 
     atTime = System.currentTimeMillis() + milliseconds;
-    notifier = (Notifier)n;
+    notifier = n;
     isCancelled = false;
 
     /*
-     * Add the event to the queue in the correct position (ordered by
-     * event firing time).
+     * Add timer event to the pending timer list in the correct
+     * position (ordered by event firing time).
      *
      * NOTE: it's very important that if two timer handlers have the
      * same atTime, the newer timer handler always goes after the
