@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: FuncSig.java,v 1.13 2006/01/26 19:49:19 mdejong Exp $
+ * RCS: @(#) $Id: FuncSig.java,v 1.14 2006/04/13 07:36:50 mdejong Exp $
  *
  */
 
@@ -1130,9 +1130,13 @@ getAccessibleConstructors(
 	}
 
 	if (skipped_any) {
-	    constructors = new Constructor[alist.size()];
-	    for (int i=0; i < constructors.length; i++) {
-                constructors[i] = (Constructor) alist.get(i);
+            if (alist == null) {
+                constructors = new Constructor[0];
+            } else {
+	        constructors = new Constructor[alist.size()];
+	        for (int i=0; i < constructors.length; i++) {
+                    constructors[i] = (Constructor) alist.get(i);
+                }
             }
 	}
 	return constructors;

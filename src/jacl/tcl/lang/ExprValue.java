@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ExprValue.java,v 1.5 2006/02/10 02:20:12 mdejong Exp $
+ * RCS: @(#) $Id: ExprValue.java,v 1.6 2006/03/27 21:42:55 mdejong Exp $
  *
  */
 
@@ -136,7 +136,7 @@ public final class ExprValue {
     public
     final
     boolean getBooleanValue(Interp interp)
-        throws TclException    // Raise TclException is string is not a boolean
+        throws TclException    // Raise TclException if string is not a boolean
     {
         switch (type) {
             case ExprValue.INT:
