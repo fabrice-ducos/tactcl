@@ -5,7 +5,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TJC.java,v 1.22 2006/03/27 21:42:55 mdejong Exp $ *
+ * RCS: @(#) $Id: TJC.java,v 1.23 2006/04/07 22:33:41 mdejong Exp $ *
  */
 
 // Runtime support for TJC compiler implementation.
@@ -132,7 +132,7 @@ public class TJC {
     // is executing. This method should be invoked from a catch
     // block around the body code for a proc. This method could
     // handle the exception and stop if from propagating in the
-    // case of a return, or it could allow it to propogate for
+    // case of a return, or it could allow it to propagate for
     // a normal error case. The logic in this method is copied
     // from Procedure.cmdProc().
 
@@ -1075,6 +1075,8 @@ public class TJC {
             interp.nestLevel--;
             interp.varFrame = savedVarFrame;
             interp.release();
+
+            interp.checkInterrupted();
         }
     }
 
