@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ScanCmd.java,v 1.3 2005/09/30 02:12:17 mdejong Exp $
+ * RCS: @(#) $Id: ScanCmd.java,v 1.4 2005/11/19 01:09:06 mdejong Exp $
  *
  */
 
@@ -289,11 +289,11 @@ class ScanCmd implements Command {
 			    if (widthFlag) {
 			        strd = interp.strtodResult;
 			        Util.strtod(new String(scanArr,
-                                          0, width+scanIndex), scanIndex, strd);
+                                          0, width+scanIndex), scanIndex, -1, strd);
 			    } else {
 			        strd = interp.strtodResult;
 			        Util.strtod(new String(scanArr), 
-				        scanIndex, strd);
+				        scanIndex, -1, strd);
 			    }
 			    if (strd.errno != 0) {
 			        scanOK = false;
