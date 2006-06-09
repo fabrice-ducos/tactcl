@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TclInteger.java,v 1.14 2006/06/07 17:16:10 mdejong Exp $
+ * RCS: @(#) $Id: TclInteger.java,v 1.15 2006/06/08 07:44:51 mdejong Exp $
  *
  */
 
@@ -69,9 +69,7 @@ public class TclInteger implements InternalRep {
      */
 
     public static TclObject newInstance(int i) {
-	TclObject tobj = new TclObject(dummy);
-	tobj.ivalue = i;
-	return tobj;
+	return new TclObject(i);
     }
 
     /**
