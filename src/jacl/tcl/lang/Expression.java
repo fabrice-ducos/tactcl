@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Expression.java,v 1.32 2006/06/07 17:16:10 mdejong Exp $
+ * RCS: @(#) $Id: Expression.java,v 1.33 2006/06/12 21:33:02 mdejong Exp $
  *
  */
 
@@ -336,7 +336,7 @@ class Expression {
         // If the TclObject already has an integer, boolean,
         // or floating point internal representation, use it.
 
-        if (obj.isIntegerType()) {
+        if (obj.isIntType()) {
             // A TclObject is a "pure" number if it
             // was created from a primitive type and
             // has no string rep. Pass the string rep
@@ -791,7 +791,8 @@ class Expression {
 		break;
 	    case NOT:
 		if (value.isIntType()) {
-		    value.setIntValue( value.getIntValue() == 0 );
+		    // Inlined method does not reset type to INT
+		    value.optIntUnaryNot();
 		} else if (value.isDoubleType()) {
 		    value.setIntValue( value.getDoubleValue() == 0.0 );
 		} else if (value.isStringType()) {

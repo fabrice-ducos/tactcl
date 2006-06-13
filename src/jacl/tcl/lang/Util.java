@@ -9,7 +9,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: Util.java,v 1.24 2006/06/08 07:44:51 mdejong Exp $
+ * RCS: @(#) $Id: Util.java,v 1.25 2006/06/10 04:15:59 mdejong Exp $
  */
 
 package tcl.lang;
@@ -341,7 +341,7 @@ static final int getIntForIndex(
 {
     int length, offset;
 
-    if (tobj.isIntegerType()) {
+    if (tobj.isIntType()) {
 	return TclInteger.get(interp, tobj);
     }
 
