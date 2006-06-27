@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: ExprValue.java,v 1.10 2006/06/13 06:52:47 mdejong Exp $
+ * RCS: @(#) $Id: ExprValue.java,v 1.11 2006/06/17 20:48:10 mdejong Exp $
  *
  */
 
@@ -421,6 +421,7 @@ public final class ExprValue {
 
     // Optimized integer unary logical not operation '!'
 
+    public
     final
     void optIntUnaryNot() {
         if (validate) {
@@ -433,6 +434,7 @@ public final class ExprValue {
         intValue = (intValue == 0) ? 1 : 0;
     }
 
+    public
     final
     void optIntUnaryNotNstr() {
         if (validate) {
