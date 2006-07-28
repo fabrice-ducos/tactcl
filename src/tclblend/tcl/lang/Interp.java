@@ -8,7 +8,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: Interp.java,v 1.38 2006/07/26 20:55:27 mdejong Exp $
+ * RCS: @(#) $Id: Interp.java,v 1.39 2006/07/26 23:37:19 mdejong Exp $
  *
  */
 
@@ -1018,7 +1018,9 @@ throws
     }
 
     pendingException = null;
+    tobj.preserve();
     int ccode = evalTclObject(objPtr, str, flags);
+    tobj.release();
     checkPendingException(ccode);
 }
 
