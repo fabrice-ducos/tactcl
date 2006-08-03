@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
- * RCS: @(#) $Id: JavaTestExtension.java,v 1.7 2006/06/07 01:53:51 mdejong Exp $
+ * RCS: @(#) $Id: JavaTestExtension.java,v 1.8 2006/06/17 20:48:11 mdejong Exp $
  *
  */
 
@@ -59,6 +59,7 @@ init(
     interp.createCommand("testchannel",       new TestChannelCmd());
     interp.createCommand("testvarframe",      new TestVarFrameCmd());
     interp.createCommand("testtclobjectmemory",      new TclObjectMemory());
+    interp.createCommand("testinterpdelete",      new TestInterpDeleteCmd());
 
     // Create "testobj" and friends
     TestObjCmd.init(interp);
