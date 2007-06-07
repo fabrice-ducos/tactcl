@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: SubstCmd.java,v 1.3 2003/01/09 02:15:39 mdejong Exp $
+ * RCS: @(#) $Id: SubstCmd.java,v 1.4 2005/07/22 04:47:25 mdejong Exp $
  *
  */
 
@@ -104,13 +104,7 @@ class SubstCmd implements Command {
 		i = res.nextIndex + 2;
 		result.append( res.value.toString() );
 		res.release();
-		
-	    } else if (c == '\r') {
-		/*
-		 * (ToDo) may not be portable on Mac
-		 */
-		
-		i++;
+
 	    } else if ((c == '$') && doVars) {
 		ParseResult vres = Parser.parseVar(interp,
 			s.substring(i, len));
