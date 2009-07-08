@@ -10,13 +10,11 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: LsetCmd.java,v 1.3 2009/07/07 22:46:37 rszulgo Exp $
+ * RCS: @(#) $Id: LsetCmd.java,v 1.4 2009/07/08 22:43:30 rszulgo Exp $
  *
  */
 
 package tcl.lang;
-
-import java.awt.image.IndexColorModel;
 
 /*
  * This class implements the built-in "lset" command in Tcl 8.4.19
