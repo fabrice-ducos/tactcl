@@ -7,7 +7,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: TclObjectBase.java,v 1.16 2009/07/08 22:24:33 rszulgo Exp $
+ * RCS: @(#) $Id: TclObjectBase.java,v 1.17 2009/07/10 15:36:27 rszulgo Exp $
  *
  */
 
@@ -136,6 +136,13 @@ abstract class TclObjectBase {
         return (internalRep instanceof TclDouble);
     }
 
+    // Return true if the TclObject contains a TclWideInteger.
+
+	public final 
+	boolean isWideIntType() {
+		return (internalRep instanceof TclWideInteger);
+	}
+	
     // Return true if the TclObject contains a TclList.
 
     final
