@@ -1048,7 +1048,7 @@ public class Namespace {
 	        "unknown namespace in import pattern \"" + pattern + "\"");
 	}
 	if (importNs == ns) {
-	    if (pattern.equals(simplePattern)) {
+	    if (pattern == simplePattern) {
 		throw new TclException(interp,
 	            "no namespace specified in import pattern \"" + pattern + "\"");
 	    } else {

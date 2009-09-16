@@ -1832,6 +1832,9 @@ public class TJCBench extends TJC.CompiledCommand {
         TclObject var2 = TclString.newInstance("value2");
         var2.preserve();
 
+        // Dummy ref
+        TclObject ASSIGNED = TclString.newInstance("");
+
         for (int i=0; i < 5000; i++) {
             TclObject[] objv0 = objvOnStack;
             TclObject tmp1;

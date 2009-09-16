@@ -1193,7 +1193,7 @@ throws
 	    double jdouble = TclDouble.get(interp, tclObj);
 	    float jfloat = (float) jdouble;
 
-	    if ((Double.isNaN(jdouble)) ||
+	    if ((jdouble == Double.NaN) ||
 	           (jdouble == Double.NEGATIVE_INFINITY) ||
 	           (jdouble == Double.POSITIVE_INFINITY)) {
 	        // No-op

@@ -1053,7 +1053,7 @@ FindEnsemblePart(
     nlen  = partName.length();
 
     while (last >= first) {
-        pos = (first + last) >>> 1;
+        pos = (first+last)/2;
         if (partName.charAt(0) == ensData.parts[pos].name.charAt(0)) {
             cmp = partName.substring(0, nlen).compareTo(
                 ensData.parts[pos].name);
@@ -1162,7 +1162,7 @@ FindEnsemblePartIndex(
     last  = ensData.numParts - 1;
 
     while (last >= first) {
-        pos = (first + last) >>> 1;
+        pos = (first+last)/2;
         if (partName.charAt(0) == ensData.parts[pos].name.charAt(0)) {
             cmp = partName.compareTo(ensData.parts[pos].name);
             if (cmp == 0) {

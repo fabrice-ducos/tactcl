@@ -1420,7 +1420,7 @@ public class TJC {
             // TclObject already has a string rep, check if it is a
             // ref to the interned empty string or if the len is 0.
             String s = obj.toString();
-            isEmptyString = ("".equals(s) || s.length() == 0 );
+            isEmptyString = ( s == "" || s.length() == 0 );
         }
         if (negate) {
             isEmptyString = !isEmptyString;

@@ -2021,7 +2021,7 @@ class Var {
 	throws TclException
     {
 	Var[] result;
-	Var var;
+	Var var, array;
 
 	// FIXME: what about the exception problem here?
 	result = lookupVar(interp, part1, part2, (flags | TCL.LEAVE_ERR_MSG),
@@ -2031,6 +2031,7 @@ class Var {
 	}
 
 	var = result[0];
+	array = result[1];
 
 	// Set up trace information. Set a flag to indicate that traces
 	// exists so that resolveScalar() can determine if traces
@@ -2049,6 +2050,18 @@ class Var {
 		     TCL.TRACE_ARRAY);
 
 	var.traces.add(0, rec);
+
+
+	// FIXME: is this needed ?? It was in Jacl but not 8.1
+
+	/*
+	// When inserting a trace for an array on an UNDEFINED variable,
+	// the search IDs for that array are reset.
+
+	if (array != null && var.isVarUndefined()) {
+	    array.sidVec = null;
+	}
+	*/
     }
 
     /**
