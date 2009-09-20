@@ -9,12 +9,10 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id: Util.java,v 1.26 2006/06/13 06:52:47 mdejong Exp $
+ * RCS: @(#) $Id: Util.java,v 1.31 2009/09/16 21:49:18 mdejong Exp $
  */
 
 package tcl.lang;
-
-import sunlabs.brazil.util.regexp.Regexp;
 
 import java.io.*;
 import java.util.*;
@@ -1037,8 +1035,8 @@ regExpMatch(
     TclObject pattern)   		// The regular expression.
 throws TclException
 {
-    Regexp r = TclRegexp.compile(interp, pattern, false);
-    return r.match(string, (String[]) null);
+    Regex r = TclRegexp.compile(interp, pattern, string);
+    return r.match();
 }
 
 /*
