@@ -10,7 +10,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  * 
- * RCS: @(#) $Id: RegexpCmd.java,v 1.8 2009/09/16 21:49:18 mdejong Exp $
+ * RCS: @(#) $Id: RegexpCmd.java,v 1.9 2009/09/20 00:09:44 mdejong Exp $
  */
 
 package tcl.lang;
@@ -199,6 +199,13 @@ throws TclException
             Regex reg;
             result = TclInteger.newInstance(0);
 
+            if (string.length() == 0) {
+                // Compile the expression without the Pattern.MULTILINE flag
+                // so that matching to the empty string works as expected.
+
+                flags &= ~Pattern.MULTILINE;
+            }
+
             try {
                 reg = new Regex(exp, string, offset, flags);
             } catch (PatternSyntaxException ex) {
@@ -239,10 +246,10 @@ throws TclException
 
                         if (doinline) {
                             result = TclList.newInstance();
+                            interp.setResult(result);
                         } else {
-                            TclInteger.set(result, 0);
+                            interp.setResult(0);
                         }
-                        interp.setResult(result);
                         return;
                     }
 
