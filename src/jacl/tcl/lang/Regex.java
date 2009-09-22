@@ -285,9 +285,8 @@ String
 replaceFirst(
     String subSpec)
 {
+    boolean matches;
     String result;
-
-    boolean matches = matcher.find();
 
     // we replace first matched occurence in the substring of the input string
 
@@ -297,8 +296,27 @@ replaceFirst(
       temp = string.substring(offset);
     }
 
-    matcher = pattern.matcher(temp);
-    result = matcher.replaceFirst(subSpec);
+    if (temp.length() == 0) {
+        // Re-compile the expression without the Pattern.MULTILINE
+        // flag so that matching to the empty string works as expected.
+
+        int nomlFlags = this.flags & ~Pattern.MULTILINE;
+
+        try {
+            pattern = Pattern.compile(regexp, nomlFlags);
+        } catch (PatternSyntaxException ex) {
+            throw new TclRuntimeError(
+                "regexp pattern could not be recompiled");
+        }
+
+        matcher = pattern.matcher("");
+        matches = matcher.find();
+        result = matcher.replaceFirst(subSpec);
+    } else {
+        matcher = pattern.matcher(temp);
+        matches = matcher.find();
+        result = matcher.replaceFirst(subSpec);
+    }
 
     // if offset is set then we must join the substring that was
     // removed ealier (during matching)
@@ -350,7 +368,33 @@ replaceAll(
     int i = offset;
 
     // we replace first matched occurence in the substring of the input string
-    Matcher tempMatcher = pattern.matcher(string.substring(offset));
+    
+    String temp = string;
+
+    if (offset > 0) {
+      temp = string.substring(offset);
+    }
+
+    Pattern tempPattern = pattern;
+    Matcher tempMatcher;
+
+    if (temp.length() == 0) {
+        // Re-compile the expression without the Pattern.MULTILINE
+        // flag so that matching to the empty string works as expected.
+
+        int nomlFlags = this.flags & ~Pattern.MULTILINE;
+
+        try {
+            tempPattern = Pattern.compile(regexp, nomlFlags);
+        } catch (PatternSyntaxException ex) {
+            throw new TclRuntimeError(
+                "regexp pattern could not be recompiled");
+        }
+
+        tempMatcher = tempPattern.matcher("");
+    } else {
+        tempMatcher = tempPattern.matcher(temp);
+    }
 
     while (tempMatcher.find()) {
         count++;
