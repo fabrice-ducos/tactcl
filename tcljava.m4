@@ -228,7 +228,7 @@ AC_DEFUN([AC_PROG_JAVAC], [
 
     # FIXME : add detection of command line arguments for JAVAC
 
-    JAVAC_FLAGS=-g -Xlint:deprecation -Xlint:unchecked
+    JAVAC_FLAGS="-g -Xlint:deprecation -Xlint:unchecked"
     JAVAC_D_FLAG=-d
 
     dnl Test out the Java compiler with an empty class
