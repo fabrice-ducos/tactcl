@@ -2801,7 +2801,7 @@ $as_echo "$ac_java_classpath" >&6; }
 
     # FIXME : add detection of command line arguments for JAVAC
 
-    JAVAC_FLAGS=-g -Xlint:deprecation -Xlint:unchecked
+    JAVAC_FLAGS="-g -Xlint:deprecation -Xlint:unchecked"
     JAVAC_D_FLAG=-d
 
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking to see if the java compiler works" >&5
