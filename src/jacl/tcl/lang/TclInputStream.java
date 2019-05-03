@@ -159,9 +159,9 @@ class TclInputStream {
     // These static class members are used only when
     // adding elements to charToBytes.
 
-    static Integer oneInteger = new Integer(1);
-    static Integer twoInteger = new Integer(2);
-    static Integer threeInteger = new Integer(3);
+    static Integer oneInteger = 1;
+    static Integer twoInteger = = 2;
+    static Integer threeInteger = 3;
 
     // Return the number of bytes that a range of characters
     // was decoded from. This method operates on the charToBytes

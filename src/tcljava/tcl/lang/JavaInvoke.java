@@ -1170,7 +1170,7 @@ throws
 	    // around and calling code can't detect an overflow.
 
 	    int jint = parseJavaInt(interp, tclObj);
-	    return new Integer(jint);
+	    return jint;
 
 	} else if ((type == Boolean.TYPE) || (type == Boolean.class)) {
 	    return new Boolean(TclBoolean.get(interp, tclObj));
