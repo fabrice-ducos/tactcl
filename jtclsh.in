@@ -129,6 +129,10 @@ else
     export KAFFELIBRARYPATH
 fi    
 
+# Set up DYLD_LIBRARY_PATH for OSX systems (no effect on other systems)
+DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH
+
 # Extra shared lib stuff for Unix
 
 if test "$OSTYPE" != "msys"; then

@@ -435,8 +435,15 @@ AC_DEFUN([AC_JAVA_TOOLS], [
         JAVA_G=$JAVA
     fi
 
+    # Don't error if javah can not be found: javah was removed since jdk 10
+    # and replaced with javac -h
     TOOL=javah
-    AC_JAVA_TOOLS_CHECK(JAVAH, $TOOL, $ac_java_jvm_dir/bin)  
+    AC_JAVA_TOOLS_CHECK(JAVAH, $TOOL, $ac_java_jvm_dir/bin, 1)
+
+    if test "x$JAVAH" = "x" ; then
+        AC_MSG_LOG([javah was removed in jdk 10, will be emulated by javac -h], 1)
+        JAVAH="$JAVAC"
+    fi
 
     AC_JAVA_TOOLS_CHECK(JAR, jar, $ac_java_jvm_dir/bin)
 
@@ -588,6 +595,42 @@ AC_DEFUN([AC_JAVA_JNI_LIBS], [
     # Check for known JDK installation layouts
 
     if test "$ac_java_jvm_name" = "jdk"; then
+
+        # Oracle JDK 10+ for Linux (server JVM)
+
+        F=`find $ac_java_jvm_dir -name libjava.so`
+        if test "x$ac_java_jvm_jni_lib_flags" = "x" ; then
+            AC_MSG_LOG([Looking for $F], 1)
+            if test -f "$F" ; then
+                AC_MSG_LOG([Found $F], 1)
+
+                D=`dirname "$F"`
+                ac_java_jvm_jni_lib_runtime_path=$D
+                ac_java_jvm_jni_lib_flags="-L$D -ljava -lverify"
+
+                D=$D/server
+                ac_java_jvm_jni_lib_runtime_path="${ac_java_jvm_jni_lib_runtime_path}:$D"
+                ac_java_jvm_jni_lib_flags="$ac_java_jvm_jni_lib_flags -L$D -ljvm"
+           fi
+        fi
+
+        # Oracle JDK 10+ for OSX (server JVM)
+
+        F=`find $ac_java_jvm_dir -name libjava.dylib`
+        if test "x$ac_java_jvm_jni_lib_flags" = "x" ; then
+            AC_MSG_LOG([Looking for $F], 1)
+            if test -f "$F" ; then
+                AC_MSG_LOG([Found $F], 1)
+
+                D=`dirname "$F"`
+                ac_java_jvm_jni_lib_runtime_path=$D
+                ac_java_jvm_jni_lib_flags="-L$D -ljava -lverify"
+
+                D=$D/server
+                ac_java_jvm_jni_lib_runtime_path="${ac_java_jvm_jni_lib_runtime_path}:$D"
+                ac_java_jvm_jni_lib_flags="$ac_java_jvm_jni_lib_flags -L$D -ljvm"
+           fi
+        fi
 
         # Sun/Blackdown 1.4 for Linux (client JVM)
 

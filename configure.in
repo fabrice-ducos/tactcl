@@ -135,10 +135,20 @@ if ( $JAVAC $JAVAC_FLAGS $JAVAC_D_FLAG . $srcdir/src/Test.java 1>&5 2>&5 ) &&
         #test out the javah program on our Test.class file and generate Test.h
         AC_MSG_CHECKING([the Java header generation program])
 
-        JAVAH_FLAGS="-jni -o"
+        JAVAH_STEM=`basename $JAVAH .exe`
+        if test $JAVAH_STEM = "javah" ; then
+            JAVAH_FLAGS="-jni -o Test.h"
+            JAVAH_ARGS="Test"
+        elif test $JAVAH_STEM = "javac" ; then
+            JAVAH_FLAGS="-h ."
+            JAVAH_ARGS="$srcdir/src/Test.java"
+        else
+            AC_MSG_ERROR([the Java header file compiler is missing or improperly configured: $JAVAH $JAVAH_FLAGS $JAVAH_ARGS])
+        fi
+
         rm -f Test.h
-        AC_MSG_LOG([$JAVAH $JAVAH_FLAGS Test.h Test], 1)
-        if ($JAVAH $JAVAH_FLAGS Test.h Test 2>&5) &&
+        AC_MSG_LOG([$JAVAH $JAVAH_FLAGS $JAVAH_ARGS], 1)
+        if ($JAVAH $JAVAH_FLAGS $JAVAH_ARGS 2>&5) &&
 	    test -f Test.h; then
 
 	    # Echo the lines we might be looking for into config.log
