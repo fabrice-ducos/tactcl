@@ -160,7 +160,7 @@ class TclInputStream {
     // adding elements to charToBytes.
 
     static Integer oneInteger = 1;
-    static Integer twoInteger = = 2;
+    static Integer twoInteger = 2;
     static Integer threeInteger = 3;
 
     // Return the number of bytes that a range of characters
