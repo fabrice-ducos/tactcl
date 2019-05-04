@@ -1990,32 +1990,18 @@ Java_tcl_lang_Interp_initName(
      */
 
 #ifdef TCLBLEND_DEBUG
-    fprintf(stderr, "TCLBLEND_DEBUG: Checking Tcl_GetNameOfExecutable()\n");
-#endif /* TCLBLEND_DEBUG */
-
-    name = Tcl_GetNameOfExecutable();
-
-    if (name == NULL) {
-#ifdef TCLBLEND_DEBUG
     fprintf(stderr, "TCLBLEND_DEBUG: Executable name not known, calling Tcl_FindExecutable()\n");
 #endif /* TCLBLEND_DEBUG */
 
-        Tcl_FindExecutable("java");
-        name = Tcl_GetNameOfExecutable();
+    Tcl_FindExecutable("java");
+    name = Tcl_GetNameOfExecutable();
 #ifdef TCLBLEND_DEBUG
     fprintf(stderr, "TCLBLEND_DEBUG: Done Calling Tcl_FindExecutable()\n");
     fprintf(stderr, "TCLBLEND_DEBUG: Tcl exectable name is now \"%s\"\n", name);
 #endif /* TCLBLEND_DEBUG */
-
-        TclBlendTrace("Called Tcl_FindExecutable");
-    } else {
-#ifdef TCLBLEND_DEBUG
-    fprintf(stderr, "TCLBLEND_DEBUG: Executable name is already known\n");
-#endif /* TCLBLEND_DEBUG */
-
-        TclBlendTrace("Skipped Calling Tcl_FindExecutable");
-    }
-
+    
+    TclBlendTrace("Called Tcl_FindExecutable");
+    
     return;
 }
 
