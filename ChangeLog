@@ -1,3 +1,45 @@
+2019-05-04  Fabrice Ducos <fabrice.ducos@gmail.com>
+
+        * Support of latest versions of Tcl (at least Tcl 8.5
+        and Tcl 8.6) and of modern JDK (10+);
+        support of JDK 4- abandoned (use of auto-boxing);
+        support of OSX systems added;
+        details below
+
+        * configuration (tcljava.m4, configure.in),
+        and compilation (Makefile.in) templates updated for
+        JDK 10+ (javah not available anymore).
+        javah is still used when it is available (JDK 9-).
+        * minor update of jtclsh.in (for OSX dynamic libraries)
+        * many obsolescent constructs (mostly old-style boxing)
+        removed in *.java under src/jacl/tcl/lang,
+        src/tclblend/tcl/lang and src/tcljava/tcl/lang,
+        in order to silence many warnings.
+        (effect: support of JDK 4- abandoned)
+        * src/native/javaInterp.c: 2010 implementation
+        of Java_tcl_lang_Interp_initName() crashed on the
+        example given at docs/website/getstart.html,
+        because calling Tcl_GetNameOfExecutable
+        before Tcl_FindExecutable gives rise to undefined
+        behaviour, at least in latest versions of Tcl
+        (crashes observed on several systems, at least with
+        Tcl 8.6).
+        Java_tcl_lang_Interp_initName() is now simplified and
+        always calls Tcl_FindExecutable first.
+        * all the occurences of interp->result have been
+        replaced with Tcl_GetStringResult(interp).
+        Accessing interp->result directly was deprecated in
+        latest versions of the Tcl C API, and removed from
+        Tcl 8.6 (another solution was to #define USE_INTERP_RESULT,
+        but this would have been an easy-going, quick and dirty way)
+        ref. https://www.tcl.tk/man/tcl/TclLib/Interp.htm
+
+2019-05-01  Fabrice Ducos <fabrice.ducos@gmail.com>
+
+        * tcljava resurrected
+        * migration from a CVS to a GIT repository
+        (with reposurgeon)
+
 2010-02-26  Mo DeJong  <mdejong@users.sourceforge.net>
 
 	* tests/tcl/regexp.test: Add test case for
