@@ -1103,8 +1103,8 @@ JavaTraceProc(
 	    (*env)->DeleteLocalRef(env, exception);
 	    (void) Tcl_GetStringResult(interp);
 	    tPtr->errMsg = (char *)
-		    ckalloc((unsigned) (strlen(interp->result) + 1));
-	    strcpy(tPtr->errMsg, interp->result);
+		    ckalloc((unsigned) (strlen(Tcl_GetStringResult(interp)) + 1));
+	    strcpy(tPtr->errMsg, Tcl_GetStringResult(interp));
 	    result = tPtr->errMsg;
 	}
 

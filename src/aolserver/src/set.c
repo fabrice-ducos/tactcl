@@ -48,7 +48,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1new
   (*env)->ReleaseStringUTFChars(env, name, argv[2]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -75,7 +75,7 @@ JNIEXPORT jstring  JNICALL Java_nsjava_NsSet__1copy
   (*env)->ReleaseStringUTFChars(env, ptr, argv[2]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -102,7 +102,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1size
   (*env)->ReleaseStringUTFChars(env, ptr, argv[2]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1name
@@ -128,7 +128,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1name
   (*env)->ReleaseStringUTFChars(env, ptr, argv[2]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT void JNICALL Java_nsjava_NsSet__1print
@@ -204,7 +204,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1find
   (*env)->ReleaseStringUTFChars(env, ky, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1get
@@ -232,7 +232,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1get
   (*env)->ReleaseStringUTFChars(env, ky, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT void JNICALL Java_nsjava_NsSet__1delete__JLjava_lang_String_2
@@ -286,7 +286,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1unique
   (*env)->ReleaseStringUTFChars(env, ky, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1ifind
@@ -314,7 +314,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1ifind
   (*env)->ReleaseStringUTFChars(env, ky, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1iget
@@ -342,7 +342,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1iget
   (*env)->ReleaseStringUTFChars(env, ky, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT void JNICALL Java_nsjava_NsSet__1idelete
@@ -396,7 +396,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1iunique
   (*env)->ReleaseStringUTFChars(env, ky, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1value
@@ -424,7 +424,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1value
   (*env)->ReleaseStringUTFChars(env, idx, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1isnull
@@ -452,7 +452,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1isnull
   (*env)->ReleaseStringUTFChars(env, idx, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1key
@@ -480,7 +480,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1key
   (*env)->ReleaseStringUTFChars(env, idx, argv[3]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT void JNICALL Java_nsjava_NsSet__1delete__JI
@@ -563,7 +563,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1update
   (*env)->ReleaseStringUTFChars(env, vl, argv[4]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -594,7 +594,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1icput
   (*env)->ReleaseStringUTFChars(env, vl, argv[4]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1cput
@@ -624,7 +624,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1cput
   (*env)->ReleaseStringUTFChars(env, vl, argv[4]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1put
@@ -654,7 +654,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsSet__1put
   (*env)->ReleaseStringUTFChars(env, vl, argv[4]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT void JNICALL Java_nsjava_NsSet__1merge

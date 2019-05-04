@@ -175,7 +175,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1gethandle
   }
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1exception
@@ -201,7 +201,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1exception
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1poolname
@@ -227,7 +227,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1poolname
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1password
@@ -253,7 +253,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1password
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1user
@@ -279,7 +279,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1user
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1dbtype
@@ -305,7 +305,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1dbtype
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1driver
@@ -331,7 +331,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1driver
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1datasource
@@ -357,7 +357,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1datasource
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);    
 
-  return (*env)->NewStringUTF(env, interp->result); 
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp)); 
 }
 
 JNIEXPORT void JNICALL Java_NsDb__1disconnect
@@ -431,7 +431,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1bindrow
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT void JNICALL Java_nsjava_NsDb__1releasehandle
@@ -481,7 +481,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1resethandle
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1cancel
@@ -507,7 +507,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1cancel
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1connected
@@ -533,7 +533,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1connected
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -560,7 +560,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1sp_1exec
   (*env)->ReleaseStringUTFChars(env, handle, argv[2]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1sp_1returncode
@@ -631,7 +631,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1select_10or1row
   (*env)->ReleaseStringUTFChars(env, jsql, argv[3]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1select_11row
@@ -659,7 +659,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1select_11row
   (*env)->ReleaseStringUTFChars(env, jsql, argv[3]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -688,7 +688,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1select
   (*env)->ReleaseStringUTFChars(env, jsql, argv[3]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -806,7 +806,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1selecta
   Ns_ModLog(Debug, javaModLogHandle, "freed argv array");
   
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1exec
@@ -834,7 +834,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1exec
   (*env)->ReleaseStringUTFChars(env, jsql, argv[3]);
   Ns_Free(argv);  
   
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 
@@ -880,7 +880,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1getrow
   Ns_Free(argv);  
   
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 } 
 
 JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1verbose
@@ -908,7 +908,7 @@ JNIEXPORT jstring JNICALL Java_nsjava_NsDb__1verbose
   (*env)->ReleaseStringUTFChars(env, on_off, argv[3]);
   Ns_Free(argv);    
 
-  return (*env)->NewStringUTF(env, interp->result);
+  return (*env)->NewStringUTF(env, Tcl_GetStringResult(interp));
 }
 
 JNIEXPORT jobject JNICALL Java_nsjava_NsDb__1setexception
