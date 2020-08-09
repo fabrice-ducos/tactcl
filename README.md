@@ -8,7 +8,7 @@ TclJava could be quite involved to build from the sources, because of its many d
 
 In order to ease the process, Jaclin's maintainer is developing [tclbuild](https://github.com/fabrice-ducos/tclbuild), a build tool for Tcl/Tk and Jaclin. It downloads frozen (but configurable) versions of Tcl/Tk, Jaclin (and some Tcl popular modules) and builds them accordingly.
 
-The brave ones (or those not wishing to try tclbuild, that is a work in progress and still unstable) can attempt to perform a manual installation (see docs/Topics/index.html).
+The brave ones (or those not wishing to try tclbuild, that is a work in progress and still unstable) can attempt to perform a manual installation. See [TclJava Documentation](docs/Topics/index.html).
 
 ## Context and motivation for this fork
 
