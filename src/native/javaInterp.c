@@ -289,10 +289,10 @@ Java_tcl_lang_Interp_evalString(
 
     if (!interp) {
 	ThrowNullPointerException(env, NULL);
-	return;
+	return TCL_ERROR;
     } else if (!string) {
 	ThrowNullPointerException(env, "No string to evaluate.");
-	return;
+	return TCL_ERROR;
     }
 
     objPtr = Tcl_NewObj();
@@ -368,7 +368,7 @@ Java_tcl_lang_Interp_evalTclObject(
 
     if (!interp) {
 	ThrowNullPointerException(env, NULL);
-	return;
+	return TCL_ERROR;
     }
 
     /*
@@ -387,7 +387,7 @@ Java_tcl_lang_Interp_evalTclObject(
     } else {
 	if (!string) {
 	    ThrowNullPointerException(env, "No string to evaluate.");
-	    return;
+	    return TCL_ERROR;
 	}
 
 	objPtr = Tcl_NewObj();
