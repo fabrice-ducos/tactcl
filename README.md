@@ -2,6 +2,16 @@
 
 Jaclin is a fork of the TclJava project, who was developed and maintained by Mo Dejong and contributors until 2010.
 
+## Installation
+
+TclJava could be quite involved to build from the sources, because of its many dependencies (at least JDK and Tcl/Tk, each version of which coming with their own lot of idiosyncracies). Jaclin is no different.
+
+In order to ease the process, Jaclin's maintainer is developing [tclbuild](https://github.com/fabrice-ducos/tclbuild), a build tool for Tcl/Tk and Jaclin. It downloads frozen versions of Tcl/Tk, Jaclin (and some Tcl popular modules) and builds them accordingly.
+
+The brave ones (or those not wishing to try tclbuild, that is a work in progress and still unstable) can attempt to perform a manual installation (see docs/Topics/index.html).
+
+## Context and motivation for this fork
+
 TclJava provided a bridge between Java and Tcl technologies. Unfortunately, the project's lack of momentum
 in the 2010-2020 decade made it difficult to simply build TclJava main tools (tclblend and jacl) with modern Java
 Development Kits. Official [TclJava](http://tcljava.sourceforge.net/docs/website/index.html) on sourceforge lacks
@@ -68,24 +78,13 @@ See also the Installing section.
 A modern JDK (at least 5, preferably 8 or newer).
 A modern version of Tcl (at least 8.4 is recommended)
 
-### Installing
-
-One of the most difficult parts of TclJava and Jaclin from the user's (or administrator's) point of view is the installation/deployment.
-Indeed, TclJava/Jaclin relies on two moving targets: the JDK and Tcl (though Tcl has changed at a much slower pace lately), with
-their own compatibility issues.
-
-The brave ones can attempt to perform a manual installation (see docs/Topics/index.html).
-
-For the faint of heart, the author will publish soon a set of scripts for automatic download and installation of Jaclin.
-
 ## Authors
 
 * **Mo Dejong** - *TclJava's project lead up to 2010* - [Mo Dejong](https://github.com/mdejong)
 See also the list of [contributors](https://github.com/fabrice-ducos/jaclin/contributors).
 
-* **Fabrice Ducos** - *Jaclin* - [Fabrice Ducos](https://github.com/fabrice-ducos)
+* **Fabrice Ducos** - *Jaclin* (TclJava updated for modern JDK) - [Fabrice Ducos](https://github.com/fabrice-ducos)
 
 ## License
 
 See license files in the repo for TclJava's original licenses.
-Jaclin's 
