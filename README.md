@@ -28,6 +28,8 @@ The GIT repository was migrated from CVS (keeping the CVS history) with the help
 
 The goal of Jaclin is to revive the TclJava project by fixing bugs, and providing a simpler installation process with support for modern versions of JDK (5 and more, tested up to 12) and Tcl (experimental support of 8.5 and 8.6) on most common operating systems (Windows, OSX, Linux, BSD).
 
+*EDIT 2020-08-19*: I discovered another fork [tclJBlend](https://wiki.tcl-lang.org/page/tclJBlend) with a similar purpose, that was published in september 2019 (shortly after I made my own, not yet published patches, in august 2019). Thanks to [ABU](https://wiki.tcl-lang.org/page/Aldo+Buratti?R=0&O=ABU&W=) for this effort.
+
 ## NEWS
 
         * Experimental support of latest versions of Tcl (at least Tcl 8.5
