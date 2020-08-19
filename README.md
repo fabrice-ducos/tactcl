@@ -1,4 +1,4 @@
-# Jaclin 0.1.2
+# Jaclin 0.1.3
 
 Jaclin is a fork of the TclJava project, who was developed and maintained by Mo Dejong and contributors until 2010.
 
@@ -6,9 +6,11 @@ Jaclin is a fork of the TclJava project, who was developed and maintained by Mo 
 
 TclJava could be quite involved to build from the sources, because of its many dependencies (at least JDK and Tcl/Tk, each version of which coming with their own lot of idiosyncracies). Jaclin is no different.
 
-In order to ease the process, Jaclin's maintainer is developing [tclbuild](https://github.com/fabrice-ducos/tclbuild), a build tool for Tcl/Tk and Jaclin. It downloads frozen (but configurable) versions of Tcl/Tk, Jaclin (and some Tcl popular modules) and builds them accordingly.
+In order to ease the process, Jaclin's maintainer is developing [tactcl](https://github.com/fabrice-ducos/tactcl) (formerly `tclbuild`), a small Tcl/Tk distribution including Jaclin. It downloads frozen (but configurable) versions of Tcl/Tk, Jaclin, and some other Tcl popular modules (all of them are optional and can be disabled) and builds them accordingly.
 
-The brave ones (or those not wishing to try tclbuild, that is a work in progress and still unstable) can attempt to perform a manual installation. See [TclJava Documentation](docs/Topics/index.html).
+It is extremely easy to build `Jaclin` with `tactcl` (on Unix-like systems only, for the moment). Just download [tactcl](https://github.com/fabrice-ducos/tactcl), remove the dependencies you don't need in `build.cfg` and type `make`.
+
+The brave ones (or those not wishing to try tactcl, that is a work in progress and still unstable) can attempt to perform a manual installation. See [TclJava Documentation](docs/Topics/index.html).
 
 ## Context and motivation for this fork
 
@@ -28,7 +30,7 @@ The GIT repository was migrated from CVS (keeping the CVS history) with the help
 
 The goal of Jaclin is to revive the TclJava project by fixing bugs, and providing a simpler installation process with support for modern versions of JDK (5 and more, tested up to 12) and Tcl (experimental support of 8.5 and 8.6) on most common operating systems (Windows, OSX, Linux, BSD).
 
-*EDIT 2020-08-19*: I discovered another fork [tclJBlend](https://wiki.tcl-lang.org/page/tclJBlend) with a similar purpose, that was published in september 2019 (shortly after I made my own, not yet published patches, in august 2019). Thanks to [ABU](https://wiki.tcl-lang.org/page/Aldo+Buratti?R=0&O=ABU&W=) for this effort.
+*EDIT 2020-08-19*: I discovered another fork [tclJBlend](https://wiki.tcl-lang.org/page/tclJBlend) with a similar purpose, that was published in september 2019 (shortly after I made my own, not yet published patches, in august 2019). `tclJBlend` provides precompiled binaries for Linux/MacOSX/Windows, but it is also possible to download the tclJBlend development kit. Thanks to [ABU](https://wiki.tcl-lang.org/page/Aldo+Buratti?R=0&O=ABU&W=) for this effort.
 
 ## NEWS
 
