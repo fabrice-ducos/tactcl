@@ -21,17 +21,17 @@ WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 .PHONY: default
 default: tcl tclblend jacl
 
+.PHONY: tcltk
+tcltk: default tk
+
 .PHONY: all
-all: default tk
+all: tcltk
 
 help:
 	@echo "Current configuration:"
 	@echo "jtclsh: $(jtclsh)"
 	@echo "jaclsh: $(jaclsh)"
 	@echo "wish: $(wish)"
-	@echo
-	@echo "THREADS_SRCDIR: $(THREADS_SRCDIR)"
-	@echo "threads_pkgIndex: $(threads_pkgIndex)"
 	@echo
 	@echo "The following settings can be redefined on the command line, e.g make PREFIX=/other/prefix JAVA_HOME=/other/java/home"
 	@echo "PREFIX=$(PREFIX)"
@@ -41,20 +41,20 @@ help:
 .PHONY: tclblend
 tclblend: $(jtclsh)
 
-$(jtclsh): $(JAVA_HOME) $(tclsh) $(threads_pkgIndex)
+$(jtclsh): $(JAVA_HOME) $(tclsh) threads
 	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
 .PHONY: jacl
 jacl: $(jaclsh)
 
-$(jaclsh): $(JAVA_HOME) $(tclsh)
+$(jaclsh): $(JAVA_HOME) $(tclsh) threads
 	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
 .PHONY: tcl
 tcl: $(tclsh)
 
-$(tclsh): $(JAVA_HOME) $(TCL_SRCDIR)
-	cd $(TCL_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
+$(tclsh): threads
+        cd $(TCL_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(X11_FLAGS) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) && $(MAKE) && $(MAKE) install
 
 .PHONY: threads
 threads: $(threads_pkgIndex)
