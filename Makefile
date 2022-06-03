@@ -1,4 +1,5 @@
 include build.cfg
+include $(EXTRA_CFG_FILE)
 
 TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
 TK_SRCDIR=$(BUILD_DIR)/tk$(TK_VERSION)
@@ -12,31 +13,52 @@ jtclsh=$(PREFIX)/bin/jtclsh
 jaclsh=$(PREFIX)/bin/jaclsh
 
 TCLJAVA_DIR=$(PWD)/tcljava
-THREADS_SRCDIR=$(shell echo $(TCL_SRCDIR)/pkgs/thread*)
+THREADS_SRCDIR=$(TCL_SRCDIR)/pkgs/thread$(THREADS_VERSION)
 threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 .PHONY: default
-default: tcl tclblend jacl
+default: tcl threads
+
+.PHONY: tcljava
+tcljava: tclblend jacl
 
 .PHONY: tcltk
 tcltk: default tk
 
 .PHONY: all
-all: tcltk
+all: tcltk tcljava
 
 help:
 	@echo "Current configuration:"
+	@echo "TCL_SRCDIR: $(TCL_SRCDIR)"
+	@echo "TK_SRCDIR: $(TK_SRCDIR)"
+	@echo "THREADS_SRCDIR: $(THREADS_SRCDIR)"
+	@echo
+	@echo "tcl_lang_version: $(tcl_lang_version)"
+	@echo "tclsh: $(tclsh)"
+	@echo "wish: $(wish)"
 	@echo "jtclsh: $(jtclsh)"
 	@echo "jaclsh: $(jaclsh)"
-	@echo "wish: $(wish)"
 	@echo
 	@echo "The following settings can be redefined on the command line, e.g make PREFIX=/other/prefix JAVA_HOME=/other/java/home"
 	@echo "PREFIX=$(PREFIX)"
 	@echo "JAVA_HOME=$(JAVA_HOME)"
 	@echo "BUILD_DIR=$(BUILD_DIR)"
+	@echo
+	@echo "The following targets are available:"
+	@echo "make [default]: build tcl and threads"
+	@echo "make tcl: build tcl"
+	@echo "make threads: build threads (a subpackage of tcl)"
+	@echo "make tk: build tk (with the wish interpreter)"
+	@echo "make tcltk: build tcl/tk"
+	@echo "make tcljava: build tclblend and jacl"
+	@echo "make tclblend: build tclblend (with the jtclsh interpreter)"
+	@echo "make jacl: build jacl (with the jaclsh interpreter)"
+	@echo "make all: build all the available tools"
+	@echo "make help: this help"
 
 .PHONY: tclblend
 tclblend: $(jtclsh)
@@ -53,13 +75,13 @@ $(jaclsh): $(JAVA_HOME) $(tclsh) threads
 .PHONY: tcl
 tcl: $(tclsh)
 
-$(tclsh): threads
-        cd $(TCL_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(X11_FLAGS) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) && $(MAKE) && $(MAKE) install
+$(tclsh): $(TCL_SRCDIR)
+	cd $(TCL_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(X11_FLAGS) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) && $(MAKE) && $(MAKE) install
 
 .PHONY: threads
 threads: $(threads_pkgIndex)
 
-$(threads_pkgIndex):
+$(threads_pkgIndex): $(THREADS_SRCDIR) tcl
 	cd $(THREADS_SRCDIR) && ./configure --prefix=$(PREFIX) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(WITH_TCL) && $(MAKE) && $(MAKE) install
 
 $(THREADS_SRCDIR): $(TCL_SRCDIR)
@@ -69,7 +91,7 @@ tk: $(wish)
 
 # LIB_RUNTIME_DIR must be specified to circumvent a bug in Tk's configure (TCL_LD_SEARCH_FLAGS is never defined in configure.in and prevents conversion from : to -L in LIB_RUNTIME_DIR)
 # This bug occurs in MacOSX only
-$(wish): $(tclsh)
+$(wish): $(tclsh) $(TK_SRCDIR)
 	cd $(TK_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(WITH_TCL) $(X11_FLAGS) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(MORE_TK_FLAGS) && $(MAKE) LIB_RUNTIME_DIR=$(PREFIX)/lib && $(MAKE) install
 
 $(BUILD_DIR):

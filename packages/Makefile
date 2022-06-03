@@ -24,9 +24,6 @@ help:
 	@echo "bwidget:  bwidget $(BWIDGET_VERSION)"
 	@echo "critcl:   critcl $(CRITCL_VERSION)"
 	@echo "tclx:     tclx $(TCLX_VERSION)"
-	@echo "tclblend: tclblend $(TCLBLEND_VERSION)"
-	@echo "jacl:     jacl $(JACL_VERSION)"
-	@echo "jaclin:   jaclin $(JACLIN_VERSION)"
 
 # https://prdownloads.sourceforge.net/tcl/tcl869-src.zip
 # https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
