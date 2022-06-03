@@ -1,9 +1,10 @@
 dnl	This file is an input file used by the GNU "autoconf" program to
 dnl	generate the file "configure", which is run to configure the
 dnl	Makefile in this directory.
-AC_INIT(ChangeLog)
+AC_INIT
+AC_CONFIG_SRCDIR([ChangeLog])
 
-AC_PREREQ(2.50)
+AC_PREREQ([2.71])
 
 sinclude(tcljava.m4)
 
@@ -420,4 +421,5 @@ else
     fi
 fi
 
-AC_OUTPUT([$OUTPUT_FILES])
+AC_CONFIG_FILES([$OUTPUT_FILES])
+AC_OUTPUT

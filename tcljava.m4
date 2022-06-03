@@ -598,7 +598,7 @@ AC_DEFUN([AC_JAVA_JNI_LIBS], [
 
         # Oracle JDK 10+ for Linux (server JVM)
 
-        F=`find $ac_java_jvm_dir -name libjava.so`
+        F=`find $ac_java_jvm_dir/ -name libjava.so`
         if test "x$ac_java_jvm_jni_lib_flags" = "x" ; then
             AC_MSG_LOG([Looking for $F], 1)
             if test -f "$F" ; then
@@ -616,7 +616,7 @@ AC_DEFUN([AC_JAVA_JNI_LIBS], [
 
         # Oracle JDK 10+ for OSX (server JVM)
 
-        F=`find $ac_java_jvm_dir -name libjava.dylib`
+        F=`find $ac_java_jvm_dir/ -name libjava.dylib`
         if test "x$ac_java_jvm_jni_lib_flags" = "x" ; then
             AC_MSG_LOG([Looking for $F], 1)
             if test -f "$F" ; then
@@ -688,6 +688,7 @@ AC_DEFUN([AC_JAVA_JNI_LIBS], [
                 fi
             fi
         fi
+
     fi
 
     # Generate error for unsupported JVM layout
