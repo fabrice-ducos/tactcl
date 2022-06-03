@@ -25,7 +25,7 @@ Another fork, [JTcl](https://github.com/jtcl-project/jtcl), was started around 2
 
 Interested in performing Tcl scripting on modern Java versions in the context of another project, I made some patches and [unsuccessfully attempted](https://sourceforge.net/p/tcljava/mailman/tcljava-dev/thread/CAPxFAHTkKiLxQGAVJUfY5hCGBoAbL47qnc0WfMsvcD%2BT6W2uJQ%40mail.gmail.com/#msg36653208) to contact the original developers for updating the original TclJava project. 
 
-After one year of lack of reply, I decided to propose my own fork of the project, Jaclin (that can be interpreted as Jacl INside), based on original TclJava.
+After one year of lack of reply, I decided to propose my own fork of the project, Jaclin (that is a word play of the french female first name `Jacqueline`, and is also the name of a [cocktail](https://fr.wikipedia.org/wiki/Jacqueline_(boisson)), can be interpreted as Jacl INside), based on original TclJava.
 The GIT repository was migrated from CVS (keeping the CVS history) with the help of [reposurgeon](https://gitlab.com/esr/reposurgeon).
 
 The goal of Jaclin is to revive the TclJava project by fixing bugs, and providing a simpler installation process with support for modern versions of JDK (5 and more, tested up to 12) and Tcl (experimental support of 8.5 and 8.6) on most common operating systems (Windows, OSX, Linux, BSD).
@@ -71,7 +71,7 @@ The goal of Jaclin is to revive the TclJava project by fixing bugs, and providin
 ## Getting Started
 
 An old (but still relevant) reference to TclJava: http://tcljava.sourceforge.net/docs/website/matchmadeforscripting.html
-
+https://fr.wikipedia.org/wiki/Jacqueline_(boisson)
 It is recommended to consult first docs/contents.html inside the project, then docs/Topics/index.html
 for hints on building and installing TclJava (or Jaclin) on various environments.
 
