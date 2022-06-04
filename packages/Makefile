@@ -1,109 +1,205 @@
-TAR=tar cvf
-include ../build.cfg
+# TclBuild script: integration Makefile for Tcl
+# Fabrice Ducos 2019, 2022
+
+BUILD_CFG=../build.cfg
+VERSIONS_CFG=./versions.cfg
+
+include $(BUILD_CFG)
+include $(VERSIONS_CFG)
+
+PACKAGES_DIR=.
+TCL_TARBALL=$(PACKAGES_DIR)/tcl$(TCL_VERSION)-src.tar.gz
+TK_TARBALL=$(PACKAGES_DIR)/tk$(TK_VERSION)-src.tar.gz
+CK_ZIPFILE=$(PACKAGES_DIR)/ck-$(CK_VERSION).zip
+TCLREADLINE_ZIPFILE=$(PACKAGES_DIR)/tclreadline-$(TCLREADLINE_VERSION).zip
+EXPECT_TARBALL=$(PACKAGES_DIR)/expect$(EXPECT_VERSION).tar.gz
+CRITCL_TARBALL=$(PACKAGES_DIR)/critcl-$(CRITCL_VERSION).tar.gz
+TCLX_ZIPFILE=$(PACKAGES_DIR)/tclx-$(TCLX_VERSION).zip
+TCLLIB_TARBALL=$(PACKAGES_DIR)/tcllib-$(TCLLIB_VERSION).tar.gz
+BWIDGET_TARBALL=$(PACKAGES_DIR)/bwidget-$(BWIDGET_VERSION).tar.gz
+
+# tcl_lang_version must be of the form x.y, e.g. 8.6.9 -> 8.6
+tcl_lang_version=$(shell echo $(TCL_VERSION) | sed 's/\([0-9]*\.[0-9]*\)\.[0-9]*/\1/')
+tclsh=$(PREFIX)/bin/tclsh${tcl_lang_version}
+wish=$(PREFIX)/bin/wish${tcl_lang_version}
+libtk=tk${tcl_lang_version}
+cwsh=$(PREFIX)/bin/cwsh
+tclreadline-folder=$(PREFIX)/lib/tclreadline$(TCLREADLINE_VERSION)
+thread_lib=$(PREFIX)/lib/thread$(THREADS_VERSION)
+expect_cmd=$(PREFIX)/bin/expect
+critcl_cmd=$(PREFIX)/bin/critcl
+tclx_lib=$(PREFIX)/lib/tclx${tcl_lang_version}
+tcllib_lib=$(PREFIX)/lib/tcllib$(TCLLIB_VERSION)
+bwidget_lib=$(PREFIX)/lib/BWidget
+
+ifeq (, $(JAVA_HOME))
+$(error JAVA_HOME not defined, please set it up to a proper JAVA_HOME directory, or install and configure the jenv utility)
+endif
+
+TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
+TK_SRCDIR=$(BUILD_DIR)/tk$(TK_VERSION)
+CK_SRCDIR=$(BUILD_DIR)/ck-$(CK_VERSION)
+TCLREADLINE_SRCDIR=$(BUILD_DIR)/tclreadline-$(TCLREADLINE_VERSION)
+EXPECT_SRCDIR=$(BUILD_DIR)/expect$(EXPECT_VERSION)
+CRITCL_SRCDIR=$(BUILD_DIR)/critcl-$(CRITCL_VERSION)
+TCLX_SRCDIR=$(BUILD_DIR)/tclx-$(TCLX_VERSION)
+TCLLIB_SRCDIR=$(BUILD_DIR)/tcllib-$(TCLLIB_VERSION)
+BWIDGET_SRCDIR=$(BUILD_DIR)/bwidget-$(BWIDGET_VERSION)
+
+#THREADS_SRCDIR=$(TCL_SRCDIR)/pkgs/thread$(THREADS_VERSION)
+THREADS_SRCDIR=$(shell echo $(TCL_SRCDIR)/pkgs/thread*)
+threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
+
+WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
+WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 .PHONY: all download help clean erase
-.PHONY: tcl tk ck expect critcl tclx tcllib bwidget jtcl
+.PHONY: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
 
-all: download
+all: $(TARGETS)
 
-download: $(TARGETS)
+download:
+	cd packages && $(MAKE) download
 
 help:
+	cd $(PACKAGES_DIR) && $(MAKE) help
 	@echo
-	@echo "Current configuration"
-	@echo "====================="
+	@echo "make [all]: launch the build and installation process"
+	@echo "make tcl: build tcl"
+	@echo "make tk: build tk"
+	@echo "make ck: build ck"
+	@echo "make tclreadline: build tclreadline"
+	@echo "make threads: build tcl threads (a subpackage of tcl)"
+	@echo "make expect: build expect"
+	@echo "make critcl: build critcl"
+	@echo "make tclx: build tclx"
+	@echo "make tcllib: build tcllib"
+	@echo "make bwidget: build bwidget"
+	@echo "make clean: remove the build and local subdirectories (in the current directory only)"
+	@echo "make download: download the packages given in build.cfg"
+	@echo "make erase: erase the downloaded packages"
+	@echo "make help: this help"
 	@echo
-	@echo "download tool: $(DOWNLOAD_TOOL)"
-	@echo
-	@echo "tcl:      tcl $(TCL_VERSION)"
-	@echo "tk:       tk $(TK_VERSION)"
-	@echo "ck:       ck $(CK_VERSION)"
-	@echo "tclreadline: tclreadline $(TCLREADLINE_VERSION)"
-	@echo "expect:   expect $(EXPECT_VERSION)"
-	@echo "tcllib:   tcllib $(TCLLIB_VERSION)"
-	@echo "bwidget:  bwidget $(BWIDGET_VERSION)"
-	@echo "critcl:   critcl $(CRITCL_VERSION)"
-	@echo "tclx:     tclx $(TCLX_VERSION)"
+	@echo "The following settings can be redefined on the command line, e.g make PREFIX=/other/prefix JAVA_HOME=/other/java/home"
+	@echo "PREFIX=$(PREFIX)"
+	@echo "JAVA_HOME=$(JAVA_HOME)"
+	@echo "BUILD_DIR=$(BUILD_DIR)"
 
-# https://prdownloads.sourceforge.net/tcl/tcl869-src.zip
-# https://prdownloads.sourceforge.net/tcl/tcl8.6.9-src.tar.gz
-#
-# For getting the latest version on sourceforge:
-# wget https://sourceforge.net/projects/tcl/files/latest/download
-#
-# Recommendations from sourceforge:
-# https://sourceforge.net/p/forge/documentation/Downloading%20files%20via%20the%20command%20line/
-tcl: tcl$(TCL_VERSION)-src.tar.gz
+tcl: $(tclsh)
 
-tcl$(TCL_VERSION)-src.tar.gz:
-	$(DOWNLOAD_TOOL) https://prdownloads.sourceforge.net/tcl/tcl$(TCL_VERSION)-src.tar.gz
+$(tclsh):
+	$(MAKE) $(TCL_SRCDIR) && cd $(TCL_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(X11_FLAGS) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) && $(MAKE) && $(MAKE) install
 
-# https://prdownloads.sourceforge.net/tcl/tk869-src.zip
-# https://prdownloads.sourceforge.net/tcl/tk8.6.9.1-src.tar.gz
-tk: tk$(TK_VERSION)-src.tar.gz
+tk: $(wish)
 
-tk$(TK_VERSION)-src.tar.gz:
-	$(DOWNLOAD_TOOL) https://prdownloads.sourceforge.net/tcl/tk$(TK_VERSION)-src.tar.gz
+# LIB_RUNTIME_DIR must be specified to circumvent a bug in Tk's configure (TCL_LD_SEARCH_FLAGS is never defined in configure.in and prevents conversion from : to -L in LIB_RUNTIME_DIR)
+# This bug occurs in MacOSX only
+$(wish): $(tclsh)
+	$(MAKE) $(TK_SRCDIR) && cd $(TK_SRCDIR)/$(TCL_PLATFORM) && ./configure --prefix=$(PREFIX) $(WITH_TCL) $(X11_FLAGS) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(MORE_TK_FLAGS) && $(MAKE) LIB_RUNTIME_DIR=$(PREFIX)/lib && $(MAKE) install
 
-ck: ck-$(CK_VERSION).zip
+ck: $(cwsh)
 
-ck-$(CK_VERSION).zip:
-	$(DOWNLOAD_TOOL) https://github.com/credil/ck/archive/$(CK_VERSION).zip -O ck-$(CK_VERSION).zip
+tclreadline: $(tclreadline-folder)
 
-# https://github.com/flightaware/tclreadline/archive/v2.3.8.zip
-tclreadline: tclreadline-$(TCLREADLINE_VERSION).zip
+# explicit CFLAGS is necessary with tclreadline because tclreadline's configure doesn't recognize --with-x-includes
+$(tclreadline-folder):
+	$(MAKE) $(TCLREADLINE_SRCDIR) && cd $(TCLREADLINE_SRCDIR) && ./configure --prefix=$(PREFIX) $(WITH_TCL) $(WITH_TK) $(READLINE_FLAGS) $(X11_FLAGS) --enable-tclshrl --enable-wishrl $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(MORE_TK_FLAGS) CFLAGS=-I$(X11_PREFIX)/include && $(MAKE) && $(MAKE) install
 
-tclreadline-$(TCLREADLINE_VERSION).zip:
-	$(DOWNLOAD_TOOL) https://github.com/flightaware/tclreadline/archive/v$(TCLREADLINE_VERSION).zip -O tclreadline-$(TCLREADLINE_VERSION).zip
 
-# https://sourceforge.net/projects/expect/files/Expect%204%20Windows/2008-06-10/expect-src.zip
-# https://sourceforge.net/projects/expect/files/Expect/5.45.4/expect5.45.4.tar.gz
-# https://sourceforge.net/projects/expect/files/Expect/5.45.4/expect5.45.4.tar.gz.SHA256
-expect: expect$(EXPECT_VERSION).tar.gz
+$(cwsh): $(tclsh)
+	$(MAKE) $(CK_SRCDIR) && cd $(CK_SRCDIR) && ./configure --prefix=$(PREFIX) $(WITH_TCL) $(X11_FLAGS) && $(MAKE) && $(MAKE) install 
 
-expect$(EXPECT_VERSION).tar.gz:
-	$(DOWNLOAD_TOOL) https://sourceforge.net/projects/expect/files/Expect/$(EXPECT_VERSION)/expect$(EXPECT_VERSION).tar.gz
+threads: $(threads_pkgIndex)
 
-# https://github.com/andreas-kupries/critcl/archive/3.1.17.zip
-# https://github.com/andreas-kupries/critcl/archive/3.1.17.tar.gz
-critcl: critcl-$(CRITCL_VERSION).tar.gz
+$(threads_pkgIndex):
+	$(MAKE) $(THREADS_SRCDIR) && cd $(THREADS_SRCDIR) && ./configure --prefix=$(PREFIX) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(WITH_TCL) && $(MAKE) && $(MAKE) install
 
-critcl-$(CRITCL_VERSION).tar.gz:
-	$(DOWNLOAD_TOOL) https://github.com/andreas-kupries/critcl/archive/$(CRITCL_VERSION).tar.gz -O critcl-$(CRITCL_VERSION).tar.gz
+expect: $(expect_cmd)
 
-# https://github.com/flightaware/tclx/archive/v8.4.2.zip
-tclx: tclx-$(TCLX_VERSION).zip
+$(expect_cmd): $(tclsh)
+	$(MAKE) $(EXPECT_SRCDIR) && cd $(EXPECT_SRCDIR) && ./configure --prefix=$(PREFIX) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(WITH_TCL) && $(MAKE) && $(MAKE) install
 
-tclx-$(TCLX_VERSION).zip:
-	$(DOWNLOAD_TOOL) https://github.com/flightaware/tclx/archive/v$(TCLX_VERSION).zip -O tclx-$(TCLX_VERSION).zip
+critcl: $(critcl_cmd)
 
-# https://sourceforge.net/projects/tcllib/files/tcllib/1.19/tcllib-1.19.zip
-# https://sourceforge.net/projects/tcllib/files/tcllib/1.19/tcllib-1.19.tar.gz
-# https://sourceforge.net/projects/tcllib/files/tcllib/1.19/tcllib-1.19.tar.xz
-# https://sourceforge.net/projects/tcllib/files/tcllib/1.19/tcllib-1.19.kit
-# https://sourceforge.net/projects/tcllib/files/tcllib/1.19/tcllib-1.19.SHA256
-tcllib: tcllib-$(TCLLIB_VERSION).tar.gz
+$(critcl_cmd): $(tclsh)
+	$(MAKE) $(CRITCL_SRCDIR) && cd $(CRITCL_SRCDIR) && $(tclsh) ./build.tcl install
 
-tcllib-$(TCLLIB_VERSION).tar.gz:
-	$(DOWNLOAD_TOOL) https://sourceforge.net/projects/tcllib/files/tcllib/$(TCLLIB_VERSION)/tcllib-$(TCLLIB_VERSION).tar.gz
+tclx: $(tclx_lib)
 
-# https://sourceforge.net/projects/tcllib/files/BWidget/1.9.13/bwidget-1.9.13.zip
-# https://sourceforge.net/projects/tcllib/files/BWidget/1.9.13/bwidget-1.9.13.tar.gz
-bwidget: bwidget-$(BWIDGET_VERSION).tar.gz
+$(tclx_lib): $(tclsh)
+	$(MAKE) $(TCLX_SRCDIR) && cd $(TCLX_SRCDIR) && ./configure --prefix=$(PREFIX) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(WITH_TCL) && $(MAKE) && $(MAKE) install
 
-bwidget-$(BWIDGET_VERSION).tar.gz:
-	$(DOWNLOAD_TOOL) https://sourceforge.net/projects/tcllib/files/BWidget/$(BWIDGET_VERSION)/bwidget-$(BWIDGET_VERSION).tar.gz
+tcllib: $(tcllib_lib)
 
-# https://github.com/jtcl-project/jtcl/releases
-# https://github.com/jtcl-project/jtcl/archive/2.8.0-release.tar.gz
-jtcl: jtcl-$(JTCL_VERSION).tar.gz
+$(tcllib_lib): $(tclsh)
+	$(MAKE) $(TCLLIB_SRCDIR) && cd $(TCLLIB_SRCDIR) && ./configure --prefix=$(PREFIX) --with-tclsh=$(tclsh) && $(MAKE) && $(MAKE) install
 
-jtcl-$(JTCL_VERSION).tar.gz:
-	$(DOWNLOAD_TOOL) https://github.com/jtcl-project/jtcl/archive/$(JTCL_VERSION).tar.gz -O jtcl-$(JTCL_VERSION).tar.gz
+bwidget: $(bwidget_lib)
+
+$(bwidget_lib):
+	$(MAKE) $(BWIDGET_SRCDIR) && mv $(BWIDGET_SRCDIR) $(PREFIX)/lib/BWidget
+
+$(THREADS_SRCDIR): $(TCL_SRCDIR)
+
+############## EXTRACT ARCHIVES INTO BUILD_DIR ###############
+$(TCL_SRCDIR): $(TCL_TARBALL)
+	$(MAKE) $(BUILD_DIR) && $(UNTAR) $< -C $(BUILD_DIR)
+
+$(TK_SRCDIR): $(TK_TARBALL)
+	$(MAKE) $(BUILD_DIR) && $(UNTAR) $< -C $(BUILD_DIR)
+
+$(CK_SRCDIR): $(CK_ZIPFILE)
+	$(MAKE) $(BUILD_DIR) && $(UNZIP) $< -d $(BUILD_DIR)
+
+$(TCLREADLINE_SRCDIR): $(TCLREADLINE_ZIPFILE)
+	$(MAKE) $(BUILD_DIR) && $(UNZIP) $< -d $(BUILD_DIR)
+
+$(EXPECT_SRCDIR): $(EXPECT_TARBALL)
+	$(MAKE) $(BUILD_DIR) && $(UNTAR) $< -C $(BUILD_DIR)
+
+$(CRITCL_SRCDIR): $(CRITCL_TARBALL)
+	$(MAKE) $(BUILD_DIR) && $(UNTAR) $< -C $(BUILD_DIR)
+
+$(TCLX_SRCDIR): $(TCLX_ZIPFILE)
+	$(MAKE) $(BUILD_DIR) && $(UNZIP) $< -d $(BUILD_DIR)
+
+$(TCLLIB_SRCDIR): $(TCLLIB_TARBALL)
+	$(MAKE) $(BUILD_DIR) && $(UNTAR) $< -C $(BUILD_DIR)
+
+$(BWIDGET_SRCDIR): $(BWIDGET_TARBALL)
+	$(MAKE) $(BUILD_DIR) && $(UNTAR) $< -C $(BUILD_DIR)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+################## ARCHIVES ###################
+
+$(TCL_TARBALL):
+	@echo "$(TCL_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(TK_TARBALL):
+	@echo "$(TK_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(CK_ZIPFILE):
+	@echo "$(CK_ZIPFILE) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(TCLREADLINE_ZIPFILE):
+	@echo "$(TCLREADLINE_ZIPFILE) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(EXPECT_TARBALL):
+	@echo "$(EXPECT_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(CRITCL_TARBALL):
+	@echo "$(CRITCL_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(TCLX_ZIPFILE):
+	@echo "$(TCLX_ZIPFILE) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(TCLLIB_TARBALL):
+	@echo "$(TCLLIB_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
+$(BWIDGET_TARBALL):
+	@echo "$(BWIDGET_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
+
 clean:
 	-rm -f *~
-
-erase:
-	-rm -vf *.tar.gz
-	-rm -vf *.zip
-
