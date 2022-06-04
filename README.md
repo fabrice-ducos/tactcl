@@ -99,9 +99,12 @@ Once everything is set up, launch `make help` to see the list of available build
 ## NOTES
 
   - Before version 0.3.0, TacTCL was relying on another project Jaclin (Jacl INside), that
-    was a fork of TclJava updated for modern JDK and TCL versions. TacTCL started
-    as a small TCL distribution integrating TclJava with other tools.
-    Both projects proved difficult to maintain and build separately. TacTCL 0.3.0 is basically
+    was a fork of [TclJava](https://sourceforge.net/projects/tcljava/files/), migrated from
+    SVN to GIT with [reposurgeon](https://gitlab.com/esr/reposurgeon) and updated for modern
+    versions of the JDK and of TCL. 
+  - TacTCL started as a small TCL distribution including several general-purpose Tcl tools
+    and TclJava.
+  - Both projects proved difficult to maintain and build separately. TacTCL 0.3.0 is basically
     a merge of TacTCL 0.2.9 and Jaclin 0.1.4.
 
 ## TODO
