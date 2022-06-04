@@ -1,5 +1,6 @@
 include build.cfg
 include platforms/$(PLATFORM).cfg
+include versions.cfg
 
 TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
 TK_SRCDIR=$(BUILD_DIR)/tk$(TK_VERSION)
@@ -73,7 +74,6 @@ $(JAVA_HOME):
 
 # for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
 clean:
-	cd $(PACKAGES_DIR) && $(MAKE) clean
 	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) clean distclean
 	rm -rf build
 	rm -rf local
