@@ -1,4 +1,4 @@
-# TacTCL 0.3.1
+# TacTCL 0.3.2
 (pronounce "tactical")
 
 A small, free Tcl/Tk distribution with some popular Tcl/Tk packages built from sources.
@@ -38,6 +38,8 @@ It is up to the user to copy the tools under their system directories.
 For installing Tcl/Tk, type `make tk`
 
 For installing TclJava (TclBlend and Jacl), type `make tcljava`
+
+For installing well-behaved packages (at the author's knowledge), type `make stable`
 
 For installing everything, type `make all` (you may experience errors depending on your environment, this early version of TacTCL doesn't take care of missing dependencies of the packages it gathers).
 

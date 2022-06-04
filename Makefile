@@ -35,6 +35,8 @@ tcljava: tclblend jacl
 .PHONY: all
 all: tcl tk tcljava all-packages
 
+stable: tcl tk tcljava stable-packages
+
 help:
 	@echo "The following targets are available:"
 	@echo
@@ -51,6 +53,7 @@ help:
 	@echo "          because of package dependencies missing on your system,"
 	@echo "          or installed in non-default locations."
 	@echo "          You may need to edit your build.cfg file."
+	@echo "make stable: builds only packages with no known build issue"
 	@echo "make help: this help"
 
 help-tcljava:

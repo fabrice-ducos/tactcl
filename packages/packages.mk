@@ -48,12 +48,15 @@ WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 .PHONY: all-packages help-packages
 .PHONY: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
 
-all-packages: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
+# ck fails on a matherr link error in Glibc 2.27+ on Linux (see math manpage)
+all-packages: stable-packages ck critcl
+
+stable-packages: tcl tk tclreadline threads expect tclx tcllib bwidget
 
 help-packages:
 	@echo "make tcl: build tcl"
 	@echo "make tk: build tk (will build tcl first if needed)"
-	@echo "make ck: build ck"
+	@echo "make ck: build ck (a link error on matherr may occur on Linux systems running Glibc 2.27+)"
 	@echo "make tclreadline: build tclreadline"
 	@echo "make threads: build tcl threads (a subpackage of tcl)"
 	@echo "make expect: build expect"
