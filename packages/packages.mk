@@ -45,8 +45,10 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
-.PHONY: all help clean
+.PHONY: all-packages help-packages
 .PHONY: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
+
+all-packages: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
 
 help-packages:
 	@echo "make tcl: build tcl"

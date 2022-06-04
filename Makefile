@@ -32,7 +32,7 @@ tcljava: tclblend jacl
 tcltk: default tk
 
 .PHONY: all
-all: tcltk tcljava
+all: tcltk tcljava all-packages
 
 help:
 	@echo "The following targets are available:"
