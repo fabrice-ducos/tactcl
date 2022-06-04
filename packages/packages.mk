@@ -1,15 +1,6 @@
 # TclBuild script: integration Makefile for Tcl
 # Fabrice Ducos 2019, 2022
 
-BUILD_CFG=../build.cfg
-VERSIONS_CFG=./versions.cfg
-
-include $(BUILD_CFG)
-include ../platforms/$(PLATFORM).cfg
-include $(VERSIONS_CFG)
-
-
-PACKAGES_DIR=.
 TCL_TARBALL=$(PACKAGES_DIR)/tcl$(TCL_VERSION)-src.tar.gz
 TK_TARBALL=$(PACKAGES_DIR)/tk$(TK_VERSION)-src.tar.gz
 CK_ZIPFILE=$(PACKAGES_DIR)/ck-$(CK_VERSION).zip
@@ -34,8 +25,8 @@ tclx_lib=$(PREFIX)/lib/tclx${tcl_lang_version}
 tcllib_lib=$(PREFIX)/lib/tcllib$(TCLLIB_VERSION)
 bwidget_lib=$(PREFIX)/lib/BWidget
 
-ifeq (, $(JAVA_HOME))
-$(error JAVA_HOME not defined, please set it up to a proper JAVA_HOME directory, or install and configure the jenv utility)
+ifeq (, $(BUILD_DIR))
+$(error BUILD_DIR is not defined, please do not call this Makefile directly. Only the top level Makefile should be launched, that will load the proper configuration)
 endif
 
 TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
@@ -54,14 +45,10 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
-.PHONY: all download help clean erase
+.PHONY: all help clean
 .PHONY: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
 
-all: $(TARGETS)
-
-help:
-	@echo
-	@echo "make [all]: launch the build and installation process"
+help-packages:
 	@echo "make tcl: build tcl"
 	@echo "make tk: build tk"
 	@echo "make ck: build ck"
@@ -72,15 +59,6 @@ help:
 	@echo "make tclx: build tclx"
 	@echo "make tcllib: build tcllib"
 	@echo "make bwidget: build bwidget"
-	@echo "make clean: remove the build and local subdirectories (in the current directory only)"
-	@echo "make download: download the packages given in build.cfg"
-	@echo "make erase: erase the downloaded packages"
-	@echo "make help: this help"
-	@echo
-	@echo "The following settings can be redefined on the command line, e.g make PREFIX=/other/prefix JAVA_HOME=/other/java/home"
-	@echo "PREFIX=$(PREFIX)"
-	@echo "JAVA_HOME=$(JAVA_HOME)"
-	@echo "BUILD_DIR=$(BUILD_DIR)"
 
 tcl: $(tclsh)
 
@@ -201,6 +179,3 @@ $(TCLLIB_TARBALL):
 $(BWIDGET_TARBALL):
 	@echo "$(BWIDGET_TARBALL) not found. Please download it first, or update the $(VERSIONS_CFG) file" 1>&2 && false
 
-clean:
-	-rm -f *~
-	-rm -rf build
