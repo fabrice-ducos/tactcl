@@ -5,7 +5,9 @@ BUILD_CFG=../build.cfg
 VERSIONS_CFG=./versions.cfg
 
 include $(BUILD_CFG)
+include ../platforms/$(PLATFORM).cfg
 include $(VERSIONS_CFG)
+
 
 PACKAGES_DIR=.
 TCL_TARBALL=$(PACKAGES_DIR)/tcl$(TCL_VERSION)-src.tar.gz
@@ -46,8 +48,7 @@ TCLX_SRCDIR=$(BUILD_DIR)/tclx-$(TCLX_VERSION)
 TCLLIB_SRCDIR=$(BUILD_DIR)/tcllib-$(TCLLIB_VERSION)
 BWIDGET_SRCDIR=$(BUILD_DIR)/bwidget-$(BWIDGET_VERSION)
 
-#THREADS_SRCDIR=$(TCL_SRCDIR)/pkgs/thread$(THREADS_VERSION)
-THREADS_SRCDIR=$(shell echo $(TCL_SRCDIR)/pkgs/thread*)
+THREADS_SRCDIR=$(TCL_SRCDIR)/pkgs/thread$(THREADS_VERSION)
 threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
@@ -58,11 +59,7 @@ WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 all: $(TARGETS)
 
-download:
-	cd packages && $(MAKE) download
-
 help:
-	cd $(PACKAGES_DIR) && $(MAKE) help
 	@echo
 	@echo "make [all]: launch the build and installation process"
 	@echo "make tcl: build tcl"
@@ -136,10 +133,13 @@ $(tcllib_lib): $(tclsh)
 
 bwidget: $(bwidget_lib)
 
-$(bwidget_lib):
-	$(MAKE) $(BWIDGET_SRCDIR) && mv $(BWIDGET_SRCDIR) $(PREFIX)/lib/BWidget
+$(bwidget_lib): $(PREFIX)
+	$(MAKE) $(BWIDGET_SRCDIR) && mkdir -p -v $(PREFIX)/lib && mv $(BWIDGET_SRCDIR) $(PREFIX)/lib/BWidget
 
 $(THREADS_SRCDIR): $(TCL_SRCDIR)
+
+$(PREFIX):
+	mkdir -p -v $@
 
 ############## EXTRACT ARCHIVES INTO BUILD_DIR ###############
 $(TCL_SRCDIR): $(TCL_TARBALL)
@@ -203,3 +203,4 @@ $(BWIDGET_TARBALL):
 
 clean:
 	-rm -f *~
+	-rm -rf build
