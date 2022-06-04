@@ -1,6 +1,7 @@
 autom4te.cache/
 config.log
 build
+build.cfg
 local
 
 # CVS default ignores begin
