@@ -1,5 +1,5 @@
 include build.cfg
-include $(EXTRA_CFG_FILE)
+include platforms/$(PLATFORM).cfg
 
 TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
 TK_SRCDIR=$(BUILD_DIR)/tk$(TK_VERSION)
@@ -116,6 +116,7 @@ $(JAVA_HOME):
 
 clean:
 	cd $(PACKAGES_DIR) && $(MAKE) clean
+	cd $(TCLJAVA_DIR) && $(MAKE) clean distclean
 	rm -rf $(BUILD_DIR)
 	rm -rf local
 	rm -f *~
