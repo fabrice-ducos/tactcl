@@ -1,3 +1,6 @@
+# this file is generated automatically when tcljava is built
+tcljava/jdk.cfg
+
 autom4te.cache/
 config.log
 build

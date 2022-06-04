@@ -33,7 +33,7 @@ include $(PACKAGES_DIR)/packages.mk
 tcljava: tclblend jacl
 
 .PHONY: all
-all: tcltk tcljava all-packages
+all: tcl tk tcljava all-packages
 
 help:
 	@echo "The following targets are available:"
@@ -83,7 +83,9 @@ $(JAVA_HOME):
 
 # for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
 clean:
-	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) clean distclean
+	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) clean
+	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) distclean
+	rm -f tcljava/jdk.cfg # generated automatically
 	rm -rf build
 	rm -rf local
 	rm -f *~
