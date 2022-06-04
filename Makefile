@@ -1,4 +1,4 @@
-ifeq (, build.cfg)
+ifeq (, $(wildcard build.cfg))
 $(error build.cfg is not found. It is probably a fresh installation. Please copy build.cfg.dist to build.cfg, check up the file and edit it if necessary, then retry.)
 endif
 
