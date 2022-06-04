@@ -6,7 +6,7 @@ A small, free Tcl/Tk distribution with some popular Tcl/Tk packages built from s
 IT IS NOT A REPLACEMENT FOR ActiveState Tcl.
 If you need a production-ready, stable version of Tcl, it's probably better to rely on commercially supported packages such as ActiveState's.
 
-TacTCL's goal is to automatically download stable sources of several popular packages and compile them on your system with your available compiler, instead of relying on precompiled binaries.
+TacTCL's goal is to gather several popular, reasonably stable packages and compile them on your system with your available compiler, instead of relying on precompiled binaries.
 
 The policy of TacTCL is that the default configuration should provide working, stable versions of main packages, but that the user should be able to easily try any configuration of her liking by editing a simple `build.cfg` text file. Contributors are welcome to propose newer default configurations after testing them. 
 
