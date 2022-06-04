@@ -114,10 +114,11 @@ $(TK_TARBALL):
 $(JAVA_HOME):
 	@echo "\$$JAVA_HOME: '$(JAVA_HOME)' not found: You must set \$$JAVA_HOME to a proper JDK root directory in your environment, or optionally in build.cfg" 1>&2 && false
 
+# for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
 clean:
 	cd $(PACKAGES_DIR) && $(MAKE) clean
 	cd $(TCLJAVA_DIR) && $(MAKE) clean distclean
-	rm -rf $(BUILD_DIR)
+	rm -rf build
 	rm -rf local
 	rm -f *~
 
