@@ -1,3 +1,7 @@
+ifeq (, build.cfg)
+$(error build.cfg is not found. It is probably a fresh installation. Please copy build.cfg.dist to build.cfg, check up the file and edit it if necessary, then retry.)
+endif
+
 include build.cfg
 include platforms/$(PLATFORM).cfg
 include versions.cfg
@@ -28,14 +32,13 @@ include $(PACKAGES_DIR)/packages.mk
 .PHONY: tcljava
 tcljava: tclblend jacl
 
-.PHONY: tcltk
-tcltk: default tk
-
 .PHONY: all
 all: tcltk tcljava all-packages
 
 help:
 	@echo "The following targets are available:"
+	@echo
+	@echo make [default]: build tcl and its threads subpackage
 	@echo
 	@echo "For native Tcl distribution:"
 	@$(MAKE) help-packages
@@ -44,10 +47,13 @@ help:
 	@$(MAKE) help-tcljava
 	@echo "make clean: clean the build artifacts"
 	@echo "make all: build tcljava and everything in $(PACKAGES_DIR)"
+	@echo "          This is likely to fail without some trial and error"
+	@echo "          because of package dependencies missing on your system,"
+	@echo "          or installed in non-default locations."
+	@echo "          You may need to edit your build.cfg file."
 	@echo "make help: this help"
 
 help-tcljava:
-	@echo "make tcltk: build tcl/tk"
 	@echo "make tcljava: build tclblend and jacl"
 	@echo "make tclblend: build tclblend (with the jtclsh interpreter)"
 	@echo "make jacl: build jacl (with the jaclsh interpreter)"

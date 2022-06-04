@@ -52,7 +52,7 @@ all-packages: tcl tk ck tclreadline threads expect critcl tclx tcllib bwidget
 
 help-packages:
 	@echo "make tcl: build tcl"
-	@echo "make tk: build tk"
+	@echo "make tk: build tk (will build tcl first if needed)"
 	@echo "make ck: build ck"
 	@echo "make tclreadline: build tclreadline"
 	@echo "make threads: build tcl threads (a subpackage of tcl)"
@@ -79,7 +79,7 @@ ck: $(cwsh)
 tclreadline: $(tclreadline-folder)
 
 # explicit CFLAGS is necessary with tclreadline because tclreadline's configure doesn't recognize --with-x-includes
-$(tclreadline-folder):
+$(tclreadline-folder): tcl tk
 	$(MAKE) $(TCLREADLINE_SRCDIR) && cd $(TCLREADLINE_SRCDIR) && ./configure --prefix=$(PREFIX) $(WITH_TCL) $(WITH_TK) $(READLINE_FLAGS) $(X11_FLAGS) --enable-tclshrl --enable-wishrl $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(MORE_TK_FLAGS) CFLAGS=-I$(X11_PREFIX)/include && $(MAKE) && $(MAKE) install
 
 

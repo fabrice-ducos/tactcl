@@ -1,8 +1,8 @@
 UNTAR=tar xf
 UNZIP=unzip
 
-# linux, macosx, windows
-PLATFORM=macosx
+# unix, windows (unix includes linux and macosx)
+PLATFORM=unix
 
 # The installation PREFIX (by default the local directory under the current directory)
 # It can be changed to /usr/local for a system-wide installation, if you don't mind overwriting a previous tcl installation
@@ -23,8 +23,8 @@ THREADS_FLAGS=--enable-threads
 # comment this line for adding X11 support
 #X11_FLAGS=--with-x --x-includes=$(X11_PREFIX)/include --x-libraries=$(X11_PREFIX)/lib
 
-# for readline
-READLINE_FLAGS=--with-readline-includes=/usr/local/Cellar/readline/8.1.1/include/
+# required for tclreadline
+#READLINE_FLAGS=--with-readline-includes=/usr/local/Cellar/readline/8.1.1/include/
 
 #For MacOSX systems only
 #MORE_TK_FLAGS=--enable-aqua=yes --enable-framework
