@@ -36,8 +36,11 @@ all: tcltk tcljava
 
 help:
 	@echo "The following targets are available:"
+	@echo
+	@echo "For native Tcl distribution:"
 	@$(MAKE) help-packages
 	@echo
+	@echo "For TclJava:"
 	@$(MAKE) help-tcljava
 	@echo "make clean: clean the build artifacts"
 	@echo "make all: build tcljava and everything in $(PACKAGES_DIR)"
