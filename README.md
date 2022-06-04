@@ -41,6 +41,8 @@ For installing TclJava (TclBlend and Jacl), type `make tcljava`
 
 For installing everything, type `make all` (you may experience errors depending on your environment, this early version of TacTCL doesn't take care of missing dependencies of the packages it gathers).
 
+For a list of all the available commands: `make help`
+
 You can test `jtclsh` and `jaclsh` (the JVM Tcl interpreters from Tclblend and Jacl) with these commands:
 
 ```
