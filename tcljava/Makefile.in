@@ -2,6 +2,8 @@
 #
 # RCS: @(#) $Id: Makefile.in,v 1.61 2007/10/01 21:48:39 mdejong Exp $
 
+# updated by F. Ducos, 2022/06/05 for JSR223 support
+
 SHELL = /bin/sh
 
 MAKEFLAGS = --no-print-directory
@@ -59,6 +61,9 @@ JAVAC_D_FLAG		= @JAVAC_D_FLAG@
 JAR_EXTRACT_FLAGS	= @JAR_EXTRACT_FLAGS@
 JAR_COMPRESS_FLAGS	= @JAR_COMPRESS_FLAGS@
 JAR_NOCOMPRESS_FLAGS	= @JAR_NOCOMPRESS_FLAGS@
+# F. Ducos 2022/06/05: Manifests for tclblend.jar and jacl.jar
+JAR_MANIFEST_AND_COMPRESS_FLAGS = @JAR_MANIFEST_AND_COMPRESS_FLAGS@
+JAR_MANIFEST_AND_NOCOMPRESS_FLAGS = @JAR_MANIFEST_AND_NOCOMPRESS_FLAGS@
 JDB_FLAGS		=
 JDB_ATTACH_FLAGS	= @JDB_ATTACH_FLAGS@
 DDD_FLAGS		=
@@ -85,6 +90,7 @@ BUILD_DIR		= @BUILD_DIR@
 BUILD_DIR_NATIVE	= @BUILD_DIR_NATIVE@
 UNIX_DIR		= $(TOP_DIR)/unix
 WIN_DIR			= $(TOP_DIR)/win
+RESOURCES_DIR           = $(TOP_DIR)/src/resources
 TCLBLEND_SRC_DIR	= $(TOP_DIR)/src/tclblend
 TCLBLEND_BUILD_DIR	= $(BUILD_DIR)/tclblend
 JACL_SRC_DIR		= $(TOP_DIR)/src/jacl
@@ -307,7 +313,7 @@ tclblend.build: tclblend.clean tcljava.check
 	cd $(TCLBLEND_SRC_DIR) ;\
 	CLASSPATH=$(TCLBLEND_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
-		$(JAVAC_D_FLAG) $(TCLBLEND_BUILD_DIR) tcl/lang/*.java
+		$(JAVAC_D_FLAG) $(TCLBLEND_BUILD_DIR) tcl/lang/*.java tcl/jsr223/*.java
 
 # Only use this if you are developing tclblend code and you need to recompile
 # a lot. It will not clean up before building and tclblend.jar will not be
@@ -320,7 +326,7 @@ tclblend.fastbuild:
 	cd $(TCLBLEND_SRC_DIR) ;\
 	CLASSPATH=$(TCLBLEND_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
-		$(JAVAC_D_FLAG) $(TCLBLEND_BUILD_DIR) tcl/lang/*.java
+		$(JAVAC_D_FLAG) $(TCLBLEND_BUILD_DIR) tcl/lang/*.java tcl/jsr223/*.java
 
 # tclblend.jar needs to depend on tclblend.build so that the
 # classfiles get rebuilt each time the jar is built
@@ -328,7 +334,8 @@ tclblend.fastbuild:
 tclblend.jar: tclblend.build
 	cd $(TCLBLEND_BUILD_DIR) ;\
 	CLASSPATH=$(JAVA_CLASSPATH) \
-	$(JAR) $(JAR_NOCOMPRESS_FLAGS) $(BUILD_DIR)/tclblend.jar tcl
+	$(JAR) $(JAR_MANIFEST_AND_NOCOMPRESS_FLAGS) $(BUILD_DIR)/tclblend.jar \
+	  $(RESOURCES_DIR)/META-INF/MANIFEST.MF tcl -C $(RESOURCES_DIR) META-INF
 
 # The tclblend: rule will always rebuild the .class files and
 # recreate the tclblend.jar file.
@@ -589,7 +596,7 @@ jacl.build: jacl.clean tcljava.check
 	CLASSPATH=$(JACL_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
 		$(JAVAC_D_FLAG) $(JACL_BUILD_DIR) \
-		tcl/lang/*.java
+		tcl/lang/*.java tcl/jsr223/*.java
 	mkdir $(JACL_BUILD_DIR)/tcl/lang/library
 	cp -f $(JACL_SRC_DIR)/tcl/lang/library/*.tcl \
 		$(JACL_BUILD_DIR)/tcl/lang/library
@@ -611,15 +618,15 @@ jacl.fastbuild:
 	CLASSPATH=$(JACL_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
 		$(JAVAC_D_FLAG) $(JACL_BUILD_DIR) \
-                tcl/lang/*.java
+                tcl/lang/*.java tcl/jsr223/*.java
 
 # jacl.jar needs to depend on jacl.build so that the
 # classfiles get rebuilt each time the jar is built
 jacl.jar: jacl.build
 	cd $(JACL_BUILD_DIR) ;\
 	CLASSPATH=$(JAVA_CLASSPATH) \
-	$(JAR) $(JAR_NOCOMPRESS_FLAGS) $(BUILD_DIR)/jacl.jar tcl
-
+	$(JAR) $(JAR_MANIFEST_AND_NOCOMPRESS_FLAGS) $(BUILD_DIR)/jacl.jar \
+	  $(RESOURCES_DIR)/META-INF/MANIFEST.MF tcl -C $(RESOURCES_DIR) META-INF
 
 #
 # This rule is run before installing, it is used to do any checks that
@@ -2361,11 +2368,11 @@ tcljavasrc.jar:
 jaclsrc.jar:
 	cd $(JACL_SRC_DIR) ; \
 	$(JAR) $(JAR_COMPRESS_FLAGS) $(BUILD_DIR)/jaclsrc.jar \
-	    tcl/lang/*.java
+	    tcl/lang/*.java tcl/jsr223/*.java
 
 tclblendsrc.jar:
 	cd $(TCLBLEND_SRC_DIR) ; \
-	$(JAR) $(JAR_COMPRESS_FLAGS) $(BUILD_DIR)/tclblendsrc.jar tcl/lang/*.java
+	$(JAR) $(JAR_COMPRESS_FLAGS) $(BUILD_DIR)/tclblendsrc.jar tcl/lang/*.java tcl/jsr223/*.java
 
 itclsrc.jar:
 	cd $(ITCL_SRC_DIR) ; \
