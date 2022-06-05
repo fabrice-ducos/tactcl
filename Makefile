@@ -47,7 +47,8 @@ help:
 	@echo
 	@echo "For TclJava:"
 	@$(MAKE) help-tcljava
-	@echo "make clean: clean the build artifacts"
+	@echo "make clean: remove all the build artifacts"
+	@echo "make clean-tcljava: remove tcljava build artifacts"
 	@echo "make all: build tcljava and everything in $(PACKAGES_DIR)"
 	@echo "          This is likely to fail without some trial and error"
 	@echo "          because of package dependencies missing on your system,"
@@ -85,11 +86,13 @@ $(JAVA_HOME):
 	@echo "\$$JAVA_HOME: '$(JAVA_HOME)' not found: You must set \$$JAVA_HOME to a proper JDK root directory in your environment, or optionally in build.cfg" 1>&2 && false
 
 # for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
-clean:
+clean: clean-tcljava
+	rm -rf build
+	rm -rf local
+	rm -f *~ 
+
+clean-tcljava:
 	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) clean
 	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) distclean
 	rm -f tcljava/jdk.cfg # generated automatically
-	rm -rf build
-	rm -rf local
-	rm -f *~
 
