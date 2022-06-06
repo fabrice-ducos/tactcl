@@ -13,6 +13,15 @@ tcljava/itcl/
 tcljava/jacl/
 tcljava/tcljava/
 
+tcljava/src/native/javaNative.h
+tcljava/src/native/tcl_lang_CObject.h
+tcljava/src/native/tcl_lang_IdleHandler.h
+tcljava/src/native/tcl_lang_Interp.h
+tcljava/src/native/tcl_lang_Notifier.h
+tcljava/src/native/tcl_lang_TclList.h
+tcljava/src/native/tcl_lang_TimerHandler.h
+tcljava/src/native/tcl_lang_Util.h
+
 autom4te.cache/
 config.log
 build
