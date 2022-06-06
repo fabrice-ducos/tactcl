@@ -378,7 +378,7 @@ javaUtil.o: $(NATIVE_SRC_DIR)/javaUtil.c
 javaNative.h:
 	@# one checks that javah is available; otherwise one emulates it with javac -h (since jdk 10)
 	@JAVAH_STEM=`basename $(JAVAH) .exe` ; test "${JAVAH_STEM}" = javah && \
-	@echo CLASSPATH=$(TCLBLEND_CLASSPATH) \
+	CLASSPATH=$(TCLBLEND_CLASSPATH) \
 	$(JAVAH) -jni -o javaNative.h $(TCLBLEND_JNI_HEADER_CLASS_NAMES) || \
 	cd $(TCL_LANG_SRC_DIR) && CLASSPATH=$(TCLBLEND_CLASSPATH) \
 	$(JAVAC) -Xlint:deprecation -Xlint:unchecked -h . $(TCLBLEND_JNI_JAVA_FILES) && \
