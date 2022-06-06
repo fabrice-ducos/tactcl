@@ -4,9 +4,6 @@
 UNTAR=tar xf
 UNZIP=unzip
 
-# unix, windows (unix includes linux and macosx)
-PLATFORM=unix
-
 # The installation PREFIX (by default the local directory under the current directory)
 # It can be changed to /usr/local for a system-wide installation, if you don't mind overwriting a previous tcl installation
 # You can also set it to /usr/local/mytclversion if you want to be safe.

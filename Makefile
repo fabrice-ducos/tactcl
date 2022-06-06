@@ -2,6 +2,36 @@ ifeq (, $(wildcard build.cfg))
 $(error build.cfg is not found. It is probably a fresh installation. Please copy build.cfg.dist to build.cfg, check up the file and edit it if necessary, then retry.)
 endif
 
+MAIN_TARGET=failed
+ifeq ($(OS),Windows_NT)
+  PLATFORM=windows
+  JAVA_HOME:=$(subst \,\\,$(JAVA_HOME))
+  # no "lib" prefix expected on Windows
+  LIB_PREFIX=
+  LIB_EXT=dll
+  LIB_OPTION=shared
+  MAIN_TARGET=default
+else
+  UNAME_S := $(shell uname -s)
+  UNAME_P := $(shell uname -p)
+  OS=$(UNAME_S)
+  ifeq ($(UNAME_S), Darwin)
+    PLATFORM=unix
+    LIB_PREFIX=lib
+	LIB_EXT=dylib
+	LIB_OPTION=shared
+	MAIN_TARGET=default
+  endif
+  ifeq ($(UNAME_S),Linux)
+    PLATFORM=unix
+    LIB_PREFIX=lib
+	LIB_EXT=so
+	LIB_OPTION=shared
+	MAIN_TARGET=default
+  endif
+endif
+  
+
 include build.cfg
 include platforms/$(PLATFORM).cfg
 include versions.cfg
@@ -23,6 +53,13 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
+
+.PHONY: start
+start: $(MAIN_TARGET)
+
+.PHONY: failed
+failed:
+	@echo "System $(OS) not recognized or not supported for the time being"
 
 .PHONY: default
 default: tcl threads
