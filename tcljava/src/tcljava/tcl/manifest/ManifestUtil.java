@@ -19,7 +19,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package tcl.jsr223;
+package tcl.manifest;
 
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
