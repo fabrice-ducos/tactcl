@@ -1,5 +1,17 @@
-# this file is generated automatically when tcljava is built
+# these files are generated automatically when tcljava is built
 tcljava/jdk.cfg
+tcljava/Makefile
+tcljava/Test.h
+tcljava/Test.tcl
+tcljava/config.status
+tcljava/jaclsh
+tcljava/jtclsh
+tcljava/pkgIndex.tcl
+tcljava/tcljavaConfig.sh
+tcljava/btjc/
+tcljava/itcl/
+tcljava/jacl/
+tcljava/tcljava/
 
 autom4te.cache/
 config.log
@@ -31,6 +43,8 @@ _$*
 *.so
 *.dylib
 *.exe
+*.class
+*.jar
 *.Z
 *.elc
 *.ln
