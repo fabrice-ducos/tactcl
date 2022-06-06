@@ -10,10 +10,13 @@ PLATFORM=unix
 # The installation PREFIX (by default the local directory under the current directory)
 # It can be changed to /usr/local for a system-wide installation, if you don't mind overwriting a previous tcl installation
 # You can also set it to /usr/local/mytclversion if you want to be safe.
-PREFIX=$(PWD)/local
+#
+# IMPORTANT: do not replace $(shell pwd) by $(PWD) (in an attempt of simplification), it will not work properly with sudo
+# see: https://jerome-wang.github.io/2015/08/13/pwd-in-sudo-make/ for a discussion on this issue
+PREFIX=$(shell pwd)/local
 
-BUILD_DIR=$(PWD)/build
-PACKAGES_DIR=$(PWD)/packages
+BUILD_DIR=$(shell pwd)/build
+PACKAGES_DIR=$(shell pwd)/packages
 
 # comment the following line out in order to disable multithreading support
 THREADS_FLAGS=--enable-threads
