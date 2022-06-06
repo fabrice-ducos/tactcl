@@ -1011,7 +1011,7 @@ createCommands()
     Extension.loadOnDemand(this, "jaclloadjava", "tcl.lang.JaclLoadJavaCmd");
     
     try {
-        eval("package ifneeded java 1.4.1 jaclloadjava");
+        eval("package ifneeded java 1.5.0 jaclloadjava");
     } catch (TclException e) {
 	System.out.println(getResult());
 	e.printStackTrace();

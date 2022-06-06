@@ -1,3 +1,11 @@
+2022-06-06  Fabrice Ducos <fabrice.ducos@gmail.com>
+        * release of TclJava 1.5.0
+        * the most notable improvement is the 
+          support of JSR 223 for TclBlend and Jacl
+          (for easier integration of the script engines
+          in third-party Java or JVM-based applications)
+        * several bug fixes in the build system
+
 2019-05-04  Fabrice Ducos <fabrice.ducos@gmail.com>
 
         * Support of latest versions of Tcl (at least Tcl 8.5
