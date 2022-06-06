@@ -17,7 +17,7 @@ wish=$(PREFIX)/bin/wish${tcl_lang_version}
 jtclsh=$(PREFIX)/bin/jtclsh
 jaclsh=$(PREFIX)/bin/jaclsh
 
-TCLJAVA_DIR=$(PWD)/tcljava
+TCLJAVA_DIR=$(shell pwd)/tcljava
 THREADS_SRCDIR=$(TCL_SRCDIR)/pkgs/thread$(THREADS_VERSION)
 threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 
