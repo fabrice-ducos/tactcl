@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Created-By: tactcl+tcljava
-TclBlend-EngineVersion: 0.0
+TclBlend-EngineVersion: 1.5
 TclBlend-LanguageVersion: 8.6
-Jacl-EngineVersion: 0.0
+Jacl-EngineVersion: 1.5
 Jacl-LanguageVersion: 8.0

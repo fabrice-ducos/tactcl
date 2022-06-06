@@ -42,8 +42,7 @@ public class JaclScriptEngineFactory implements ScriptEngineFactory
 
     @Override
     public String getEngineVersion() {
-	// TODO: read the version from the Manifest
-	return "0.0.0";
+	return ManifestUtil.getAttributeValue("Jacl-EngineVersion");
     }
 
     @Override
@@ -71,8 +70,7 @@ public class JaclScriptEngineFactory implements ScriptEngineFactory
 
     @Override
     public String getLanguageVersion() {
-	// TODO: read the version from the Manifest
-	return "8.0";
+	return ManifestUtil.getAttributeValue("Jacl-LanguageVersion");
     }
 
     @Override

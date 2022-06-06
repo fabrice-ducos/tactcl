@@ -42,8 +42,7 @@ public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 
     @Override
     public String getEngineVersion() {
-        // TODO: read the version from the Manifest
-	return "0.0.0";
+	return ManifestUtil.getAttributeValue("TclBlend-EngineVersion");
     }
 
     @Override
@@ -69,8 +68,7 @@ public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 
     @Override
     public String getLanguageVersion() {
-        // TODO: read the version from the Manifest
-	return "8.6";
+	return ManifestUtil.getAttributeValue("TclBlend-LanguageVersion");
     }
 
     @Override

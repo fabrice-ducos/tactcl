@@ -335,7 +335,9 @@ tclblend.jar: tclblend.build
 	cd $(TCLBLEND_BUILD_DIR) ;\
 	CLASSPATH=$(JAVA_CLASSPATH) \
 	$(JAR) $(JAR_MANIFEST_AND_NOCOMPRESS_FLAGS) $(BUILD_DIR)/tclblend.jar \
-	  $(RESOURCES_DIR)/META-INF/MANIFEST.MF tcl -C $(RESOURCES_DIR) META-INF
+	  $(RESOURCES_DIR)/META-INF/MANIFEST.MF tcl \
+	  -C $(RESOURCES_DIR) META-INF \
+	  -C $(TCLJAVA_BUILD_DIR) tcl/jsr223
 
 # The tclblend: rule will always rebuild the .class files and
 # recreate the tclblend.jar file.
@@ -625,7 +627,9 @@ jacl.jar: jacl.build
 	cd $(JACL_BUILD_DIR) ;\
 	CLASSPATH=$(JAVA_CLASSPATH) \
 	$(JAR) $(JAR_MANIFEST_AND_NOCOMPRESS_FLAGS) $(BUILD_DIR)/jacl.jar \
-	  $(RESOURCES_DIR)/META-INF/MANIFEST.MF tcl -C $(RESOURCES_DIR) META-INF
+	  $(RESOURCES_DIR)/META-INF/MANIFEST.MF tcl \
+	  -C $(RESOURCES_DIR) META-INF \
+	  -C $(TCLJAVA_BUILD_DIR) tcl/jsr223
 
 #
 # This rule is run before installing, it is used to do any checks that
@@ -1002,7 +1006,7 @@ tcljava.build: tcljava.clean
 	CLASSPATH=$(TCLJAVA_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
 	$(JAVAC_D_FLAG) $(TCLJAVA_BUILD_DIR) \
-		tcl/lang/*.java
+		tcl/lang/*.java tcl/jsr223/*.java
 	mkdir $(TCLJAVA_BUILD_DIR)/tcl/lang/library
 	mkdir $(TCLJAVA_BUILD_DIR)/tcl/lang/library/java
 	cp -fr $(TCLJAVA_SRC_DIR)/tcl/lang/library/java/*.tcl \
@@ -1020,7 +1024,7 @@ tcljava.fastbuild:
 	CLASSPATH=$(TCLJAVA_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
 	$(JAVAC_D_FLAG) $(TCLJAVA_BUILD_DIR) \
-		tcl/lang/*.java
+		tcl/lang/*.java tcl/jsr223/*.java
 
 # tcljava.jar needs to depend on tcljava.build so that the
 # classfiles get rebuilt each time the jar is built
@@ -2362,7 +2366,7 @@ debug_src_jars: tcljavasrc.jar jaclsrc.jar tclblendsrc.jar itclsrc.jar tjcsrc.ja
 tcljavasrc.jar:
 	cd $(TCLJAVA_SRC_DIR) ; \
 	$(JAR) $(JAR_COMPRESS_FLAGS) $(BUILD_DIR)/tcljavasrc.jar \
-	    tcl/lang/*.java tcl/lang/reflect/*.java
+	    tcl/lang/*.java tcl/lang/reflect/*.java tcl/jsr223/*.java
 
 jaclsrc.jar:
 	cd $(JACL_SRC_DIR) ; \
