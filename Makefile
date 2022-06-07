@@ -58,7 +58,7 @@ WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 TCLBLEND_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.jar
-TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.$(LIB_EXT)
+TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/libtclblend.$(LIB_EXT)
 JACL_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/jacl.jar
 
 .PHONY: start
@@ -129,12 +129,15 @@ $(jaclsh): $(JAVA_HOME) tcl threads
 .PHONY: maven-install
 maven-install: maven-install-tclblend-jar maven-install-tclblend-so maven-install-jacl-jar
 
+.PHONY: maven-install-tclblend-jar
 maven-install-tclblend-jar:
 	mvn install:install-file -Dfile=$(TCLBLEND_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libtclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
 
+.PHONY: maven-install-tclblend-so
 maven-install-tclblend-so:
 	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libtclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT)
 
+.PHONY: maven-install-jacl-jar
 maven-install-jacl-jar:
 	mvn install:install-file -Dfile=$(JACL_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libjacl -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
 
