@@ -2,6 +2,9 @@ ifeq (, $(wildcard build.cfg))
 $(error build.cfg is not found. It is probably a fresh installation. Please copy build.cfg.dist to build.cfg, check up the file and edit it if necessary, then retry.)
 endif
 
+TCLJAVA_GROUPID=com.github.fabriceducos.tactcl.tcljava
+TCLJAVA_VERSION=`grep 'TCLJAVA_VERSION=' tcljava/configure.in | cut -d'=' -f2`
+
 MAIN_TARGET=failed
 ifeq ($(OS),Windows_NT)
   PLATFORM=windows
@@ -18,16 +21,16 @@ else
   ifeq ($(UNAME_S), Darwin)
     PLATFORM=unix
     LIB_PREFIX=lib
-	LIB_EXT=dylib
-	LIB_OPTION=shared
-	MAIN_TARGET=default
+    LIB_EXT=dylib
+    LIB_OPTION=shared
+    MAIN_TARGET=default
   endif
   ifeq ($(UNAME_S),Linux)
     PLATFORM=unix
     LIB_PREFIX=lib
-	LIB_EXT=so
-	LIB_OPTION=shared
-	MAIN_TARGET=default
+    LIB_EXT=so
+    LIB_OPTION=shared
+    MAIN_TARGET=default
   endif
 endif
   
@@ -53,6 +56,10 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
+
+TCLBLEND_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.jar
+TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.$(LIB_EXT)
+JACL_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/jacl.jar
 
 .PHONY: start
 start: $(MAIN_TARGET)
@@ -98,11 +105,13 @@ help-tcljava:
 	@echo "make tcljava: build tclblend and jacl"
 	@echo "make tclblend: build tclblend (with the jtclsh interpreter)"
 	@echo "make jacl: build jacl (with the jaclsh interpreter)"
+	@echo "make maven-install: install tcljava (tclblend and jacl) in the local maven repo"
 	@echo	
 	@echo "The following settings can be redefined on the command line, e.g make PREFIX=/other/prefix JAVA_HOME=/other/java/home"
 	@echo "PREFIX=$(PREFIX)"
 	@echo "JAVA_HOME=$(JAVA_HOME)"
 	@echo "BUILD_DIR=$(BUILD_DIR)"
+	@echo "TCLJAVA_VERSION=$(TCLJAVA_VERSION)"
 	@echo
 
 .PHONY: tclblend
@@ -116,6 +125,19 @@ jacl: $(jaclsh)
 
 $(jaclsh): $(JAVA_HOME) tcl threads
 	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
+
+.PHONY: maven-install
+maven-install: maven-install-tclblend-jar maven-install-tclblend-so maven-install-jacl-jar
+
+maven-install-tclblend-jar:
+	mvn install:install-file -Dfile=$(TCLBLEND_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libtclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+
+maven-install-tclblend-so:
+	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libtclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT)
+
+maven-install-jacl-jar:
+	mvn install:install-file -Dfile=$(JACL_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libjacl -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+
 
 #############################################################
 
