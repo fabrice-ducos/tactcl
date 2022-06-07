@@ -27,6 +27,8 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 
+import tcl.manifest.ManifestUtil;
+
 /**
  * JaclScriptEngineFactory is required for compliance with the JSR223
  * (script engine discovery mechanism in Java 6+)
