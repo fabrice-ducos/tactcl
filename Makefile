@@ -69,7 +69,7 @@ failed:
 	@echo "System $(OS) not recognized or not supported for the time being"
 
 .PHONY: default
-default: tcl threads
+default: tcljava
 
 include $(PACKAGES_DIR)/packages.mk
 
@@ -84,15 +84,15 @@ stable: tcl tk tcljava stable-packages
 help:
 	@echo "The following targets are available:"
 	@echo
-	@echo make [default]: build tcl and its threads subpackage
+	@echo "make [default]: build tcljava - will build tcl and threads as dependencies"
 	@echo
 	@echo "For native Tcl distribution:"
 	@$(MAKE) help-packages
 	@echo
 	@echo "For TclJava:"
 	@$(MAKE) help-tcljava
-	@echo "make clean: remove all the build artifacts"
-	@echo "make clean-tcljava: remove tcljava build artifacts"
+	@echo "make clean: clean tcljava source directory from build artifacts"
+	@echo "make cleanall|clean-all: remove all the build artifacts"
 	@echo "make all: build tcljava and everything in $(PACKAGES_DIR)"
 	@echo "          This is likely to fail without some trial and error"
 	@echo "          because of package dependencies missing on your system,"
@@ -144,8 +144,10 @@ maven-install-jacl-jar:
 $(JAVA_HOME):
 	@echo "\$$JAVA_HOME: '$(JAVA_HOME)' not found: You must set \$$JAVA_HOME to a proper JDK root directory in your environment, or optionally in build.cfg" 1>&2 && false
 
-# for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
 clean: clean-tcljava
+
+# for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
+cleanall clean-all: clean-tcljava
 	rm -rf build
 	rm -rf local
 	rm -f *~ 
