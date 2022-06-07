@@ -689,6 +689,22 @@ AC_DEFUN([AC_JAVA_JNI_LIBS], [
             fi
         fi
 
+        # AdoptJDK Hotspot on Windows (server JVM)
+
+        F=lib/jvm.lib
+        if test "x$ac_java_jvm_jni_lib_flags" = "x" ; then
+            AC_MSG_LOG([Looking for $ac_java_jvm_dir/$F], 1)
+            if test -f $ac_java_jvm_dir/$F ; then
+                DLL=bin/server/jvm.dll
+                if test -f $ac_java_jvm_dir/$DLL ; then
+                    AC_MSG_LOG([Found $ac_java_jvm_dir/$F], 1)
+                    D1=$ac_java_jvm_dir/jre/bin
+                    D2=$ac_java_jvm_dir/jre/bin/server
+                    ac_java_jvm_jni_lib_runtime_path="${D1}:${D2}"
+                    ac_java_jvm_jni_lib_flags="$ac_java_jvm_dir/$F"
+                fi
+            fi
+        fi
     fi
 
     # Generate error for unsupported JVM layout
