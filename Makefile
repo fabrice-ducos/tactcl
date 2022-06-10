@@ -3,34 +3,42 @@ $(error build.cfg is not found. It is probably a fresh installation. Please copy
 endif
 
 TCLJAVA_GROUPID=com.github.fabriceducos.tactcl.tcljava
-TCLJAVA_VERSION=`grep 'TCLJAVA_VERSION=' tcljava/configure.in | cut -d'=' -f2`
+TCLJAVA_REPO=com/github/fabriceducos/tactcl/tcljava
+
+# the version is extracted from tcljava/configure.in that should be
+# the main source for the version number (reconfiguring updates
+# the version in several source files)
+# the variable is suffixed by _MK in order to avoid a strange
+# circular dependency between the variable and the grep expression 
+# (that contains TCLJAVA_VERSION=)
+TCLJAVA_VERSION:=$(shell grep 'TCLJAVA_VERSION=' tcljava/configure.in | cut -d'=' -f2)
 
 MAIN_TARGET=failed
 ifeq ($(OS),Windows_NT)
   PLATFORM=windows
   JAVA_HOME:=$(subst \,\\,$(JAVA_HOME))
-  # no "lib" prefix expected on Windows
-  LIB_PREFIX=
   LIB_EXT=dll
   LIB_OPTION=shared
   MAIN_TARGET=default
+  HOMEPATH_SAFE=$(subst \,/,$(HOMEPATH))
+  M2_ROOT=$(HOMEDRIVE)$(HOMEPATH_SAFE)/.m2
 else
   UNAME_S := $(shell uname -s)
   UNAME_P := $(shell uname -p)
   OS=$(UNAME_S)
   ifeq ($(UNAME_S), Darwin)
     PLATFORM=unix
-    LIB_PREFIX=lib
     LIB_EXT=dylib
     LIB_OPTION=shared
     MAIN_TARGET=default
+    M2_ROOT=$(HOME)/.m2
   endif
   ifeq ($(UNAME_S),Linux)
     PLATFORM=unix
-    LIB_PREFIX=lib
     LIB_EXT=so
     LIB_OPTION=shared
     MAIN_TARGET=default
+    M2_ROOT=$(HOME)/.m2
   endif
 endif
   
@@ -58,7 +66,9 @@ WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 TCLBLEND_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.jar
-TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/libtclblend.$(LIB_EXT)
+TCLBLEND_SO_BASE=tclblend.$(LIB_EXT)
+TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/$(TCLBLEND_SO_BASE)
+TCLBLEND_LIB_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/lib$(TCLBLEND_SO_BASE)
 JACL_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/jacl.jar
 
 .PHONY: start
@@ -79,8 +89,10 @@ tcljava: tclblend jacl
 .PHONY: all
 all: tcl tk tcljava all-packages
 
+.PHONY: stable
 stable: tcl tk tcljava stable-packages
 
+.PHONY: help
 help:
 	@echo "The following targets are available:"
 	@echo
@@ -101,6 +113,7 @@ help:
 	@echo "make stable: builds only packages with no known build issue"
 	@echo "make help: this help"
 
+.PHONY: help-tcljava
 help-tcljava:
 	@echo "make tcljava: build tclblend and jacl"
 	@echo "make tclblend: build tclblend (with the jtclsh interpreter)"
@@ -112,12 +125,18 @@ help-tcljava:
 	@echo "JAVA_HOME=$(JAVA_HOME)"
 	@echo "BUILD_DIR=$(BUILD_DIR)"
 	@echo "TCLJAVA_VERSION=$(TCLJAVA_VERSION)"
+	@echo "M2_ROOT: $(M2_ROOT)"
 	@echo
 
 .PHONY: tclblend
 tclblend: $(jtclsh)
 
-$(jtclsh): $(JAVA_HOME) tcl threads
+$(jtclsh): $(JAVA_HOME) tcl threads $(TCLBLEND_SO)
+
+$(TCLBLEND_SO): $(TCLBLEND_LIB_SO)
+	cp $< $@
+
+$(TCLBLEND_LIB_SO):
 	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
 .PHONY: jacl
@@ -129,17 +148,27 @@ $(jaclsh): $(JAVA_HOME) tcl threads
 .PHONY: maven-install
 maven-install: maven-install-tclblend-jar maven-install-tclblend-so maven-install-jacl-jar
 
+.PHONY: maven-uninstall
+maven-uninstall:
+	-rm -rfv $(M2_ROOT)/repository/$(TCLJAVA_REPO)
+
 .PHONY: maven-install-tclblend-jar
 maven-install-tclblend-jar:
-	mvn install:install-file -Dfile=$(TCLBLEND_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libtclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+	mvn install:install-file -Dfile=$(TCLBLEND_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
 
+# the creation of the link (that adds a "lib" prefix to the native library) is required for a portable access to the native
+# library: the "lib" prefix is expected on POSIX systems (including Linux and OSX) and not on Windows
+# This portability issue is a real pain...
+# For more details:
+# https://jornvernee.github.io/java/panama-ffi/panama/jni/native/2021/09/13/debugging-unsatisfiedlinkerrors.html
 .PHONY: maven-install-tclblend-so
 maven-install-tclblend-so:
-	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libtclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT)
+	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
+	ln -sf $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/lib$(TCLBLEND_SO_BASE)
 
 .PHONY: maven-install-jacl-jar
 maven-install-jacl-jar:
-	mvn install:install-file -Dfile=$(JACL_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=libjacl -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+	mvn install:install-file -Dfile=$(JACL_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=jacl -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
 
 
 #############################################################
