@@ -37,6 +37,16 @@ import tcl.manifest.ManifestUtil;
  */
 public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 {
+
+    TclBlendScriptEngineFactory(final Options options) {
+	this.statementSeparator = (options.statementSeparator != null) ? options.statementSeparator : "";
+	this.methodCallSyntax = (options.methodCallSyntax != null) ? options.methodCallSyntax : "TclOO";
+
+	if (! ("".equals(this.statementSeparator) || ";".equals(this.statementSeparator))) {
+	    throw new IllegalArgumentException("illegal statement separator: \"" + this.statementSeparator + "\"");
+	}
+    }
+    
     @Override
     public String getEngineName() {
 	return "TclBlend Engine";
@@ -86,23 +96,58 @@ public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 	}
     }
 
+    private String getTclOOMethodCallSyntax(String obj, String m, String[] args) {
+	// TclOO syntax
+	
+	String ret = obj;
+	ret += " " + m + " ";
+	for (int i = 0; i < args.length; i++) {
+	    ret += args[i];
+	    if (i < args.length - 1) {
+		ret += " ";
+	    }
+	}
+	ret += statementSeparator;
+	return ret;
+    }
+    
     @Override
-    public String getMethodCallSyntax(String obj, String m, String[] p) {
-	throw new UnsupportedOperationException("getMethodCallSyntax is not yet implemented");
+    public String getMethodCallSyntax(String obj, String m, String[] args) {
+	if ("TclOO".equals(methodCallSyntax)) {
+	    return getTclOOMethodCallSyntax(obj, m, args);
+	}
+	else {
+	    throw new UnsupportedOperationException("unknown or not supported value for methodCallSyntax: " + methodCallSyntax);
+	}
     }
 
     @Override
     public String getOutputStatement(String toDisplay) {
-	throw new UnsupportedOperationException("getOutputStatement is not yet implemented");
+	return "puts {" + toDisplay + "}";
     }
 
     @Override
     public String getProgram(String[] statements) {
-	throw new UnsupportedOperationException("getProgram is not yet implemented");
+	String retval = "";
+	int len = statements.length;
+	for (int i = 0; i < len; i++) {
+	    retval += statements[i] + "\n";
+	}
+	return retval;
     }
 
     @Override
     public ScriptEngine getScriptEngine() {
 	return new TclBlendScriptEngine(this);
     }
+
+    public final class Options {
+	// for options, public fields are handy (options will be passed to the factory constructor
+	// and copied, one cannot do much more with them)
+	public String statementSeparator = "";
+	public String methodCallSyntax = "TclOO";
+    }
+
+    private final String statementSeparator; // can be "" or ";"
+    private final String methodCallSyntax;
 }
