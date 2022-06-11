@@ -37,14 +37,22 @@ import tcl.manifest.ManifestUtil;
  */
 public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 {
-
     TclBlendScriptEngineFactory(final Options options) {
 	this.statementSeparator = (options.statementSeparator != null) ? options.statementSeparator : "";
 	this.methodCallSyntax = (options.methodCallSyntax != null) ? options.methodCallSyntax : "TclOO";
 
 	if (! ("".equals(this.statementSeparator) || ";".equals(this.statementSeparator))) {
-	    throw new IllegalArgumentException("illegal statement separator: \"" + this.statementSeparator + "\"");
+	    throw new IllegalArgumentException(ILLEGAL_STATEMENT_SEPARATOR + ": \"" + this.statementSeparator + "\"");
 	}
+
+	if (! ("TclOO".equals(this.methodCallSyntax))) {
+	    throw new UnsupportedOperationException(UNSUPPORTED_METHOD_CALL_SYNTAX + ": " + methodCallSyntax);
+	}
+    }
+
+    TclBlendScriptEngineFactory() {
+	this.statementSeparator = "";
+	this.methodCallSyntax = "TclOO";
     }
     
     @Override
@@ -117,7 +125,7 @@ public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 	    return getTclOOMethodCallSyntax(obj, m, args);
 	}
 	else {
-	    throw new UnsupportedOperationException("unknown or not supported value for methodCallSyntax: " + methodCallSyntax);
+	    throw new UnsupportedOperationException(UNSUPPORTED_METHOD_CALL_SYNTAX + ": " + methodCallSyntax);
 	}
     }
 
@@ -150,4 +158,7 @@ public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 
     private final String statementSeparator; // can be "" or ";"
     private final String methodCallSyntax;
+
+    private static final String UNSUPPORTED_METHOD_CALL_SYNTAX = "unknown or not supported value for methodCallSyntax";
+    private static final String ILLEGAL_STATEMENT_SEPARATOR = "illegal statement separator";
 }
