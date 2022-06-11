@@ -66,10 +66,14 @@ WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 TCLBLEND_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.jar
+TCLBLEND_JAR_MAVEN_BASE=tclblend-$(TCLJAVA_VERSION).jar
 TCLBLEND_SO_BASE=tclblend.$(LIB_EXT)
+TCLBLEND_SO_MAVEN_BASE=tclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
 TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/$(TCLBLEND_SO_BASE)
 TCLBLEND_LIB_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/lib$(TCLBLEND_SO_BASE)
+TCLBLEND_LIB_SO_MAVEN_BASE=libtclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
 JACL_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/jacl.jar
+JACL_JAR_MAVEN_BASE=jacl-$(TCLJAVA_VERSION).jar
 
 .PHONY: start
 start: $(MAIN_TARGET)
@@ -119,6 +123,7 @@ help-tcljava:
 	@echo "make tclblend: build tclblend (with the jtclsh interpreter)"
 	@echo "make jacl: build jacl (with the jaclsh interpreter)"
 	@echo "make maven-install: install tcljava (tclblend and jacl) in the local maven repo"
+	@echo "make maven-uninstall: remove tcljava (tclblend and jacl) from the local maven repo"
 	@echo	
 	@echo "The following settings can be redefined on the command line, e.g make PREFIX=/other/prefix JAVA_HOME=/other/java/home"
 	@echo "PREFIX=$(PREFIX)"
@@ -169,7 +174,7 @@ maven-install-tclblend-jar:
 .PHONY: maven-install-tclblend-so
 maven-install-tclblend-so:
 	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
-	ln -sf $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/lib$(TCLBLEND_SO_BASE)
+	ln -sf $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
 
 .PHONY: maven-install-jacl-jar
 maven-install-jacl-jar:
