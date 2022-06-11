@@ -37,7 +37,7 @@ import tcl.manifest.ManifestUtil;
  */
 public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 {
-    TclBlendScriptEngineFactory(final Options options) {
+    public TclBlendScriptEngineFactory(final Options options) {
 	this.statementSeparator = (options.statementSeparator != null) ? options.statementSeparator : "";
 	this.methodCallSyntax = (options.methodCallSyntax != null) ? options.methodCallSyntax : "TclOO";
 
@@ -50,7 +50,7 @@ public class TclBlendScriptEngineFactory implements ScriptEngineFactory
 	}
     }
 
-    TclBlendScriptEngineFactory() {
+    public TclBlendScriptEngineFactory() {
 	this.statementSeparator = "";
 	this.methodCallSyntax = "TclOO";
     }
