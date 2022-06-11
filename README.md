@@ -80,6 +80,18 @@ Once everything is set up, launch `make help` to see the list of available build
 
 `make` will attempt to build all the targets specified in `build.cfg`
 
+## Test luajava with jrunscript
+
+If jrunscript is available with your JDK, you can use it.
+
+With the maven installation (on MSYS2/Windows, replace $HOME by $HOMEDRIVE$HOMEPATH):
+
+`jrunscript -cp $HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tclblend/1.5.0/tclblend-1.5.0.jar:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/jacl/1.5.0/jacl-1.5.0.jar -Djava.library.path=$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tclbend/1.5.0:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/jacl/1.5.0 -l tclblend`
+
+(one can put `-l jacl` instead of `-l tclblend` for using the jacl interpreter)
+
+If tcljava is installed elsewhere on your system, just adapt the paths accordingly.
+
 ## Requirements
   - A modern JDK (JDK 5+, JDK 8+ recommended)
   - A modern version of Tcl (8.6+ recommended)
