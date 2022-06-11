@@ -111,6 +111,8 @@ Once everything is set up, launch `make help` to see the list of available build
   - Both projects proved difficult to maintain and build separately. TacTCL 0.3.0 is basically
     a merge of TacTCL 0.2.9 and Jaclin 0.1.4.
 
-## TODO
-  - Test on various Linux and BSD distributions
-  - Port on Windows native (.bat, nmake)
+## COMPATIBILITY
+
+This distribution has been successfully built on the following systems:
+  - MacOSX Monterey (12.4) with OpenJDK Zulu 17.32.13 (JDK 17.0.2)
+  - Ubuntu on Windows 10 with AdoptOpenJDK 11.0.6
