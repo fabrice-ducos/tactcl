@@ -174,7 +174,7 @@ maven-install-tclblend-jar:
 .PHONY: maven-install-tclblend-so
 maven-install-tclblend-so:
 	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
-	ln -sf $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
+	ln -sfr $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
 
 .PHONY: maven-install-jacl-jar
 maven-install-jacl-jar:
