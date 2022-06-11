@@ -131,22 +131,18 @@ help-tcljava:
 .PHONY: tclblend
 tclblend: $(jtclsh)
 
-$(jtclsh): $(JAVA_HOME) tcl threads $(TCLBLEND_SO) $(TCLBLEND_LIB_SO)
+$(jtclsh): $(JAVA_HOME) tcl threads libtclblend
 
 # one must check for both tclblend.so and libtclblend.so
 # and build the missing one from the other one. Unfortunately, this
 # depends on the system: on Windows, tclblend.so will be built first,
 # and on POSIX systems, it's libtclblend.so that will be built first.
-$(TCLBLEND_SO): libtclblend
-	test -f $(TCLBLEND_LIB_SO) && cp $(TCLBLEND_LIB_SO) $(TCLBLEND_SO)
-
-$(TCLBLEND_LIB_SO): libtclblend
-	test -f $(TCLBLEND_SO) && cp $(TCLBLEND_SO) $(TCLBLEND_LIB_SO)
-
 
 .PHONY: libtclblend
 libtclblend:
 	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
+	test -f $(TCLBLEND_SO) || cp $(TCLBLEND_LIB_SO) $(TCLBLEND_SO)
+	test -f $(TCLBLEND_LIB_SO) || cp $(TCLBLEND_SO) $(TCLBLEND_LIB_SO)
 
 .PHONY: jacl
 jacl: $(jaclsh)
