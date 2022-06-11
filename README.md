@@ -1,4 +1,4 @@
-# TacTCL 0.3.2
+# TacTCL 0.3.3
 (pronounce "tactical")
 
 A small, free Tcl/Tk distribution with some popular Tcl/Tk packages built from sources.
@@ -116,3 +116,5 @@ Once everything is set up, launch `make help` to see the list of available build
 This distribution has been successfully built on the following systems:
   - MacOSX Monterey (12.4) with OpenJDK Zulu 17.32.13 (JDK 17.0.2)
   - Ubuntu on Windows 10 with AdoptOpenJDK 11.0.6
+  - MSYS2 on Windows 10 with OpenJDK 17.0.3 Server VM Temurin
+  - Ubuntu 21.10 with OpenJDK 17.0.3 Server VM
