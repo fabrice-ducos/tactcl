@@ -22,6 +22,7 @@ ifeq ($(OS),Windows_NT)
   MAIN_TARGET=default
   HOMEPATH_SAFE=$(subst \,/,$(HOMEPATH))
   M2_ROOT=$(HOMEDRIVE)$(HOMEPATH_SAFE)/.m2
+  MAKE_ALIAS=cp
 else
   UNAME_S := $(shell uname -s)
   UNAME_P := $(shell uname -p)
@@ -32,6 +33,7 @@ else
     LIB_OPTION=shared
     MAIN_TARGET=default
     M2_ROOT=$(HOME)/.m2
+    MAKE_ALIAS=ln -sf
   endif
   ifeq ($(UNAME_S),Linux)
     PLATFORM=unix
@@ -39,6 +41,8 @@ else
     LIB_OPTION=shared
     MAIN_TARGET=default
     M2_ROOT=$(HOME)/.m2
+    # On Linux, ln can create relative links with -r
+    MAKE_ALIAS=ln -sfr
   endif
 endif
   
@@ -174,7 +178,7 @@ maven-install-tclblend-jar:
 .PHONY: maven-install-tclblend-so
 maven-install-tclblend-so:
 	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
-	ln -sfr $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
+	$(MAKE_ALIAS) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
 
 .PHONY: maven-install-jacl-jar
 maven-install-jacl-jar:
