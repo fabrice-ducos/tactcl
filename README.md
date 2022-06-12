@@ -92,6 +92,10 @@ With the maven installation (on MSYS2/Windows, replace $HOME by $HOMEDRIVE$HOMEP
 
 If tcljava is installed elsewhere on your system, just adapt the paths accordingly.
 
+CAVEAT: there seems to be a bug in at least some implementations of `jrunscript`on MacOSX. If you experience an `UnsatisfiedLinkError` despite of providing
+the proper `java.library.path`, you should set the `DYLD_LIBRARY_PATH` environment variable to the same value as `java.library.path` (or extend it depending on your needs).
+This bug wasn't observed on other systems (e.g. Linux/Ubuntu or Windows/MSYS2). 
+
 ## Requirements
   - A modern JDK (JDK 5+, JDK 8+ recommended)
   - A modern version of Tcl (8.6+ recommended)
