@@ -117,7 +117,6 @@ This bug wasn't observed on other systems (e.g. Linux/Ubuntu or Windows/MSYS2).
   - bwidget: a cross-platform widget toolkit for Blender (currently GPL2)
   - critcl: package for on-the-fly compilation of tcl scripts
   - tclx: popular extensions for Tcl
-  - jaclin: a TclJava fork (Tcl on the JVM), with Tclblend updated for Tcl 8.6 (jtclsh 8.6 and jaclsh 8.0)
 
 ## NOTES
 
