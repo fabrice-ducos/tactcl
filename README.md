@@ -88,7 +88,7 @@ If jrunscript is available with your JDK, you can use it.
 
 With the maven installation (on MSYS2/Windows, replace $HOME by $HOMEDRIVE$HOMEPATH):
 
-`jrunscript -cp $HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tclblend/1.5.0/tclblend-1.5.0.jar:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/jacl/1.5.0/jacl-1.5.0.jar -Djava.library.path=$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tclbend/1.5.0:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/jacl/1.5.0 -l tclblend`
+`jrunscript -cp $HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tcljava/1.5.0/tcljava-1.5.0.jar:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tclblend/1.5.0/tclblend-1.5.0.jar:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/jacl/1.5.0/jacl-1.5.0.jar -Djava.library.path=$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/tclblend/1.5.0:$HOME/.m2/repository/com/github/fabriceducos/tactcl/tcljava/jacl/1.5.0 -l tclblend`
 
 (one can put `-l jacl` instead of `-l tclblend` for using the jacl interpreter)
 
