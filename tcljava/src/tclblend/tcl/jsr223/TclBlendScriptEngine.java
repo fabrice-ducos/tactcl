@@ -32,6 +32,8 @@ import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.IOException;
 
+import tcl.lang.*;
+
 /**
  * TclBlendScriptEngine is required for compliance with the JSR223
  * (script engine discovery mechanism in Java 6+)
@@ -43,11 +45,28 @@ public class TclBlendScriptEngine extends AbstractScriptEngine
     
     public TclBlendScriptEngine(ScriptEngineFactory factory) {
 	this.factory = factory;
+	this.interp = new Interp();
     }
 
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
-	throw new UnsupportedOperationException("eval(String, ScriptContext) is not yet implemented");
+	//throw new UnsupportedOperationException("eval(String, ScriptContext) is not yet implemented");
+
+	// the TclBlend API provides: evalFile(String filename), evalResource(String resource), eval(String script), eval(String script, int flags)
+	// flags can be: 0 or TCL.EVAL_GLOBAL
+	
+	try {
+	    interp.eval(script);
+	}
+	catch (TclException ex) {
+	    throw new ScriptException(ex);
+	}
+
+	TclObject result = interp.getResult();
+
+	// for the moment, one will just return the string representation of the TclObject
+	return result.toString();
+	
     }
 
     @Override
@@ -79,4 +98,5 @@ public class TclBlendScriptEngine extends AbstractScriptEngine
     }
 
     private final ScriptEngineFactory factory;
+    private final Interp interp;
 }
