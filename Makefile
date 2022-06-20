@@ -69,14 +69,15 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
-TCLBLEND_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/tclblend.jar
+LIBDIR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)
+TCLBLEND_JAR=$(LIBDIR)/tclblend.jar
 TCLBLEND_JAR_MAVEN_BASE=tclblend-$(TCLJAVA_VERSION).jar
 TCLBLEND_SO_BASE=tclblend.$(LIB_EXT)
 TCLBLEND_SO_MAVEN_BASE=tclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
-TCLBLEND_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/$(TCLBLEND_SO_BASE)
-TCLBLEND_LIB_SO=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/lib$(TCLBLEND_SO_BASE)
+TCLBLEND_SO=$(LIBDIR)/$(TCLBLEND_SO_BASE)
+TCLBLEND_LIB_SO=$(LIBDIR)/lib$(TCLBLEND_SO_BASE)
 TCLBLEND_LIB_SO_MAVEN_BASE=libtclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
-JACL_JAR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)/jacl.jar
+JACL_JAR=$(LIBDIR)/jacl.jar
 JACL_JAR_MAVEN_BASE=jacl-$(TCLJAVA_VERSION).jar
 
 .PHONY: start
@@ -160,14 +161,14 @@ $(jaclsh): $(JAVA_HOME) tcl threads
 	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
 .PHONY: maven-install
-maven-install: maven-install-tclblend-jar maven-install-tclblend-so maven-install-jacl-jar
+maven-install: maven-install-tcljava maven-install-tclblend maven-install-jacl maven-install-itcl maven-install-janino maven-install-tjc
 
 .PHONY: maven-uninstall
 maven-uninstall:
 	-rm -rfv $(M2_ROOT)/repository/$(TCLJAVA_REPO)
 
-.PHONY: maven-install-tclblend-jar
-maven-install-tclblend-jar:
+.PHONY: maven-install-tclblend
+maven-install-tclblend: maven-install-tclblend-so
 	mvn install:install-file -Dfile=$(TCLBLEND_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
 
 # the creation of the link (that adds a "lib" prefix to the native library) is required for a portable access to the native
@@ -180,9 +181,25 @@ maven-install-tclblend-so:
 	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
 	$(MAKE_ALIAS) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
 
-.PHONY: maven-install-jacl-jar
-maven-install-jacl-jar:
+.PHONY: maven-install-jacl
+maven-install-jacl:
 	mvn install:install-file -Dfile=$(JACL_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=jacl -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+
+.PHONY: maven-install-tcljava
+maven-install-tcljava:
+	mvn install:install-file -Dfile=$(LIBDIR)/tcljava.jar -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tcljava -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+
+.PHONY: maven-install-itcl
+maven-install-itcl:
+	mvn install:install-file -Dfile=$(LIBDIR)/itcl.jar -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=itcl -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+
+.PHONY: maven-install-janino
+maven-install-janino:
+	mvn install:install-file -Dfile=$(LIBDIR)/janino.jar -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=janino -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
+
+.PHONY: maven-install-tjc
+maven-install-tjc:
+	mvn install:install-file -Dfile=$(LIBDIR)/tjc.jar -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tjc -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
 
 
 #############################################################
