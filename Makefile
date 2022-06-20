@@ -80,6 +80,12 @@ TCLBLEND_LIB_SO_MAVEN_BASE=libtclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
 JACL_JAR=$(LIBDIR)/jacl.jar
 JACL_JAR_MAVEN_BASE=jacl-$(TCLJAVA_VERSION).jar
 
+# For MacOSX only (where Java looks for .dylib)
+# for system-wide installations (requires superuser permissions)
+#JAVA_EXTENSIONS_DIR=/Library/Java/Extensions
+
+JAVA_EXTENSIONS_DIR=$(HOME)/Library/Java/Extensions
+
 .PHONY: start
 start: $(MAIN_TARGET)
 
@@ -180,6 +186,7 @@ maven-install-tclblend: maven-install-tclblend-so
 maven-install-tclblend-so:
 	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
 	$(MAKE_ALIAS) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
+	@#[ -d "$(JAVA_EXTENSIONS_DIR)" ] && $(MAKE_ALIAS) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) "$(JAVA_EXTENSIONS_DIR)/$(TCLBLEND_LIB_SO_MAVEN_BASE)"
 
 .PHONY: maven-install-jacl
 maven-install-jacl:
