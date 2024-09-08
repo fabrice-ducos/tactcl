@@ -1,4 +1,4 @@
-# TacTCL 0.3.3
+# TacTCL 0.3.4
 (pronounce "tactical")
 
 A small, free Tcl/Tk distribution with some popular Tcl/Tk packages built from sources.
@@ -30,6 +30,8 @@ The default values should be fine for Tcl, Tk and TclJava, but not for `make all
 Just type `make`
 The sources from a Tcl stable version will be extracted, and all what you need (binaries, libraries, header files) will be created in the `local` directory.
 Especially, you will find the binaries under `local/bin`.
+
+If anything goes wrong, you can `make clean` or even `make clean-all` and retry `make`. If it fails again, you are welcome to emit an issue.
 
 You can copy the directories wherever you need (e.g. under `/usr/local`).
 `TacTCL` doesn't currently perform an automatic installation in system directories to avoid overwriting a working installation.
