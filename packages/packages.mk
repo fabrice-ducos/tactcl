@@ -1,6 +1,8 @@
 # TclBuild script: integration Makefile for Tcl
 # Fabrice Ducos 2019, 2022
 
+VERSIONS_CFG=versions.cfg
+
 TCL_TARBALL=$(PACKAGES_DIR)/tcl$(TCL_VERSION)-src.tar.gz
 TK_TARBALL=$(PACKAGES_DIR)/tk$(TK_VERSION)-src.tar.gz
 CK_ZIPFILE=$(PACKAGES_DIR)/ck-$(CK_VERSION).zip
