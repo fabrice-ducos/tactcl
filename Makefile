@@ -13,6 +13,8 @@ TCLJAVA_REPO=com/github/fabriceducos/tactcl/tcljava
 # (that contains TCLJAVA_VERSION=)
 TCLJAVA_VERSION:=$(shell grep 'TCLJAVA_VERSION=' tcljava/configure.in | cut -d'=' -f2)
 
+NATIVE_DIR=native
+
 MAIN_TARGET=failed
 ifeq ($(OS),Windows_NT)
   PLATFORM=windows
@@ -20,6 +22,7 @@ ifeq ($(OS),Windows_NT)
   # LIB_PREFIX is empty for Windows
   LIB_PREFIX=
   LIB_EXT=dll
+  NATIVE_SUBDIR=$(NATIVE_DIR)/windows
   LIB_OPTION=shared
   MAIN_TARGET=default
   HOMEPATH_SAFE=$(subst \,/,$(HOMEPATH))
@@ -33,6 +36,7 @@ else
     PLATFORM=unix
     LIB_PREFIX=lib
     LIB_EXT=dylib
+    NATIVE_SUBDIR=$(NATIVE_DIR)/macos
     LIB_OPTION=shared
     MAIN_TARGET=default
     M2_ROOT=$(HOME)/.m2
@@ -42,6 +46,7 @@ else
     PLATFORM=unix
     LIB_PREFIX=lib
     LIB_EXT=so
+    NATIVE_SUBDIR=$(NATIVE_DIR)/linux
     LIB_OPTION=shared
     MAIN_TARGET=default
     M2_ROOT=$(HOME)/.m2
@@ -54,6 +59,8 @@ endif
 include build.cfg
 include platforms/$(PLATFORM).cfg
 include versions.cfg
+
+JAR=$(JAVA_HOME)/bin/jar
 
 TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
 TK_SRCDIR=$(BUILD_DIR)/tk$(TK_VERSION)
@@ -75,14 +82,10 @@ WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
 LIBDIR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)
 TCLBLEND_JAR=$(LIBDIR)/tclblend.jar
-TCLBLEND_JAR_MAVEN_BASE=tclblend-$(TCLJAVA_VERSION).jar
-TCLBLEND_SO_BASE=tclblend.$(LIB_EXT)
-TCLBLEND_SO_MAVEN_BASE=tclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
+TCLBLEND_SO_BASE=$(LIB_PREFIX)tclblend.$(LIB_EXT)
 TCLBLEND_SO=$(LIBDIR)/$(TCLBLEND_SO_BASE)
-TCLBLEND_LIB_SO=$(LIBDIR)/lib$(TCLBLEND_SO_BASE)
-TCLBLEND_LIB_SO_MAVEN_BASE=libtclblend-$(TCLJAVA_VERSION).$(LIB_EXT)
+TCLBLEND_SO_IN_NATIVE=$(NATIVE_SUBDIR)/$(LIB_PREFIX)tclblend.$(LIB_EXT)
 JACL_JAR=$(LIBDIR)/jacl.jar
-JACL_JAR_MAVEN_BASE=jacl-$(TCLJAVA_VERSION).jar
 
 # For MacOSX only (where Java looks for .dylib)
 # for system-wide installations (requires superuser permissions)
@@ -161,8 +164,8 @@ $(jtclsh): $(JAVA_HOME) tcl threads libtclblend
 .PHONY: libtclblend
 libtclblend:
 	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
-	test -f $(TCLBLEND_SO) || cp $(TCLBLEND_LIB_SO) $(TCLBLEND_SO)
-	test -f $(TCLBLEND_LIB_SO) || cp $(TCLBLEND_SO) $(TCLBLEND_LIB_SO)
+	test -f $(TCLBLEND_SO) && chmod 644 $(TCLBLEND_SO) && cp $(TCLBLEND_SO) $(TCLBLEND_SO_IN_NATIVE)
+	test -f $(TCLBLEND_JAR) && $(JAR) -uf $(TCLBLEND_JAR) $(NATIVE_DIR)
 
 .PHONY: jacl
 jacl: $(jaclsh)
@@ -178,19 +181,8 @@ maven-uninstall:
 	-rm -rfv $(M2_ROOT)/repository/$(TCLJAVA_REPO)
 
 .PHONY: maven-install-tclblend
-maven-install-tclblend: maven-install-tclblend-so
+maven-install-tclblend:
 	mvn install:install-file -Dfile=$(TCLBLEND_JAR) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=jar
-
-# the creation of the link (that adds a "lib" prefix to the native library) is required for a portable access to the native
-# library: the "lib" prefix is expected on POSIX systems (including Linux and OSX) and not on Windows
-# This portability issue is a real pain...
-# For more details:
-# https://jornvernee.github.io/java/panama-ffi/panama/jni/native/2021/09/13/debugging-unsatisfiedlinkerrors.html
-.PHONY: maven-install-tclblend-so
-maven-install-tclblend-so:
-	mvn install:install-file -Dfile=$(TCLBLEND_SO) -DgroupId=$(TCLJAVA_GROUPID) -DartifactId=tclblend -Dversion=$(TCLJAVA_VERSION) -Dpackaging=$(LIB_EXT) && \
-	$(MAKE_ALIAS) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_LIB_SO_MAVEN_BASE)
-	@#[ -d "$(JAVA_EXTENSIONS_DIR)" ] && $(MAKE_ALIAS) $(M2_ROOT)/repository/$(TCLJAVA_REPO)/tclblend/$(TCLJAVA_VERSION)/$(TCLBLEND_SO_MAVEN_BASE) "$(JAVA_EXTENSIONS_DIR)/$(TCLBLEND_LIB_SO_MAVEN_BASE)"
 
 .PHONY: maven-install-jacl
 maven-install-jacl:
