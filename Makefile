@@ -17,6 +17,8 @@ MAIN_TARGET=failed
 ifeq ($(OS),Windows_NT)
   PLATFORM=windows
   JAVA_HOME:=$(subst \,\\,$(JAVA_HOME))
+  # LIB_PREFIX is empty for Windows
+  LIB_PREFIX=
   LIB_EXT=dll
   LIB_OPTION=shared
   MAIN_TARGET=default
@@ -29,6 +31,7 @@ else
   OS=$(UNAME_S)
   ifeq ($(UNAME_S), Darwin)
     PLATFORM=unix
+    LIB_PREFIX=lib
     LIB_EXT=dylib
     LIB_OPTION=shared
     MAIN_TARGET=default
@@ -37,6 +40,7 @@ else
   endif
   ifeq ($(UNAME_S),Linux)
     PLATFORM=unix
+    LIB_PREFIX=lib
     LIB_EXT=so
     LIB_OPTION=shared
     MAIN_TARGET=default
