@@ -137,8 +137,6 @@ $(jtclsh): $(JAVA_HOME) tcl threads libtclblend
 .PHONY: libtclblend
 libtclblend:
 	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(BUILD_PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
-	test -f $(TCLBLEND_SO) && chmod 644 $(TCLBLEND_SO) && cp $(TCLBLEND_SO) $(TCLBLEND_SO_IN_NATIVE)
-	test -f $(TCLBLEND_JAR) && $(JAR) -uf $(TCLBLEND_JAR) $(NATIVE_DIR)
 
 .PHONY: jacl
 jacl: $(jaclsh) $(BINDIR)/jacl
