@@ -4,7 +4,7 @@
 
 # updated by F. Ducos, 2022/06/05 for JSR223 support
 
-SHELL = /bin/sh
+SHELL = /bin/bash
 
 MAKEFLAGS = --no-print-directory
 
@@ -43,6 +43,10 @@ TCLSH=@TCLSH@
 
 TOP_DIR			= @TOP_DIR@
 TOP_DIR_NATIVE		= @TOP_DIR_NATIVE@
+
+# Fabrice Ducos 2024-09-14
+ABSOLUTE_NATIVE_DIR     = @TOP_DIR@/../native
+
 
 # Fully qualified paths for programs used in build process
 JAVA			= @JAVA@
@@ -332,11 +336,12 @@ tclblend.fastbuild:
 # classfiles get rebuilt each time the jar is built
 
 tclblend.jar: tclblend.build
-	cd $(TCLBLEND_BUILD_DIR) ;\
+	cd $(BUILD_DIR) ; \
+	cd $(TCLBLEND_BUILD_DIR) ; \
 	CLASSPATH=$(JAVA_CLASSPATH) \
 	$(JAR) $(JAR_MANIFEST_AND_NOCOMPRESS_FLAGS) $(BUILD_DIR)/tclblend.jar \
 	  $(RESOURCES_DIR)/tclblend/META-INF/MANIFEST.MF tcl \
-	  -C $(RESOURCES_DIR)/tclblend META-INF \
+	  -C $(RESOURCES_DIR)/tclblend META-INF && $(JAR) -uf $(BUILD_DIR)/tclblend.jar $(ABSOLUTE_NATIVE_DIR)
 
 # The tclblend: rule will always rebuild the .class files and
 # recreate the tclblend.jar file.
@@ -347,7 +352,10 @@ tclblend: tclblend.jar $(TCLBLEND_LIB_FILE)
 # Build the shared library
 $(TCLBLEND_LIB_FILE): $(OBJS)
 	$(SHLIB_LD) -o $(TCLBLEND_LIB_FILE) $(OBJS) $(SHLIB_LD_LIBS)
-
+	[[ "$(TCLBLEND_LIB_FILE)" == lib*.so ]] && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/linux/ ; \
+	[[ "$(TCLBLEND_LIB_FILE)" == lib*.dylib ]] && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/macos/ ; \
+	[[ "$(TCLBLEND_LIB_FILE)" == *.dll ]] && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/windows/ ; \
+	true
 
 # javaNative.h is created by javah in the build directory.
 $(OBJS): javaNative.h
