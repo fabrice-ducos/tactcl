@@ -237,7 +237,7 @@ parseCommand(
 		    //parse.termIndex = token.script_index;
 		    parse.incomplete = true;
 		    parse.errorType = Parser.TCL_PARSE_MISSING_BRACKET;
-		    throw new TclException(interp, "missing close-bracket");
+		    throw new TclException(interp, "missing close-bracket", fileName, lineNum);
 		}
 		break;
 	    }
@@ -265,7 +265,7 @@ parseCommand(
 		    parse.termIndex = script_index - 1;
 		    parse.incomplete = true;
 		    parse.errorType = Parser.TCL_PARSE_MISSING_QUOTE;
-		    throw new TclException(parse.interp, "missing \"");
+		    throw new TclException(parse.interp, "missing \"", fileName, lineNum);
 		}
 		script_index = parse.termIndex + 1;
 	    } else if (cur == '{') {
@@ -334,7 +334,7 @@ parseCommand(
 			    parse.getToken(wordIndex).script_index; 
 			parse.incomplete = true;
 			parse.errorType = Parser.TCL_PARSE_MISSING_BRACE;
-			throw new TclException(interp, "missing close-brace");
+			throw new TclException(interp, "missing close-brace", fileName, lineNum);
 		    } else {
 			script_index++;
 		    }
@@ -401,7 +401,7 @@ parseCommand(
 		    //parse.termIndex = token.script_index;
 		    parse.incomplete = true;
 		    parse.errorType = Parser.TCL_PARSE_MISSING_BRACKET;
-		    throw new TclException(interp, "missing close-bracket");
+		    throw new TclException(interp, "missing close-bracket", fileName, lineNum);
 		}
 		break;
 	    }
@@ -410,11 +410,11 @@ parseCommand(
 	    if (script_array[script_index - 1] == '"') {
 		parse.errorType = Parser.TCL_PARSE_QUOTE_EXTRA;
 		throw new TclException(interp, 
-			"extra characters after close-quote");
+			"extra characters after close-quote", fileName, lineNum);
 	    } else {
 		parse.errorType = Parser.TCL_PARSE_BRACE_EXTRA;
 		throw new TclException(interp, 
-			"extra characters after close-brace");
+			"extra characters after close-brace", fileName, lineNum);
 	    }
 	}
     } catch (TclException e) {
