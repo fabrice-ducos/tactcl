@@ -1,4 +1,6 @@
 # these files are generated automatically when tcljava is built
+native
+
 tcljava/jdk.cfg
 tcljava/Makefile
 tcljava/Test.h
