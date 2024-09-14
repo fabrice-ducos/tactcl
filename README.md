@@ -1,4 +1,4 @@
-# TacTCL 0.3.4
+# TacTCL 0.3.5
 (pronounce "tactical")
 
 A small, free Tcl/Tk distribution with some popular Tcl/Tk packages built from sources.
@@ -33,33 +33,30 @@ Especially, you will find the binaries under `local/bin`.
 
 If anything goes wrong, you can `make clean` or even `make clean-all` and retry `make`. If it fails again, you are welcome to emit an issue.
 
-You can copy the directories wherever you need (e.g. under `/usr/local`).
-`TacTCL` doesn't currently perform an automatic installation in system directories to avoid overwriting a working installation.
-It is up to the user to copy the tools under their system directories.
-
-For installing Tcl/Tk, type `make tk`
-
-For installing TclJava (TclBlend and Jacl), type `make tcljava`
-
-For installing well-behaved packages (at the author's knowledge), type `make stable`
-
-For installing everything, type `make all` (you may experience errors depending on your environment, this early version of TacTCL doesn't take care of missing dependencies of the packages it gathers).
+For installing: `[sudo] make install [PREFIX=/usr/local]`
+(the parts between brackets are optional and depend on your installation requirements)
+The default PREFIX is `/usr/local`. If you want to install in your HOME directory, you can try:
+`make install PREFIX=$HOME/.local` or `make install PREFIX=$HOME/local` (on Linux, MacOS and other Unix-like systems)
+`make install PREFIX=%HOMEDRIVE%HOMEPATH%/local` on Windows systems
 
 For a list of all the available commands: `make help`
 
-You can test `jtclsh` and `jaclsh` (the JVM Tcl interpreters from Tclblend and Jacl) with these commands:
+You can test `jtcl` and `jacl` (the JVM Tcl interpreters from Tclblend and Jacl) with these commands, provided
+the installation path (e.g. `/usr/local/bin`) is part of the PATH:
 
 ```
-$ ./local/bin/jtclsh 
+$ jtcl 
 % puts $tcl_version
 8.6
 ```
 
 ```
-$ ./local/bin/jaclsh 
+$ jacl 
 % puts $tcl_version
 8.0
 ```
+
+NOTE: legacy implementations jtclsh and jaclsh are still provided, but are deprecated. It is preferable to use jtcl and jacl (simpler and more portable) wherever possible.
 
 ### To get a more user's friendly tcl shell
 (currently recognized by tclsh and jtclsh but not by jaclsh):
@@ -81,6 +78,14 @@ Edit `versions.cfg`
 Once everything is set up, launch `make help` to see the list of available build targets, and check the configuration.
 
 `make` will attempt to build all the targets specified in `build.cfg`
+
+For building Tcl/Tk, type `make tk`
+
+For building TclJava (TclBlend and Jacl), type `make tcljava`
+
+For building well-behaved packages (at the author's knowledge), type `make stable`
+
+For building everything, type `make all` (you may experience errors depending on your environment, this early version of TacTCL doesn't take care of missing dependencies of the packages it gathers).
 
 ## Test tcljava with jrunscript
 
