@@ -2,7 +2,7 @@
 #
 # RCS: @(#) $Id: Makefile.in,v 1.61 2007/10/01 21:48:39 mdejong Exp $
 
-# updated by F. Ducos, 2022/06/05 for JSR223 support
+# updated by F. Ducos, 2022/06/05, 2024/09/14 for JSR223 support
 
 SHELL = /bin/bash
 
@@ -335,7 +335,7 @@ tclblend.fastbuild:
 # tclblend.jar needs to depend on tclblend.build so that the
 # classfiles get rebuilt each time the jar is built
 
-tclblend.jar: tclblend.build
+tclblend.jar: tclblend.build $(TCLBLEND_LIB_FILE)
 	cd $(BUILD_DIR) ; \
 	cd $(TCLBLEND_BUILD_DIR) ; \
 	CLASSPATH=$(JAVA_CLASSPATH) \
@@ -352,9 +352,9 @@ tclblend: tclblend.jar $(TCLBLEND_LIB_FILE)
 # Build the shared library
 $(TCLBLEND_LIB_FILE): $(OBJS)
 	$(SHLIB_LD) -o $(TCLBLEND_LIB_FILE) $(OBJS) $(SHLIB_LD_LIBS)
-	[[ "$(TCLBLEND_LIB_FILE)" == lib*.so ]] && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/linux/ ; \
-	[[ "$(TCLBLEND_LIB_FILE)" == lib*.dylib ]] && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/macos/ ; \
-	[[ "$(TCLBLEND_LIB_FILE)" == *.dll ]] && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/windows/ ; \
+	[[ "$(TCLBLEND_LIB_FILE)" == lib*.so ]] && mkdir -p $(ABSOLUTE_NATIVE_DIR)/linux && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/linux/ ; \
+	[[ "$(TCLBLEND_LIB_FILE)" == lib*.dylib ]] && mkdir -p $(ABSOLUTE_NATIVE_DIR)/macos && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/macos/ ; \
+	[[ "$(TCLBLEND_LIB_FILE)" == *.dll ]] && mkdir -p $(ABSOLUTE_NATIVE_DIR)/windows && cp $(TCLBLEND_LIB_FILE) $(ABSOLUTE_NATIVE_DIR)/windows/ ; \
 	true
 
 # javaNative.h is created by javah in the build directory.
