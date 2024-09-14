@@ -21,6 +21,7 @@ ifeq ($(OS),Windows_NT)
   M2_ROOT=$(HOMEDRIVE)$(HOMEPATH_SAFE)/.m2
   MAKE_ALIAS=cp
   MKDIR=mkdir
+  RECURSIVE_CP=robocopy /S
 else
   UNAME_S := $(shell uname -s)
   UNAME_P := $(shell uname -p)
@@ -35,6 +36,7 @@ else
     M2_ROOT=$(HOME)/.m2
     MAKE_ALIAS=ln -sf
     MKDIR=mkdir -p
+    RECURSIVE_CP=cp -R
   endif
   ifeq ($(UNAME_S),Linux)
     PLATFORM=unix
@@ -47,6 +49,7 @@ else
     # On Linux, ln can create relative links with -r
     MAKE_ALIAS=ln -sfr
     MKDIR=mkdir -p
+    RECURSIVE_CP=cp -r
   endif
 endif
 
