@@ -100,8 +100,8 @@ help:
 .PHONY: help-tcljava
 help-tcljava:
 	@echo "make tcljava: build tclblend and jacl"
-	@echo "make tclblend: build tclblend (with the jtclsh interpreter)"
-	@echo "make jacl: build jacl (with the jaclsh interpreter)"
+	@echo "make tclblend: build tclblend (with the jtcl interpreter)"
+	@echo "make jacl: build jacl (with the jacl interpreter)"
 	@echo "make maven-install: install tcljava (tclblend and jacl) in the local maven repo"
 	@echo "make maven-uninstall: remove tcljava (tclblend and jacl) from the local maven repo"
 	@echo	
@@ -114,11 +114,12 @@ help-tcljava:
 	@echo
 
 .PHONY: tclblend
-tclblend: $(jtclsh) $(BINDIR)/tclblend
+tclblend: $(jtclsh) $(BINDIR)/jtcl
 
-$(BINDIR)/tclblend: src/tclblend.sh tcl threads libtclblend $(BINDIR)
+$(BINDIR)/jtcl: src/jtcl.sh tcl threads libtclblend $(BINDIR)
 	sed "s|__LIBDIR__|$(LIBDIR)|g" $< > $@ && chmod +x $@
 
+# $(jtclsh) is deprecated, use jtcl instead
 $(jtclsh): $(JAVA_HOME) tcl threads libtclblend
 
 # one must check for both tclblend.so and libtclblend.so
@@ -138,6 +139,7 @@ jacl: $(jaclsh) $(BINDIR)/jacl
 $(BINDIR)/jacl: src/jacl.sh tcl threads $(BINDIR)
 	sed "s|__LIBDIR__|$(LIBDIR)|g" $< > $@ && chmod +x $@
 
+#$(jaclsh) is deprecated, use jacl instead
 $(jaclsh): $(JAVA_HOME) tcl threads
 	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
