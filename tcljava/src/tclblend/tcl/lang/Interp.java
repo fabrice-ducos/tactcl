@@ -23,7 +23,6 @@ import java.net.*;
  */
 public class Interp {
 
-
 // Load the Tcl Blend shared library to make JNI
 // methods visible to the JVM. We need to actually
 // call a JNI method to make sure the loading worked
@@ -35,12 +34,25 @@ public class Interp {
 // appeared in a static initializer (the old approach)
 // there would be no means to propagate the exception.
 
+    static {
+	init();
+    }
+
+    private static void init() {
+	try {
+	    Class.forName("tcl.lang.NativeLibraryLoader");
+	}
+	catch (ClassNotFoundException e) {
+	    e.printStackTrace();
+	    throw new RuntimeException("unable to find tcl.lang.NativeLibraryLoader: " + e.getMessage());
+	}
+    }
+    
 private static boolean shlib_loaded = false;
 
 private synchronized final static void shlib_load()
     throws UnsatisfiedLinkError
 {
-    System.loadLibrary("tclblend");
     Interp.commandComplete("");
     Interp.initName();
     shlib_loaded = true;
