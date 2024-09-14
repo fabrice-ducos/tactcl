@@ -185,14 +185,18 @@ maven-install-tjc:
 $(JAVA_HOME):
 	@echo "\$$JAVA_HOME: '$(JAVA_HOME)' not found: You must set \$$JAVA_HOME to a proper JDK root directory in your environment, or optionally in build.cfg" 1>&2 && false
 
+.PHONY: clean
 clean: clean-tcljava
-
 # for safety reasons, never erase $(BUILD_DIR) and $(BUILD_PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
-cleanall clean-all: clean-tcljava
-	rm -rf build
 	rm -rf local
-	rm -f *~ 
+	rm -rf native
+	rm -f *~
 
+.PHONY: cleanall clean-all
+cleanall clean-all: clean
+	rm -rf build 
+
+.PHONY: clean-tcljava
 clean-tcljava:
 	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) clean
 	-cd $(TCLJAVA_DIR) && test -f Makefile && $(MAKE) distclean
