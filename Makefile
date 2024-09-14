@@ -13,49 +13,7 @@ TCLJAVA_REPO=com/github/fabriceducos/tactcl/tcljava
 # (that contains TCLJAVA_VERSION=)
 TCLJAVA_VERSION:=$(shell grep 'TCLJAVA_VERSION=' tcljava/configure.in | cut -d'=' -f2)
 
-NATIVE_DIR=native
-
-MAIN_TARGET=failed
-ifeq ($(OS),Windows_NT)
-  PLATFORM=windows
-  JAVA_HOME:=$(subst \,\\,$(JAVA_HOME))
-  # LIB_PREFIX is empty for Windows
-  LIB_PREFIX=
-  LIB_EXT=dll
-  NATIVE_SUBDIR=$(NATIVE_DIR)/windows
-  LIB_OPTION=shared
-  MAIN_TARGET=default
-  HOMEPATH_SAFE=$(subst \,/,$(HOMEPATH))
-  M2_ROOT=$(HOMEDRIVE)$(HOMEPATH_SAFE)/.m2
-  MAKE_ALIAS=cp
-else
-  UNAME_S := $(shell uname -s)
-  UNAME_P := $(shell uname -p)
-  OS=$(UNAME_S)
-  ifeq ($(UNAME_S), Darwin)
-    PLATFORM=unix
-    LIB_PREFIX=lib
-    LIB_EXT=dylib
-    NATIVE_SUBDIR=$(NATIVE_DIR)/macos
-    LIB_OPTION=shared
-    MAIN_TARGET=default
-    M2_ROOT=$(HOME)/.m2
-    MAKE_ALIAS=ln -sf
-  endif
-  ifeq ($(UNAME_S),Linux)
-    PLATFORM=unix
-    LIB_PREFIX=lib
-    LIB_EXT=so
-    NATIVE_SUBDIR=$(NATIVE_DIR)/linux
-    LIB_OPTION=shared
-    MAIN_TARGET=default
-    M2_ROOT=$(HOME)/.m2
-    # On Linux, ln can create relative links with -r
-    MAKE_ALIAS=ln -sfr
-  endif
-endif
-  
-
+include detect_os.mk
 include build.cfg
 include platforms/$(PLATFORM).cfg
 include versions.cfg
@@ -80,6 +38,7 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
+BINDIR=$(PREFIX)/bin
 LIBDIR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)
 TCLBLEND_JAR=$(LIBDIR)/tclblend.jar
 TCLBLEND_SO_BASE=$(LIB_PREFIX)tclblend.$(LIB_EXT)
@@ -113,6 +72,9 @@ all: tcl tk tcljava all-packages
 
 .PHONY: stable
 stable: tcl tk tcljava stable-packages
+
+$(BINDIR):
+	$(MKDIR) $@
 
 .PHONY: help
 help:
@@ -152,7 +114,10 @@ help-tcljava:
 	@echo
 
 .PHONY: tclblend
-tclblend: $(jtclsh)
+tclblend: $(jtclsh) $(BINDIR)/tclblend
+
+$(BINDIR)/tclblend: src/tclblend.sh tcl threads libtclblend $(BINDIR)
+	sed "s|__LIBDIR__|$(LIBDIR)|g" $< > $@ && chmod +x $@
 
 $(jtclsh): $(JAVA_HOME) tcl threads libtclblend
 
@@ -168,7 +133,10 @@ libtclblend:
 	test -f $(TCLBLEND_JAR) && $(JAR) -uf $(TCLBLEND_JAR) $(NATIVE_DIR)
 
 .PHONY: jacl
-jacl: $(jaclsh)
+jacl: $(jaclsh) $(BINDIR)/jacl
+
+$(BINDIR)/jacl: src/jacl.sh tcl threads $(BINDIR)
+	sed "s|__LIBDIR__|$(LIBDIR)|g" $< > $@ && chmod +x $@
 
 $(jaclsh): $(JAVA_HOME) tcl threads
 	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
