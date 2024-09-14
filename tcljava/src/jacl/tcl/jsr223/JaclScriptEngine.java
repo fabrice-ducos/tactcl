@@ -32,6 +32,10 @@ import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.IOException;
 
+import tcl.lang.TclObject;
+import tcl.lang.Interp;
+import tcl.lang.TclException;
+
 /**
  * JaclScriptEngine is required for compliance with the JSR223
  * (script engine discovery mechanism in Java 6+)
@@ -42,30 +46,38 @@ public class JaclScriptEngine extends AbstractScriptEngine
 {
     
     public JaclScriptEngine(ScriptEngineFactory factory) {
-	this.factory = factory;
+		this.factory = factory;
+		this.interpreter = new tcl.lang.Interp();
     }
 
     @Override
     public Object eval(String script, ScriptContext context) throws ScriptException {
-	throw new UnsupportedOperationException("eval(String, ScriptContext) is not yet implemented");
+		try {
+			interpreter.eval(script);
+		} catch (TclException e) {
+			throw new ScriptException(e);
+		}
+
+		TclObject result = interpreter.getResult();
+		return result.toString();
     }
 
     @Override
     public Object eval(Reader reader, ScriptContext context) throws ScriptException {
-	BufferedReader br = new BufferedReader(reader);
+		BufferedReader br = new BufferedReader(reader);
 
-	StringBuilder sb = new StringBuilder();
-	String line = null;
-	try {
-	    while ((line = br.readLine()) != null) {
-		sb.append(line);
-	    }
-	}
-	catch (IOException ex) {
-	    throw new ScriptException(ex);
-	}
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+		try {
+			while ((line = br.readLine()) != null) {
+			sb.append(line);
+			}
+		}
+		catch (IOException ex) {
+			throw new ScriptException(ex);
+		}
 
-	return eval(sb.toString(), context);
+		return eval(sb.toString(), context);
     }
 
     @Override
@@ -79,4 +91,5 @@ public class JaclScriptEngine extends AbstractScriptEngine
     }
 
     private final ScriptEngineFactory factory;
+	private final Interp interpreter;
 }
