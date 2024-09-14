@@ -17,10 +17,16 @@ public class NativeLibraryLoader {
 
     public static void init() {
         /* it is needed to print exception messages before throwing them, because jrunscript (a standard JSR223 tool)
-	     * doesn't display low level exception messages, making troubleshooting difficult
-	    */
-	
+	 * doesn't display low level exception messages, making troubleshooting difficult
+	 */
+
+	    String tclblendDebug = System.getProperty("tclblend.debug");
         String currentDirectory = System.getProperty("user.dir");
+	    String javaLibraryPath = System.getProperty("java.library.path");
+        String tclblendLibraryPath = System.getProperty("tclblend.library.path"); // e.g. "/path/to/libtclblend.so"
+        String tclblendLibraryStem = System.getProperty("tclblend.library.stem"); // e.g. "tclblend"
+
+        final boolean debug = convertToBoolean(tclblendDebug);
         String libName = "tclblend";
         String libPath = "native/";
         try {
@@ -53,7 +59,23 @@ public class NativeLibraryLoader {
                 }
             }
 
-            System.load(tempFile.toAbsolutePath().toString());
+            if (debug) {
+		        System.err.println("[DEBUG] tclblend.debug: " + tclblendDebug);
+                System.err.println("[DEBUG] tempFile: " + tempFile.toAbsolutePath().toString());
+		        System.err.println("[DEBUG] java.library.path: " + javaLibraryPath);
+                System.err.println("[DEBUG] tclblend.library.path: " + tclblendLibraryPath);
+                System.err.println("[DEBUG] tclblend.library.stem: " + tclblendLibraryStem + " (e.g. \"tclblend\")");
+	        }
+
+            if (tclblendLibraryPath != null && ! tclblendLibraryPath.isEmpty()) {
+                System.load(tclblendLibraryPath);
+            }
+            else if (tclblendLibraryStem != null && ! tclblendLibraryStem.isEmpty()) {
+                System.loadLibrary(tclblendLibraryStem);
+            }
+            else {
+                System.load(tempFile.toAbsolutePath().toString());
+            }
 
             // Clean up
             tempFile.toFile().deleteOnExit();
@@ -67,5 +89,31 @@ public class NativeLibraryLoader {
     private static String getExtension(String path) {
         int lastDot = path.lastIndexOf('.');
         return (lastDot == -1) ? "" : path.substring(lastDot);
+    }
+
+    private static boolean convertToBoolean(final String property, boolean defaultValue) {
+        if (property == null) return defaultValue;
+
+        String lowerCase = property.toLowerCase();
+        
+        if ("true".equals(lowerCase)) {
+            return true;
+        }
+        else if ("yes".equals(lowerCase)) {
+            return true;
+        }
+        else if ("y".equals(lowerCase)) {
+            return true;
+        }
+        else if ("1".equals(lowerCase)) {
+            return true;
+        }
+        else { 
+            return false;
+        }
+    }
+
+    private static boolean convertToBoolean(final String property) {
+        return convertToBoolean(property, false);
     }
 }
