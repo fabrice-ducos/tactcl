@@ -1,11 +1,10 @@
 ifeq (, $(wildcard build.cfg))
-$(error build.cfg is not found. It is probably a fresh installation. Please copy build.cfg.dist to build.cfg, check up the file and edit it if necessary, then retry.)
+$(warning build.cfg is not found. It is probably a fresh installation. It will be created from build.cfg.dist)
+$(shell cp build.cfg.dist build.cfg)
 endif
 
 # for backward compatibility
 PREFIX=$(BUILD_PREFIX)
-
-INSTALL_PREFIX=/usr/local
 
 TCLJAVA_GROUPID=com.github.fabriceducos.tactcl.tcljava
 TCLJAVA_REPO=com/github/fabriceducos/tactcl/tcljava
@@ -113,6 +112,7 @@ help-tcljava:
 	@echo "e.g make BUILD_PREFIX=/other/BUILD_PREFIX JAVA_HOME=/other/java/home"
 	@echo "or: [sudo] make install INSTALL_PREFIX=/other/prefix"
 	@echo ""
+	@echo "Detected OS: $(OS)"
 	@echo "INSTALL_PREFIX: $(INSTALL_PREFIX)"
 	@echo "BUILD_PREFIX=$(BUILD_PREFIX)"
 	@echo "JAVA_HOME=$(JAVA_HOME)"
