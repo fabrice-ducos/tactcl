@@ -3,9 +3,6 @@ $(warning build.cfg is not found. It is probably a fresh installation. It will b
 $(shell cp build.cfg.dist build.cfg)
 endif
 
-# for backward compatibility
-PREFIX=$(BUILD_PREFIX)
-
 TCLJAVA_GROUPID=com.github.fabriceducos.tactcl.tcljava
 TCLJAVA_REPO=com/github/fabriceducos/tactcl/tcljava
 
@@ -21,6 +18,9 @@ include detect_os.mk
 include build.cfg
 include platforms/$(PLATFORM).cfg
 include versions.cfg
+
+# for backward compatibility
+PREFIX=$(BUILD_PREFIX)
 
 JAR=$(JAVA_HOME)/bin/jar
 
