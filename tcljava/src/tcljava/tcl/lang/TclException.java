@@ -181,6 +181,60 @@ TclException(
 {
     this(interp, msg, ccode, -1);
 }
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclException --
+ *
+ *	Create an TclException with the given error message, file name,
+ *  and line number. The completion code is set to ERROR by default.
+ * 
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	The instance fields are initialized; the message is assigned to
+ *	the interpreter's result if interp is non-null.
+ *
+ *----------------------------------------------------------------------
+ */
+public
+TclException(
+    Interp interp,		// Current interpreter. May be null if unknown.
+    String msg,			// Error message.
+    String fileName,		// File name.
+    int lineNum)		// Line number.
+{
+    this(interp, msg + " (file \"" + fileName + "\", line " + lineNum + ")", TCL.ERROR, -1);
+}
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclException --
+ *
+ *	Create an TclException with the given error message, file name,
+ *  and line number. The completion code is set to ERROR by default.
+ * 
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	The instance fields are initialized; the message is assigned to
+ *	the interpreter's result if interp is non-null.
+ *
+ *----------------------------------------------------------------------
+ */
+public
+TclException(
+    Interp interp,		// Current interpreter. May be null if unknown.
+    String msg,			// Error message.
+    int ccode,			// Completion code.
+    String fileName,		// File name.
+    int lineNum)		// Line number.
+{
+    this(interp, msg + " (file \"" + fileName + "\", line " + lineNum + ")", ccode, -1);
+}
+
 
 /*
  *----------------------------------------------------------------------
