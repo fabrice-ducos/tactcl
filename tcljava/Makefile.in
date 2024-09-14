@@ -313,7 +313,7 @@ tclblend.build: tclblend.clean tcljava.check
 	cd $(TCLBLEND_SRC_DIR) ;\
 	CLASSPATH=$(TCLBLEND_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
-		$(JAVAC_D_FLAG) $(TCLBLEND_BUILD_DIR) tcl/lang/*.java tcl/jsr223/*.java
+		$(JAVAC_D_FLAG) $(TCLBLEND_BUILD_DIR) tcl/lang/*.java tcl/jsr223/*.java tcl/manifest/*.java
 
 # Only use this if you are developing tclblend code and you need to recompile
 # a lot. It will not clean up before building and tclblend.jar will not be
@@ -1022,7 +1022,7 @@ tcljava.fastbuild:
 	CLASSPATH=$(TCLJAVA_CLASSPATH) \
 	$(JAVAC) $(JAVAC_FLAGS) \
 	$(JAVAC_D_FLAG) $(TCLJAVA_BUILD_DIR) \
-		tcl/lang/*.java tcl/manifest/*.java
+		tcl/lang/*.java
 
 # tcljava.jar needs to depend on tcljava.build so that the
 # classfiles get rebuilt each time the jar is built
@@ -2364,7 +2364,7 @@ debug_src_jars: tcljavasrc.jar jaclsrc.jar tclblendsrc.jar itclsrc.jar tjcsrc.ja
 tcljavasrc.jar:
 	cd $(TCLJAVA_SRC_DIR) ; \
 	$(JAR) $(JAR_COMPRESS_FLAGS) $(BUILD_DIR)/tcljavasrc.jar \
-	    tcl/lang/*.java tcl/lang/reflect/*.java tcl/manifest/*.java
+	    tcl/lang/*.java tcl/lang/reflect/*.java
 
 jaclsrc.jar:
 	cd $(JACL_SRC_DIR) ; \
