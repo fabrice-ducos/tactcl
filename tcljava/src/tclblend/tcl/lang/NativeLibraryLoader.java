@@ -20,9 +20,9 @@ public class NativeLibraryLoader {
 	 * doesn't display low level exception messages, making troubleshooting difficult
 	 */
 
-	    String tclblendDebug = System.getProperty("tclblend.debug");
+	String tclblendDebug = System.getProperty("tclblend.debug");
         String currentDirectory = System.getProperty("user.dir");
-	    String javaLibraryPath = System.getProperty("java.library.path");
+	String javaLibraryPath = System.getProperty("java.library.path");
         String tclblendLibraryPath = System.getProperty("tclblend.library.path"); // e.g. "/path/to/libtclblend.so"
         String tclblendLibraryStem = System.getProperty("tclblend.library.stem"); // e.g. "tclblend"
 
