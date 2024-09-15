@@ -19,6 +19,11 @@ include build.cfg
 include platforms/$(PLATFORM).cfg
 include versions.cfg
 
+# $(PACKAGES_DIR) defined in build.cfg
+include $(PACKAGES_DIR)/packages.mk
+
+TCLJAVA_TEST_SCRIPT=tcljava/Test.tcl
+
 # for backward compatibility
 PREFIX=$(BUILD_PREFIX)
 
@@ -59,8 +64,6 @@ JAVA_EXTENSIONS_DIR=$(HOME)/Library/Java/Extensions
 .PHONY: default
 default: tcljava
 
-include $(PACKAGES_DIR)/packages.mk
-
 .PHONY: tcljava
 tcljava: tclblend jacl
 
@@ -88,8 +91,17 @@ help:
 	@echo "For native Tcl distribution:"
 	@$(MAKE) help-packages
 	@echo ""
+	@echo "For tests:"
+	@echo "make test: run all the tests"
+	@echo "make test-jacl|test-jtcl|test-jaclsh|test-jtclsh: run specific tests"
+	@echo ""
 	@echo "For TclJava:"
-	@$(MAKE) help-tcljava
+	@echo "make tcljava: build tclblend and jacl"
+	@echo "make tclblend: build tclblend (with the jtcl interpreter)"
+	@echo "make jacl: build jacl (with the jacl interpreter)"
+	@echo "make maven-install: install tcljava (tclblend and jacl) in the local maven repo"
+	@echo "make maven-uninstall: remove tcljava (tclblend and jacl) from the local maven repo"
+	@echo ""
 	@echo "make clean: clean tcljava source directory from build artifacts"
 	@echo "make cleanall|clean-all: remove all the build artifacts"
 	@echo "make all: build tcljava and everything in $(PACKAGES_DIR)"
@@ -99,15 +111,7 @@ help:
 	@echo "          You may need to edit your build.cfg file."
 	@echo "make stable: builds only packages with no known build issue"
 	@echo "make help: this help"
-
-.PHONY: help-tcljava
-help-tcljava:
-	@echo "make tcljava: build tclblend and jacl"
-	@echo "make tclblend: build tclblend (with the jtcl interpreter)"
-	@echo "make jacl: build jacl (with the jacl interpreter)"
-	@echo "make maven-install: install tcljava (tclblend and jacl) in the local maven repo"
-	@echo "make maven-uninstall: remove tcljava (tclblend and jacl) from the local maven repo"
-	@echo ""	
+	@echo ""
 	@echo "The following settings can be redefined on the command line,"
 	@echo "e.g make BUILD_PREFIX=/other/BUILD_PREFIX JAVA_HOME=/other/java/home"
 	@echo "or: [sudo] make install INSTALL_PREFIX=/other/prefix"
@@ -119,6 +123,28 @@ help-tcljava:
 	@echo "BUILD_DIR=$(BUILD_DIR)"
 	@echo "TCLJAVA_VERSION=$(TCLJAVA_VERSION)"
 	@echo "M2_ROOT: $(M2_ROOT)"
+
+.PHONY: test
+test: test-tcljava
+
+.PHONY: test-tcljava
+test-tcljava: test-jaclsh test-jtclsh test-jacl test-jtcl
+
+.PHONY: test-jaclsh
+test-jaclsh: $(jaclsh)
+	$(jaclsh) $(TCLJAVA_TEST_SCRIPT)
+
+.PHONY: test-jtclsh
+test-jtclsh: $(jtclsh)
+	$(jtclsh) $(TCLJAVA_TEST_SCRIPT)
+
+.PHONY: test-jacl
+test-jacl: $(BINDIR)/jacl
+	$(BINDIR)/jacl $(TCLJAVA_TEST_SCRIPT)
+
+.PHONY: test-jtcl
+test-jtcl: $(BINDIR)/jtcl
+	$(BINDIR)/jtcl $(TCLJAVA_TEST_SCRIPT)
 
 .PHONY: tclblend
 tclblend: $(jtclsh) $(BINDIR)/jtcl
