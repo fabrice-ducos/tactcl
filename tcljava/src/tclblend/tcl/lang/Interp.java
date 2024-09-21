@@ -39,13 +39,7 @@ public class Interp {
     }
 
     private static void init() {
-	try {
-	    Class.forName("tcl.lang.NativeLibraryLoader");
-	}
-	catch (ClassNotFoundException e) {
-	    e.printStackTrace();
-	    throw new RuntimeException("unable to find tcl.lang.NativeLibraryLoader: " + e.getMessage());
-	}
+	NativeLibraryLoader.loadLibrary("tclblend");
     }
     
 private static boolean shlib_loaded = false;
