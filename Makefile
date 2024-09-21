@@ -24,21 +24,13 @@ include $(PACKAGES_DIR)/packages.mk
 
 TCLJAVA_TEST_SCRIPT=tcljava/Test.tcl
 
-# for backward compatibility
-PREFIX=$(BUILD_PREFIX)
-
 JAR=$(JAVA_HOME)/bin/jar
 
 TCL_SRCDIR=$(BUILD_DIR)/tcl$(TCL_VERSION)
 TK_SRCDIR=$(BUILD_DIR)/tk$(TK_VERSION)
 
-# tcl_lang_version must be of the form x.y, e.g. 8.6.9 -> 8.6
-tcl_lang_version=$(shell echo $(TCL_VERSION) | sed 's/\([0-9]*\.[0-9]*\)\.[0-9]*/\1/')
-tclsh=$(BUILD_PREFIX)/bin/tclsh${tcl_lang_version}
-wish=$(BUILD_PREFIX)/bin/wish${tcl_lang_version}
-
-jtclsh=$(BUILD_PREFIX)/bin/jtclsh
-jaclsh=$(BUILD_PREFIX)/bin/jaclsh
+jtclsh=$(PREFIX)/bin/jtclsh
+jaclsh=$(PREFIX)/bin/jaclsh
 
 TCLJAVA_DIR=$(shell pwd)/tcljava
 THREADS_SRCDIR=$(TCL_SRCDIR)/pkgs/thread$(THREADS_VERSION)
@@ -47,12 +39,12 @@ threads_pkgIndex=$(THREADS_SRCDIR)/pkgIndex.tcl
 WITH_TCL=--with-tcl=$(TCL_SRCDIR)/$(TCL_PLATFORM)
 WITH_TK=--with-tk=$(TK_SRCDIR)/$(TCL_PLATFORM)
 
-BINDIR=$(BUILD_PREFIX)/bin
-LIBDIR=$(BUILD_PREFIX)/lib/tcljava$(TCLJAVA_VERSION)
+BINDIR=$(PREFIX)/bin
+LIBDIR=$(PREFIX)/lib/tcljava$(TCLJAVA_VERSION)
 TCLBLEND_JAR=$(LIBDIR)/tclblend.jar
-TCLBLEND_SO_BASE=$(LIB_BUILD_PREFIX)tclblend.$(LIB_EXT)
+TCLBLEND_SO_BASE=$(LIB_PREFIX)tclblend.$(LIB_EXT)
 TCLBLEND_SO=$(LIBDIR)/$(TCLBLEND_SO_BASE)
-TCLBLEND_SO_IN_NATIVE=$(NATIVE_SUBDIR)/$(LIB_BUILD_PREFIX)tclblend.$(LIB_EXT)
+TCLBLEND_SO_IN_NATIVE=$(NATIVE_SUBDIR)/$(LIB_PREFIX)tclblend.$(LIB_EXT)
 JACL_JAR=$(LIBDIR)/jacl.jar
 
 # For MacOSX only (where Java looks for .dylib)
@@ -62,7 +54,7 @@ JACL_JAR=$(LIBDIR)/jacl.jar
 JAVA_EXTENSIONS_DIR=$(HOME)/Library/Java/Extensions
 
 .PHONY: default
-default: tcljava
+default: stable
 
 .PHONY: tcljava
 tcljava: tclblend jacl
@@ -77,9 +69,9 @@ $(BINDIR):
 	$(MKDIR) $@
 
 .PHONY: install
-install: $(BUILD_PREFIX)
+install: $(PREFIX)
 	$(MKDIR) $(INSTALL_PREFIX)
-	$(RECURSIVE_CP) $(BUILD_PREFIX)/* $(INSTALL_PREFIX)/
+	$(RECURSIVE_CP) $(PREFIX)/* $(INSTALL_PREFIX)/
 
 
 .PHONY: help
@@ -113,12 +105,12 @@ help:
 	@echo "make help: this help"
 	@echo ""
 	@echo "The following settings can be redefined on the command line,"
-	@echo "e.g make BUILD_PREFIX=/other/BUILD_PREFIX JAVA_HOME=/other/java/home"
+	@echo "e.g make PREFIX=/other/PREFIX JAVA_HOME=/other/java/home"
 	@echo "or: [sudo] make install INSTALL_PREFIX=/other/prefix"
 	@echo ""
 	@echo "Detected OS: $(OS)"
 	@echo "INSTALL_PREFIX: $(INSTALL_PREFIX)"
-	@echo "BUILD_PREFIX=$(BUILD_PREFIX)"
+	@echo "PREFIX=$(PREFIX)"
 	@echo "JAVA_HOME=$(JAVA_HOME)"
 	@echo "BUILD_DIR=$(BUILD_DIR)"
 	@echo "TCLJAVA_VERSION=$(TCLJAVA_VERSION)"
@@ -162,7 +154,7 @@ $(jtclsh): $(JAVA_HOME) tcl threads libtclblend
 
 .PHONY: libtclblend
 libtclblend:
-	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(BUILD_PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
+	cd $(TCLJAVA_DIR) && ./configure --enable-tclblend --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
 .PHONY: jacl
 jacl: $(jaclsh) $(BINDIR)/jacl
@@ -172,7 +164,7 @@ $(BINDIR)/jacl: src/jacl.sh tcl threads $(BINDIR)
 
 #$(jaclsh) is deprecated, use jacl instead
 $(jaclsh): $(JAVA_HOME) tcl threads
-	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(BUILD_PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
+	cd $(TCLJAVA_DIR) && ./configure --enable-jacl --prefix=$(PREFIX) $(WITH_TCL) --with-thread=$(THREADS_SRCDIR) --with-jdk=$(JAVA_HOME) && $(MAKE) && $(MAKE) install
 
 .PHONY: maven-install
 maven-install: maven-install-tcljava maven-install-tclblend maven-install-jacl maven-install-itcl maven-install-janino maven-install-tjc
@@ -213,7 +205,7 @@ $(JAVA_HOME):
 
 .PHONY: clean
 clean: clean-tcljava
-# for safety reasons, never erase $(BUILD_DIR) and $(BUILD_PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
+# for safety reasons, never erase $(BUILD_DIR) and $(PREFIX) (e.g. /usr/local!!). That's why 'build' and 'local' are hardcoded here.
 	rm -rf local
 	rm -rf native
 	rm -f *~

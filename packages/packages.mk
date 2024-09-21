@@ -93,7 +93,7 @@ $(cwsh): $(tclsh)
 
 threads: $(threads_pkgIndex)
 
-$(threads_pkgIndex):
+$(threads_pkgIndex): $(tclsh)
 	$(MAKE) $(THREADS_SRCDIR) && cd $(THREADS_SRCDIR) && ./configure --prefix=$(PREFIX) $(THREADS_FLAGS) $(MORE_TCL_FLAGS) $(WITH_TCL) && $(MAKE) && $(MAKE) install
 
 expect: $(expect_cmd)
